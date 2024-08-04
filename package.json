@@ -1,0 +1,53 @@
+{
+  "name": "chatter",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@apollo/client": "^3.11.1",
+    "@hookform/resolvers": "^3.9.0",
+    "@radix-ui/react-avatar": "^1.1.0",
+    "@radix-ui/react-dropdown-menu": "^2.1.1",
+    "@radix-ui/react-popover": "^1.1.1",
+    "@radix-ui/react-slot": "^1.1.0",
+    "@radix-ui/react-tooltip": "^1.1.2",
+    "@tanstack/react-query": "^5.51.15",
+    "@tinymce/tinymce-react": "^5.1.1",
+    "axios": "^1.7.2",
+    "class-variance-authority": "^0.7.0",
+    "clsx": "^2.1.1",
+    "dotenv": "^16.4.5",
+    "firebase": "^10.12.4",
+    "graphql": "^16.9.0",
+    "lucide-react": "^0.417.0",
+    "next": "14.2.5",
+    "react": "^18",
+    "react-dom": "^18",
+    "react-firebase-hooks": "^5.1.1",
+    "react-hook-form": "^7.52.1",
+    "react-hot-toast": "^2.4.1",
+    "react-markdown": "^9.0.1",
+    "react-quill": "^2.0.0",
+    "slate": "^0.103.0",
+    "slate-history": "^0.100.0",
+    "slate-react": "^0.107.1",
+    "tailwind-merge": "^2.4.0",
+    "tailwindcss-animate": "^1.0.7",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "eslint": "^8",
+    "eslint-config-next": "14.2.5",
+    "postcss": "^8",
+    "tailwindcss": "^3.4.1",
+    "typescript": "^5"
+  }
+}
