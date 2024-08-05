@@ -27,7 +27,7 @@ const Schema = z.object({
 type createNewPostFormDataType = z.infer<typeof Schema>
 
 const WriteNewStoryPage = () => {
-    const [user] = useAuthState(auth);
+    const [user, loading] = useAuthState(auth);
     const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
     const { theme } = useContext(ThemeContext);
     const quillRef = useRef<any>(null);
@@ -52,13 +52,13 @@ const WriteNewStoryPage = () => {
     }
 
 
-    const customImageHandler = useCallback(async () => {
+    const imageSelectionHandler = useCallback(async () => {
         const handleImageUpload = async (file: File): Promise<string> => {
-            if (!user?.uid) {
+            if (!loading && !user?.uid) {
                 throw new Error("User not authenticated");
             }
 
-            const storageRef = ref(storage, `post_images/${user.uid}/${file.name}`);
+            const storageRef = ref(storage, `post_images/${user?.uid}/${file.name}`);
 
             try {
                 const snapshot = await uploadBytes(storageRef, file, {
@@ -97,7 +97,7 @@ const WriteNewStoryPage = () => {
         document.body.appendChild(input);
         document.body.removeChild(input);
 
-    }, [setValue, user?.uid, watch]);
+    }, [setValue, user?.uid, watch, loading]);
 
 
     const modules = {
@@ -111,7 +111,7 @@ const WriteNewStoryPage = () => {
                 ['clean']
             ],
             handlers: {
-                image: customImageHandler
+                image: imageSelectionHandler
             }
         },
         clipboard: {
@@ -169,8 +169,17 @@ const WriteNewStoryPage = () => {
                         placeholder='Title'
                     />
 
+
                     <article className='ImageUploader'>
-                        <input type="file" onChange={handleImageSelect} />
+
+
+                        <input type="file"
+                            onChange={handleImageSelect}
+                            className='hidden'
+
+                        />
+
+
                         {
                             !selectedImage && !coverImgURL &&
                             <div className='rulesdiv'>
@@ -191,6 +200,7 @@ const WriteNewStoryPage = () => {
                             </div>
                         }
                     </article>
+
                     <Controller
                         name="content"
                         control={control}
@@ -222,7 +232,6 @@ const WriteNewStoryPage = () => {
                 </form>
             </div>
         </main>
-
     )
 }
 
