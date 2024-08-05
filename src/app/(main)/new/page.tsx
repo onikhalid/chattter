@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useCallback, useContext, useRef, useState } from 'react'
+import React, { Suspense, useCallback, useContext, useRef, useState } from 'react'
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { Controller, useForm } from 'react-hook-form';
@@ -31,7 +31,8 @@ const WriteNewStoryPage = () => {
     const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
     const { theme } = useContext(ThemeContext);
     const quillRef = useRef<any>(null);
-    const postToEditId = useSearchParams().get('edit');
+    const params = useSearchParams()
+    const postToEditId = params.get('edit');
     const [selectedImage, setSelectedImage] = useState<File | null>(null);
     const [coverImgURL, setCoverImgURL] = useState<string | null>(null)
     const [previousCoverImgURL, setPreviousCoverImgURL] = useState<string | null>(null)
@@ -134,7 +135,7 @@ const WriteNewStoryPage = () => {
     };
 
 
-    
+
     return (
         <main className="flex flex-col h-screen items-center justify-between font-display overflow-hidden">
             <header className="sticky top-0 flex items-center justify-between w-full px-5 py-3 md:px-10 md:py-4 border-b-[0.3px] border-b-[#E4E7EC]">
@@ -221,6 +222,7 @@ const WriteNewStoryPage = () => {
                 </form>
             </div>
         </main>
+
     )
 }
 
