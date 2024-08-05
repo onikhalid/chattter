@@ -7,10 +7,10 @@ const UnauthenticatedHomepage = () => {
         <main className="flex h-screen flex-col items-center justify-between font-display">
             <header className="sticky top-0 flex items-center justify-between w-full p-5 md:px-10 md:py-6">
                 <ChatterLogo />
-                <section>
-                    <Button>
+                <section className='flex items-center gap-4'>
+                    <LinkButton href='/login'>
                         Login
-                    </Button>
+                    </LinkButton>
                     <LinkButton href="/register">
                         Get Started
                     </LinkButton>

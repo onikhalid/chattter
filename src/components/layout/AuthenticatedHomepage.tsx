@@ -15,7 +15,7 @@ const AuthenticatedHomepage = () => {
       <header className="sticky top-0 flex items-center justify-between w-full px-5 py-3 md:px-10 md:py-4 border-b-[0.3px] border-b-[#E4E7EC]">
         <ChatterLogo />
         <section className='flex items-center gap-2'>
-          <LinkButton href='new-story' shape='rounded' variant='outline' className='flex items-center gap-2 rounded-lg border-[#b6b5b5] py-1.5'>
+          <LinkButton href='/new' shape='rounded' variant='outline' className='flex items-center gap-2 rounded-lg border-[#b6b5b5] py-1.5'>
             Write story <PenIcon />
           </LinkButton>
 

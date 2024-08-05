@@ -158,7 +158,7 @@ const WriteNewStoryPage = () => {
                 </section>
             </header>
 
-            <div className="grow w-full px-4 lg:px-[7.5vw] lg:gap-[5vw] max-h-[calc(100vh_-_4.5rem)] pt-8 overflow-scroll">
+            <div className="grow w-full px-4 lg:px-[7.5vw] lg:gap-[5vw] max-h-[calc(100vh_-_4.5rem)] pt-8 overflow-scroll max-w-[1200px]">
 
                 <form action="" onSubmit={handleSubmit(handleCreateNewPost)}>
 
