@@ -8,12 +8,13 @@ export interface InputProps
   extends React.InputHTMLAttributes<HTMLInputElement> {
   hasError?: boolean
   errorMessage?: string
+  errorMessageClass?: string
   leftIcon?: React.ReactNode
   rightIcon?: React.ReactNode
 }
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ className, type, hasError, leftIcon, rightIcon, ...props }, ref) => {
+  ({ className, type, hasError, leftIcon, rightIcon, errorMessageClass, ...props }, ref) => {
     const [show, setShow] = React.useState(false)
     const inputType = show ? "text" : "password"
 
@@ -61,7 +62,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           }
         </div>
         {
-          hasError && <FormError errorMessage={props.errorMessage} />
+          hasError && <FormError className={errorMessageClass} errorMessage={props.errorMessage} />
         }
       </div>
     )
