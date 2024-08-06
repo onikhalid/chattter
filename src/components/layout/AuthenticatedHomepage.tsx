@@ -4,14 +4,18 @@ import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth } from '@/utils/firebaseConfig';
 import { getInitials } from '@/utils/strings';
 import { PenIcon, PlusIcon, SearchIcon } from '../icons';
+import { Tabs, TabsList } from '../ui/tabs';
 
 const AuthenticatedHomepage = () => {
   const [user, loading] = useAuthState(auth);
-
+const tabsArray =[
+  {
+    
+  }
+]
 
   return (
     <main className="flex flex-col h-screen items-center justify-between font-display overflow-hidden">
-      {/* <main className="grid h-screen grid-rows-[max-content_1fr_max-content] items-center justify-between font-display overflow-hidden"> */}
       <header className="sticky top-0 flex items-center justify-between w-full px-5 py-3 md:px-10 md:py-4 border-b-[0.3px] border-b-[#E4E7EC]">
         <ChatterLogo />
         <section className='flex items-center gap-2'>
@@ -56,6 +60,14 @@ const AuthenticatedHomepage = () => {
         </section>
         <section>p</section>
       </div>
+
+      <section>
+        <Tabs>
+          <TabsList>
+            
+          </TabsList>
+        </Tabs>
+      </section>
 
       {/* <footer className="sticky bottom-0 flex items-center justify-between bg-black text-background w-full p-4 max-md:text-xs">
         <small>&copy; 2024 Chatter. All rights reserved</small>

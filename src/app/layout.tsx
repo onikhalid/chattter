@@ -4,6 +4,7 @@ import { Body } from "@/components/layout";
 
 import "./globals.css";
 import { Toaster } from "react-hot-toast";
+import React from "react";
 
 
 export const metadata: Metadata = {
@@ -14,8 +15,12 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
+  authenticated,
+  unauthenticated
 }: Readonly<{
   children: React.ReactNode;
+  authenticated: React.ReactNode
+  unauthenticated: React.ReactNode
 }>) {
   return (
     <html lang="en">

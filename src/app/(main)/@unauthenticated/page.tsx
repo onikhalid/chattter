@@ -1,10 +1,9 @@
-import { Button, ChatterLogo, LinkButton } from '@/components/ui'
 import React from 'react'
+import { ChatterLogo, LinkButton } from '@/components/ui'
 
-
-const UnauthenticatedHomepage = () => {
-    return (
-        <main className="flex h-screen flex-col items-center justify-between font-display">
+const UnAuthenticatedUserHomePage = () => {
+  return (
+    <main className="flex h-screen flex-col items-center justify-between font-display">
             <header className="sticky top-0 flex items-center justify-between w-full p-5 md:px-10 md:py-6">
                 <ChatterLogo />
                 <section className='flex items-center'>
@@ -39,7 +38,7 @@ const UnauthenticatedHomepage = () => {
                 </span>
             </footer>
         </main>
-    )
+  )
 }
 
-export default UnauthenticatedHomepage
+export default UnAuthenticatedUserHomePage

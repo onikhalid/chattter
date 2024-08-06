@@ -63,5 +63,9 @@ export { Input } from './input'
 export { LinkButton } from './linkButton'
 export { default as LoadingModal } from './loadingModal'
 export { Popover, PopoverTrigger, PopoverContent } from './popover'
+
+export { Tabs, TabsList, TabsTrigger, TabsContent } from './tabs'
+
 export { default as TagInput } from './tagInput'
+
 export { default as Tooltip } from './tooltip'
