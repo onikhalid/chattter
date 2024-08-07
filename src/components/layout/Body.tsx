@@ -4,7 +4,6 @@ import React, { useContext, useEffect, useState } from 'react'
 import AllProviders from '@/utils/providers'
 import { Space_Grotesk } from "next/font/google";
 import { cn } from '@/lib/utils';
-import { ThemeContext } from '@/contexts/UserInfoContext';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth } from '@/utils/firebaseConfig';
 import { Avatar, Button, ChatterLogo, LinkButton, Popover, PopoverContent, PopoverTrigger } from '../ui';

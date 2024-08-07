@@ -3,7 +3,7 @@ import { AuthProvider } from "@/contexts/userAuthContext";
 import { ApolloProvider } from "@apollo/client";
 import apolloClient from "@/utils/apolloClient";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { ThemeProvider, UserProvider } from '@/contexts/UserInfoContext';
+import { UserProvider } from '@/contexts/UserInfoContext';
 
 const queryClient = new QueryClient();
 
@@ -11,7 +11,6 @@ const queryClient = new QueryClient();
 const AllProviders = ({ children }: { children: React.ReactNode }) => {
   return (
     <QueryClientProvider client={queryClient}>
-      <ThemeProvider>
         <AuthProvider>
           <UserProvider>
             <ApolloProvider client={apolloClient}>
@@ -19,7 +18,6 @@ const AllProviders = ({ children }: { children: React.ReactNode }) => {
             </ApolloProvider>
           </UserProvider>
         </AuthProvider>
-      </ThemeProvider>
     </QueryClientProvider>
   )
 }
