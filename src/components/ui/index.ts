@@ -1,4 +1,5 @@
 export { default as Avatar } from './avatar'
+
 export { Badge, badgeVariants } from './badge'
 
 export { Button } from './button';

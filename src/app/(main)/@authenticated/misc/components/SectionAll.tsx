@@ -29,7 +29,7 @@ const PostsList: React.FC = () => {
   return (
     <div className='w-full'>
       {data?.pages.map((page: QueryResult, i: number) => (
-        <div key={i} className='flex flex-col gap-5'>
+        <div key={i} className='flex flex-col gap-5 divide-y-2 divide-foreground'>
           {
             page.posts.map((post: TPost) => (
               <PostCard

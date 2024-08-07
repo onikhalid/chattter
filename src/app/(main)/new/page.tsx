@@ -15,7 +15,7 @@ import { auth, storage } from '@/utils/firebaseConfig';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { getInitials } from '@/utils/strings';
 import { PenIcon, TrashIcon, UploadIcon, ViewIcon } from '@/components/icons';
-import { ThemeContext, UserContext } from '@/contexts';
+import { UserContext } from '@/contexts';
 import { cn } from '@/lib/utils';
 import { presetArticleTags } from '@/constants';
 import { UseCreateNewPost, UseGetPostDetails, UseUpdateNewPost } from './misc/api';
@@ -31,7 +31,6 @@ type createNewPostFormDataType = z.infer<typeof CreateNewPostFormSchema>
 const WriteNewStoryPage = () => {
     const params = useSearchParams()
     const [user, loading] = useAuthState(auth);
-    const { theme } = useContext(ThemeContext);
     const { userData } = useContext(UserContext);
 
     const postToEditId = params.get('edit');
@@ -341,7 +340,7 @@ const WriteNewStoryPage = () => {
                                 placeholder='Write your story...'
                                 id="myQuillEditor"
                                 style={{
-                                    color: theme === 'dark' ? '#fff' : '#000',
+                                    // color: theme === 'dark' ? '#fff' : '#000',
                                     border: "none",
                                 }}
 

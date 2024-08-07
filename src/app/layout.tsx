@@ -4,7 +4,7 @@ import { Body } from "@/components/layout";
 
 import "./globals.css";
 import { Toaster } from "react-hot-toast";
-import React from "react";
+import React, { Suspense } from "react";
 
 
 export const metadata: Metadata = {
@@ -32,10 +32,10 @@ export default function RootLayout({
         <link rel="icon" href="/favicon.ico" />
         {/* <link rel="stylesheet" href={inter.href} /> */}
       </head>
-
-      <Body >
-        {children}
-        <Toaster
+      <Suspense fallback={<div>Loading...</div>}>
+        <Body >
+          {children}
+          <Toaster
             position="top-center"
             toastOptions={{
               duration: 3000,
@@ -47,8 +47,8 @@ export default function RootLayout({
               },
             }}
           />
-
-      </Body>
+        </Body>
+      </Suspense>
 
     </html>
   );
