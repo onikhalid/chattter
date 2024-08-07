@@ -11,15 +11,15 @@ const queryClient = new QueryClient();
 const AllProviders = ({ children }: { children: React.ReactNode }) => {
   return (
     <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <ThemeProvider>
+      <ThemeProvider>
+        <AuthProvider>
           <UserProvider>
             <ApolloProvider client={apolloClient}>
               {children}
             </ApolloProvider>
           </UserProvider>
-        </ThemeProvider>
-      </AuthProvider>
+        </AuthProvider>
+      </ThemeProvider>
     </QueryClientProvider>
   )
 }

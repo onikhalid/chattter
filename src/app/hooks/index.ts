@@ -3,4 +3,5 @@ export { default as useSessionStorage } from './useSessionStorage'
 export { default as useBooleanStateControl } from './useBooleanStateControl'                          
 export { default as useDebounce } from './useDebounce'     
 export { default as useErrorModalState } from './useErrorModalState';
+export { default as useTheme } from './useTheme';
     // export { default as useCloudinary } from './useCloudinary';

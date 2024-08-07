@@ -11,3 +11,9 @@ export function countWordsInQuillEditor(quillContent: string): number {
     // Return the word count
     return words.length;
 }
+export function cleanUpPostQuillEditorContent(quillContent: string): string {
+    const cleanContent = quillContent.replace(/<\/?[^>]+(>|$)/g, ' ');
+    const normalizedText = cleanContent.replace(/\s+/g, ' ').trim();
+    // const words = normalizedText.split(' ');
+    return normalizedText;
+}

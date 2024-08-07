@@ -57,6 +57,7 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
 
     const toggleTheme = () => {
         setTheme((theme) => theme === 'dark' ? 'light' : 'dark');
+        console.log('changed!')
     };
 
     useLayoutEffect(() => {
