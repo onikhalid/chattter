@@ -10,11 +10,6 @@ import { auth, db } from '@/utils/firebaseConfig';
 import { User } from 'firebase/auth';
 
 
-export const ThemeContext = createContext({
-    theme: 'dark',
-    toggleTheme: () => { },
-});
-
 
 export const MobileNavContext = createContext({
     hidden: true,
@@ -42,42 +37,6 @@ export const ThreadContext = createContext({
     threadPost: {},
     setThreadPost: {},
 });
-
-
-
-
-export const ThemeProvider = ({ children }: { children: ReactNode }) => {
-
-    const [theme, setTheme] = useState('light');
-
-    const toggleTheme = () => {
-        setTheme((theme) => theme === 'dark' ? 'light' : 'dark');
-    };
-
-    useLayoutEffect(() => {
-        if (localStorage.getItem("theme") === null) {
-            setTheme('light')
-        } else {
-            const currentTheme = localStorage.getItem('theme') || 'light';
-            setTheme(currentTheme);
-        }
-
-    }, []);
-
-    useEffect(() => {
-        localStorage.setItem('theme', theme);
-    }, [theme]);
-
-
-    return (
-        <ThemeContext.Provider value={{ theme, toggleTheme }}>
-            {children}
-        </ThemeContext.Provider>
-    );
-};
-
-
-
 
 
 

@@ -26,7 +26,7 @@ const displayFont = Space_Grotesk({
 
 const Body = ({ children }: { children: React.ReactNode }) => {
   const [user, loading] = useAuthState(auth);
-  const [theme, setTheme] = useState(localStorage.getItem("theme") ?? 'light');
+  const [theme, setTheme] = useState(localStorage && localStorage?.getItem("theme") ?? 'light');
   const toggleTheme = () => {
     const updatedTheme = theme == "light" ? 'dark' : 'light';
     setTheme(updatedTheme);

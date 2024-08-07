@@ -51,39 +51,6 @@ export const ThreadContext = createContext({
 
 
 
-export const ThemeProvider = ({ children }: { children: ReactNode }) => {
-
-    const [theme, setTheme] = useState('light');
-
-    const toggleTheme = () => {
-        setTheme((theme) => theme === 'dark' ? 'light' : 'dark');
-        console.log('changed!')
-    };
-
-    useLayoutEffect(() => {
-        if (localStorage.getItem("theme") === null) {
-            setTheme('light')
-        } else {
-            const currentTheme = localStorage.getItem('theme') || 'light';
-            setTheme(currentTheme);
-        }
-
-    }, []);
-
-    useEffect(() => {
-        localStorage.setItem('theme', theme);
-    }, [theme]);
-
-
-    return (
-        <ThemeContext.Provider value={{ theme, toggleTheme }}>
-            {children}
-        </ThemeContext.Provider>
-    );
-};
-
-
-
 
 
 
