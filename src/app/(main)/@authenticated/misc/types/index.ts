@@ -11,7 +11,7 @@ export type TPost = {
     title: string;
     title_for_search: string[];
     likes: string[];
-    bookmarks:string[];
+    bookmarks: string[];
     reads: string[];
 }
 export type TBookmark = {
@@ -22,4 +22,8 @@ export type TBookmark = {
     post_author_id: string;
     post_author_username: string;
     post_author_avatar: string;
+}
+export type TFollow = {
+    follower_id: string;
+    followed_id: string;
 }

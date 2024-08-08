@@ -77,11 +77,11 @@ const WriteNewStoryPage = () => {
         const submittedData = data;
         const dataToSubmit = {
             ...data,
-            author_id: user?.uid,
+            author_id: user?.uid || "",
             author_avatar: userData?.avatar || "",
             author_username: userData?.username || "",
             author_name: userData?.name || "",
-            created_at: postData?.created_at || new Date(),
+            created_at: postData?.created_at.toString() || new Date(),
             title_for_search: data.title.split(/[,:.\s-]+/).filter(word => word !== ''),
             cover_image: postData?.cover_image || "",
         };

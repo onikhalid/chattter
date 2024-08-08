@@ -4,6 +4,7 @@ import { TPost } from '../types';
 import { useAllPostsInfiniteQuery } from '../api';
 import { QueryResult } from '../api/getPostsAll';
 import PostCard from './PostCard';
+import PostCardSkeleton from './PostCardSkeleton';
 
 const PostsList: React.FC = () => {
   const {
@@ -23,11 +24,18 @@ const PostsList: React.FC = () => {
     }
   }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage]);
 
-  if (isLoading) return <div>Loading...</div>;
   if (status === 'error') return <div>Error fetching posts</div>;
 
   return (
     <>
+      <div className='flex flex-col divide-y-[1.5px] w-full divide-muted-foreground dark:divide-muted'>
+        {
+          isLoading && Array.from({ length: 10 }).map((_, i) => (
+            <PostCardSkeleton key={i} />
+          ))
+        }
+      </div>
+
       {
         data?.pages.map((page: QueryResult, i: number) => (
           <div key={i} className='flex flex-col divide-y-[1.5px] w-full divide-muted-foreground dark:divide-muted'>
@@ -40,12 +48,27 @@ const PostsList: React.FC = () => {
             }
           </div>
         ))}
+
       <div ref={ref}>
-        {isFetchingNextPage
-          ? 'Loading more...'
-          : hasNextPage
-            ? 'Load More'
-            : 'No more posts'}
+        {
+          isFetchingNextPage
+            ?
+            <div className='flex flex-col divide-y-[1.5px] w-full divide-muted-foreground dark:divide-muted'>
+              {
+                Array.from({ length: 4 }).map((_, i) => (
+                  <PostCardSkeleton key={i} />
+                ))
+              }
+            </div>
+
+            :
+            hasNextPage
+              ? 'Load More'
+              :
+              <div className='mt-4 py-5'>
+                - End -
+              </div>
+        }
       </div>
     </>
   );

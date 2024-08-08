@@ -22,7 +22,7 @@ export {
   DialogClose,
   DialogContent,
   DialogHeader,
-  DialogBody,
+  // DialogBody,
   DialogFooter,
   DialogTitle,
   DialogDescription,
@@ -62,8 +62,12 @@ export { default as ChatterLogo } from './logo'
 export { default as FormError } from './formError'
 export { Input } from './input'
 export { LinkButton } from './linkButton'
+
 export { default as LoadingModal } from './loadingModal'
+
 export { Popover, PopoverTrigger, PopoverContent } from './popover'
+
+export { Skeleton } from './skeleton'
 
 export { Tabs, TabsList, TabsTrigger, TabsContent } from './tabs'
 

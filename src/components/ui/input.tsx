@@ -11,16 +11,17 @@ export interface InputProps
   errorMessageClass?: string
   leftIcon?: React.ReactNode
   rightIcon?: React.ReactNode
+  containerClassName?: string
 }
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ className, type, hasError, leftIcon, rightIcon, errorMessageClass, ...props }, ref) => {
+  ({ className, containerClassName, type, hasError, leftIcon, rightIcon, errorMessageClass, ...props }, ref) => {
     const [show, setShow] = React.useState(false)
     const inputType = show ? "text" : "password"
 
 
     return (
-      <div>
+      <div className={containerClassName}>
         <div className="relative">
           {
             leftIcon && (

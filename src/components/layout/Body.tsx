@@ -1,24 +1,29 @@
 'use client';
 import React, { useEffect, useState } from 'react';
+import Link from 'next/link';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { MoonIcon, SunIcon, PenIcon, ArrowLeftSquare } from 'lucide-react';
+
 import AllProviders from '@/utils/providers';
-import { Space_Grotesk } from "next/font/google";
 import { cn } from '@/lib/utils';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth } from '@/utils/firebaseConfig';
-import { Avatar, Button, ChatterLogo, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuShortcut, DropdownMenuTrigger, LinkButton, Popover, PopoverContent, PopoverTrigger } from '../ui';
-import { MoonIcon, SunIcon, PenIcon, ArrowLeftSquare } from 'lucide-react';
 import { getInitials } from '@/utils/strings';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import Link from 'next/link';
 
-const displayFont = Space_Grotesk({
-  subsets: ["latin"],
-  variable: "--font-display",
-});
+import { Avatar, Button, ChatterLogo, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, LinkButton } from '../ui';
+
+
+
 
 const Body = ({ children }: { children: React.ReactNode }) => {
   const [user, loading] = useAuthState(auth);
   const [theme, setTheme] = useState('light');
+  const params = useSearchParams();
+  const pathName = usePathname();
+  const postToEditId = params.get('edit');
+  const router = useRouter();
+  const authPathNames = ['/login', '/register', '/onboarding', '/forgot-password', '/reset-password', '/complete-profile']
+
 
   useEffect(() => {
     const savedTheme = localStorage.getItem("theme");
@@ -38,21 +43,16 @@ const Body = ({ children }: { children: React.ReactNode }) => {
     localStorage.setItem("theme", updatedTheme);
   };
 
-  const params = useSearchParams();
-  const pathName = usePathname();
-  const postToEditId = params.get('edit');
-  const router = useRouter();
   const logout = () => {
     auth.signOut();
     router.push('/login')
   }
-  const authPathNames = ['/login', '/register', '/onboarding', '/forgot-password', '/reset-password', '/complete-profile']
 
 
 
   return (
     <AllProviders>
-      <div className={cn(displayFont.variable, theme === 'dark' ? 'dark' : 'light', "flex flex-col h-screen items-center justify-between font-display overflow-hidden")}>
+      <div className={cn(theme === 'dark' ? 'dark' : 'light', "flex flex-col h-screen items-center justify-between font-display overflow-hidden")}>
         {
           !loading && user && !authPathNames.includes(pathName) &&
           (

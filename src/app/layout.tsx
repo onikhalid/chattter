@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { Toaster } from "react-hot-toast";
 import dynamic from 'next/dynamic';
+import { Space_Grotesk } from "next/font/google";
 
 export const metadata: Metadata = {
   title: "Chatter",
@@ -11,6 +12,12 @@ export const metadata: Metadata = {
 const DynamicBody = dynamic(() => import('@/components/layout/Body'), {
   ssr: false,
 });
+const displayFont = Space_Grotesk({
+  subsets: ["latin"],
+  variable: "--font-display",
+});
+
+
 
 export default function RootLayout({
   children,
@@ -25,7 +32,7 @@ export default function RootLayout({
         <meta name="description" content={metadata.description!} />
         <link rel="icon" href="/favicon.ico" />
       </head>
-      <body>
+      <body className={displayFont.variable}>
         <DynamicBody>
           {children}
           <Toaster
