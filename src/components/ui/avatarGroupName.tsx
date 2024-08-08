@@ -6,7 +6,7 @@ import {
 } from "./avatarPrimitives"
 import { getInitials } from "@/utils/strings";
 import { cn } from "@/utils/classNames";
-import ToolTip from "./tooltip";
+import ToolTip from "./tooltipCustom";
 
 
 interface AvatarProps {

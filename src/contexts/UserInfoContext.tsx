@@ -11,59 +11,48 @@ import { User } from 'firebase/auth';
 import toast from 'react-hot-toast';
 
 
-export const ThemeContext = createContext({
-    theme: 'light',
-    toggleTheme: () => { },
-});
+interface TUser {
+    uid: string;
+    name: string;
+    username: string;
+    email: string;
+    avatar: string;
+    bio: string;
+    followers: string[];
+    followings: string[];
+    created_at: Date;
+    interests: string[];
+}
 
-
-export const MobileNavContext = createContext({
-    hidden: true,
-    toggleTheme: () => { },
-});
 
 type UserInfoContextType = {
     authenticatedUser: User | null | undefined,
-    userData: DocumentData | null | undefined;
+    userData: TUser | null | undefined;
     loadingauthenticatedUser: boolean;
-    // setUserData?: React.Dispatch<React.SetStateAction<DocumentData | null | undefined>>;
-    userFollowers: string[]
+    userFollows: string[]
     userBookmarks: string[]
+    userInterests: string[]
 };
 const initialUserContext: UserInfoContextType = {
     authenticatedUser: {} as User,
-    userData: {} as DocumentData | null | undefined,
-    // setUserData: () => { },
+    userData: {} as TUser | null | undefined,
     loadingauthenticatedUser: false,
-    userFollowers: [],
-    userBookmarks: []
+    userFollows: [],
+    userBookmarks: [],
+    userInterests: [],
 };
+
+
+
 export const UserContext = createContext<UserInfoContextType>(initialUserContext);
-
-
-export const ThreadContext = createContext({
-    threadId: null,
-    setThreadId: () => { },
-    threadPost: {},
-    setThreadPost: {},
-});
-
-
-
-
-
-
-
-
-
 
 export const UserProvider = ({ children }: { children: ReactNode }) => {
     const [authenticatedUser, loadingauthenticatedUser] = useAuthState(auth);
-    const [userData, setUserData] = useState<DocumentData | undefined | null>({});
+    const [userData, setUserData] = useState<TUser | undefined | null>(null);
     const [userFollowers, setUserFollowers] = useState<string[]>([])
-    const [userFollowings, setUserFollowings] = useState<string[]>([])
+    const [userFollows, setUserFollows] = useState<string[]>([])
     const [userBookmarks, setUserBookmarks] = useState<string[]>([])
-
+    const [userInterests, setUserInterests] = useState<string[]>([])
 
     useLayoutEffect(() => {
         const getUserData = async () => {
@@ -76,12 +65,13 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
 
                     try {
                         onSnapshot(userDocRef, (snapshot) => {
-                            setUserData(snapshot.data() || {})
+                            setUserData(snapshot.data() as TUser || {})
+                            setUserInterests(snapshot.data()?.interests || [])
                         })
 
                         const followedUsersQuerySnapshot = await getDocs(query(followsCollectionRef, where('follower_id', '==', authenticatedUser.uid)));
                         const followedUserIds = followedUsersQuerySnapshot.docs.map((doc) => doc.data().following_id);
-                        setUserFollowings(followedUserIds)
+                        setUserFollows(followedUserIds)
 
 
                         const bookmarksQuerySnapshot = await getDocs(query(bookmarksCollectionRef, where('bookmarker_id', '==', authenticatedUser.uid)));
@@ -103,8 +93,6 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
                             })
                         }
                     }
-
-
                 }
                 else {
                     setUserData(null)
@@ -122,8 +110,9 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
 
 
 
+
     return (
-        <UserContext.Provider value={{ userData, authenticatedUser, loadingauthenticatedUser, userFollowers, userBookmarks }}>
+        <UserContext.Provider value={{ userData, authenticatedUser, userFollows, userBookmarks, userInterests, loadingauthenticatedUser }}>
             {children}
         </UserContext.Provider>
     );
@@ -131,21 +120,3 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
 
 
 
-
-
-// export const ThreadProvider = ({ children }: { children: React.ReactNode }) => {
-//     const [thread, setThreadId] = useState<string | null>(null);
-//     const [threadParent, setThreadParent] = useState(null);
-
-//     const setThread = (newThreadId: string) => {
-//         setThreadId(newThreadId);
-//     };
-
-
-
-//     return (
-//         <ThreadContext.Provider value={{ thread, setThread, threadParent, setThreadParent }}>
-//             {children}
-//         </ThreadContext.Provider>
-//     );
-// };

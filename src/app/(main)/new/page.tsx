@@ -32,12 +32,12 @@ const WriteNewStoryPage = () => {
     const params = useSearchParams()
     const [user, loading] = useAuthState(auth);
     const { userData } = useContext(UserContext);
-
+    
     const postToEditId = params.get('edit');
     const { data: postData, isLoading: isFetchingPostData } = UseGetPostDetails(postToEditId)
     const { mutate: createPost, isPending: isCreatingPost } = UseCreateNewPost()
     const { mutate: updatePost, isPending: isUpdatingPost } = UseUpdateNewPost()
-
+    
     const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
 
 
@@ -78,8 +78,9 @@ const WriteNewStoryPage = () => {
         const dataToSubmit = {
             ...data,
             author_id: user?.uid,
-            author_avatar: userData?.profilePicture || "",
+            author_avatar: userData?.avatar || "",
             author_username: userData?.username || "",
+            author_name: userData?.name || "",
             created_at: postData?.created_at || new Date(),
             title_for_search: data.title.split(/[,:.\s-]+/).filter(word => word !== ''),
             cover_image: postData?.cover_image || "",

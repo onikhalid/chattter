@@ -69,4 +69,4 @@ export { Tabs, TabsList, TabsTrigger, TabsContent } from './tabs'
 
 export { default as TagInput } from './tagInput'
 
-export { default as Tooltip } from './tooltip'
+export { default as Tooltip } from './tooltipCustom'

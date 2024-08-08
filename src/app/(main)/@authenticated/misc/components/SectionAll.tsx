@@ -27,18 +27,19 @@ const PostsList: React.FC = () => {
   if (status === 'error') return <div>Error fetching posts</div>;
 
   return (
-    <div className='w-full'>
-      {data?.pages.map((page: QueryResult, i: number) => (
-        <div key={i} className='flex flex-col gap-5 divide-y-2 divide-foreground'>
-          {
-            page.posts.map((post: TPost) => (
-              <PostCard
-                key={post.post_id}
-                post={post} />
-            ))
-          }
-        </div>
-      ))}
+    <>
+      {
+        data?.pages.map((page: QueryResult, i: number) => (
+          <div key={i} className='flex flex-col divide-y-[1.5px] w-full divide-muted-foreground dark:divide-muted'>
+            {
+              page.posts.map((post: TPost) => (
+                <PostCard
+                  key={post.post_id}
+                  post={post} />
+              ))
+            }
+          </div>
+        ))}
       <div ref={ref}>
         {isFetchingNextPage
           ? 'Loading more...'
@@ -46,7 +47,7 @@ const PostsList: React.FC = () => {
             ? 'Load More'
             : 'No more posts'}
       </div>
-    </div>
+    </>
   );
 };
 

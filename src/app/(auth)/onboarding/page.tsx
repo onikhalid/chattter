@@ -8,14 +8,13 @@ import { z } from 'zod';
 import { getDoc, doc, setDoc } from 'firebase/firestore';
 import { GoogleAuthProvider, signInWithPopup, updateProfile } from 'firebase/auth';
 
-import { useAuth } from '@/contexts/userAuthContext';
 import { Button, ChatterLogo, Input } from '@/components/ui';
 import { FacebookIcon, GoogleIcon, SmallSpinner } from '@/components/icons';
 import { auth, db } from '@/utils/firebaseConfig';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { launchNotification } from '@/utils/notifications';
-import { useMutation } from '@tanstack/react-query';
 import { useAuthState } from 'react-firebase-hooks/auth';
+import { AuthLayoutHeader } from '../misc/components';
 
 
 
@@ -110,10 +109,8 @@ const Login: React.FC = () => {
 
 
     return (
-        <div className='bg-primary-foreground min-h-screen font-display'>
-            <header className="sticky top-0 flex items-center justify-between w-full p-5 md:px-10 md:py-6">
-                <ChatterLogo />
-            </header>
+        <div className='bg-primary-foreground min-h-screen font-display w-full'>
+           <AuthLayoutHeader />
 
             <article className='bg-background p-6 lg:p-10 rounded-3xl max-md:rounded-b-none mx-auto w-full max-w-[525px]'>
                 <header className='text-center'>

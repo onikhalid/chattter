@@ -14,6 +14,7 @@ import { FacebookIcon, GoogleIcon, SmallSpinner } from '@/components/icons';
 import { auth, db } from '@/utils/firebaseConfig';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { launchNotification } from '@/utils/notifications';
+import { AuthLayoutHeader } from '../misc/components';
 
 
 
@@ -84,7 +85,7 @@ const Register: React.FC = () => {
 
       if (!userDocSnap.exists()) {
         const userData = {
-          id: user.uid,
+          uid: user.uid,
           name: user.displayName,
           profilePicture: user.photoURL
         }
@@ -117,10 +118,9 @@ const Register: React.FC = () => {
 
 
   return (
-    <div className='bg-primary-foreground min-h-screen font-display'>
-      <header className="sticky top-0 flex items-center justify-between w-full p-5 md:px-10 md:py-6">
-        <ChatterLogo />
-      </header>
+    <div className='bg-primary-foreground min-h-screen font-display w-full'>
+                <AuthLayoutHeader />
+
 
       <article className='bg-background p-6 lg:p-10 rounded-3xl max-md:rounded-b-none mx-auto w-full max-w-[525px]'>
         <header className='text-center'>

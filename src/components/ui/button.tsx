@@ -30,7 +30,7 @@ const buttonVariants = cva(
       shape: {
         default: "rounded-full",
         rounded: "rounded-full",
-        square: "rounded-none",
+        square: "!rounded-none",
         pill: "rounded-full",
       },
     },

@@ -6,7 +6,7 @@ import { PenIcon, SearchIcon } from '@/components/icons';
 import { SectionAll, SectionFollowing, SectionForYou } from './misc/components';
 import { cn } from '@/lib/utils';
 import { useSearchParams } from 'next/navigation';
-import { PlusIcon,  } from 'lucide-react';
+import { PlusIcon, } from 'lucide-react';
 
 
 const AuthenticatedUserHomePage = () => {
@@ -33,9 +33,9 @@ const AuthenticatedUserHomePage = () => {
 
 
     return (
-        <main className="relative grow w-full lg:grid grid-cols-[1fr,0.4fr] px-4 lg:px-[7.5vw] lg:gap-[5vw] max-h-[calc(100vh_-_4.5rem)] pt-8 overflow-y-scroll">
-            <section className=' w-full max-w-[1200px] mx-auto'>
-                <header className='flex items-center justify-between gap-10 border-b pt-8 pb-4'>
+        <main className="relative grow w-full lg:grid grid-cols-[1fr,0.4fr] px-4 lg:px-[7.5vw] lg:gap-[5vw] max-h-[calc(100vh_-_4.5rem)] pt-2 overflow-y-scroll">
+            {/* <section className=' w-full max-w-[1200px] mx-auto'> */}
+                {/* <header className='flex items-center justify-between gap-10 border-b pt-6 pb-4'>
                     <Button variant='ghost' className='flex items-center gap-1.5'>
                         <PlusIcon size={16} />
                         Add interest
@@ -51,14 +51,13 @@ const AuthenticatedUserHomePage = () => {
                     <LinkButton href='/new' shape='rounded' variant='outline' className='flex items-center gap-2 rounded-lg border-[#b6b5b5] py-1.5'>
                         Write story <PenIcon />
                     </LinkButton>
-                </header>
+                </header> */}
 
 
-                <section>
-                    <Tabs value={view}>
+                    <Tabs value={view} className='w-full max-w-[1200px] mx-auto'>
                         <div className="w-full ">
                             <TabsList className="flex w-full justify-start gap-4 rounded-10 bg-background px-0 pb-1  h-max">
-                                <div className="hidden w-full  px-6 pt-4 md:flex items-center justify-center border-muted border-b-2">
+                                <div className="hidden w-full  px-6 pt-4 md:flex items-center justify-center border-muted-foreground/40 dark:border-muted border-b-2">
                                     {
                                         tabsArray.map((tab, index) => {
                                             return (
@@ -103,16 +102,15 @@ const AuthenticatedUserHomePage = () => {
                                     key={tab.id}
                                     value={tab.id}
                                 >
-                                    <div className="flex flex-col items-center justify-center rounded-10">
+                                    <div className="flex flex-col items-center justify-center w-full rounded-10">
                                         {tab.component}
                                     </div>
                                 </TabsContent>
                             ))
                         }
                     </Tabs>
-                </section>
 
-            </section>
+            {/* </section> */}
 
             <section className='sticky top-0 max-h-20 bg-black text-white'>
                 <h1>Pickolene</h1>

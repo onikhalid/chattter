@@ -1,6 +1,7 @@
-import { useInfiniteQuery, QueryFunctionContext, InfiniteData } from '@tanstack/react-query';
+import { useEffect } from 'react';
+import { useInfiniteQuery, useQueryClient, QueryFunctionContext, InfiniteData } from '@tanstack/react-query';
 import { db } from "@/utils/firebaseConfig";
-import { collection, query, orderBy, limit, startAfter, getDocs, QueryDocumentSnapshot, DocumentData } from "firebase/firestore";
+import { collection, query, orderBy, limit, startAfter, onSnapshot, QueryDocumentSnapshot, DocumentData, getDocs } from "firebase/firestore";
 import { TPost } from '../types';
 
 const POSTS_PER_FETCH = 10;
@@ -25,27 +26,53 @@ const getPosts = async ({ pageParam = null }: QueryFunctionContext<QueryKey, Que
   }
 
   const snapshot = await getDocs(q);
+
   const posts = snapshot.docs.map(doc => {
-    const data = doc.data();
-    return {
-      post_id: doc.id,
-      author_avatar: data.author_avatar,
-      author_id: data.author_id,
-      author_username: data.author_username,
-      content: data.content,
-      cover_image: data.cover_image,
-      created_at: data.created_at.toDate(),
-      tags: data.tags,
-      title: data.title,
-      title_for_search: data.title_for_search,
-    } as TPost;
+    return { ...doc.data(), created_at: doc.data().created_at.toDate() } as TPost;
+
   });
 
   const lastVisible = snapshot.docs.length > 0 ? snapshot.docs[snapshot.docs.length - 1] : null;
+
   return { posts, lastVisible };
 };
 
 export const useAllPostsInfiniteQuery = () => {
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+    const postsCollectionRef = collection(db, "posts");
+    const q = query(
+      postsCollectionRef,
+      orderBy("created_at", 'desc'),
+      limit(POSTS_PER_FETCH)
+    );
+
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const posts = snapshot.docs.map(doc => {
+        return { ...doc.data(), created_at: doc.data().created_at.toDate() } as TPost;
+      });
+
+      const lastVisible = snapshot.docs.length > 0 ? snapshot.docs[snapshot.docs.length - 1] : null;
+
+      queryClient.setQueryData<InfiniteData<QueryResult>>(['all-posts'], (oldData) => {
+        if (!oldData) {
+          return {
+            pageParams: [null],
+            pages: [{ posts, lastVisible }]
+          };
+        }
+
+        return {
+          ...oldData,
+          pages: [{ posts, lastVisible }]
+        };
+      });
+    });
+
+    return () => unsubscribe();
+  }, [queryClient]);
+
   return useInfiniteQuery<QueryResult, Error, InfiniteData<QueryResult>, QueryKey, QueryDocumentSnapshot<DocumentData> | null>({
     queryKey: ['all-posts'],
     queryFn: getPosts,
