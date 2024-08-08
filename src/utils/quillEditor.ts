@@ -1,19 +1,20 @@
 export function countWordsInQuillEditor(quillContent: string): number {
-    // Replace HTML tags with spaces
     const cleanContent = quillContent.replace(/<\/?[^>]+(>|$)/g, ' ');
-
-    // Normalize whitespace and remove leading/trailing spaces
     const normalizedText = cleanContent.replace(/\s+/g, ' ').trim();
-
-    // Split the text into words
     const words = normalizedText.split(' ');
-
-    // Return the word count
     return words.length;
 }
 export function cleanUpPostQuillEditorContent(quillContent: string): string {
     const cleanContent = quillContent.replace(/<\/?[^>]+(>|$)/g, ' ');
     const normalizedText = cleanContent.replace(/\s+/g, ' ').trim();
-    // const words = normalizedText.split(' ');
     return normalizedText;
+}
+
+export function averageReadingTime(content: string): number {
+    const words = countWordsInQuillEditor(content);
+    const wordsPerMinute = 200;
+    const minutes = words / wordsPerMinute;
+    const roundedReadingTimeInSeconds = Math.ceil(minutes * 60); // Rounded to the nearest second
+    console.log('roundedReadingTimeInSeconds', roundedReadingTimeInSeconds);
+    return roundedReadingTimeInSeconds;
 }

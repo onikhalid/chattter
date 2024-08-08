@@ -22,6 +22,7 @@ interface TUser {
     followings: string[];
     created_at: Date;
     interests: string[];
+    likes: string[];
 }
 
 
@@ -54,6 +55,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     const [userBookmarks, setUserBookmarks] = useState<string[]>([])
     const [userInterests, setUserInterests] = useState<string[]>([])
 
+
     useLayoutEffect(() => {
         const getUserData = async () => {
             if (!loadingauthenticatedUser) {
@@ -62,6 +64,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
                     const postsCollectionRef = collection(db, "posts");
                     const followsCollectionRef = collection(db, 'follows');
                     const bookmarksCollectionRef = collection(db, 'bookmarks');
+                    const likesCollectionRef = collection(db, 'likes');
 
                     try {
                         onSnapshot(userDocRef, (snapshot) => {
@@ -73,10 +76,11 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
                         const followedUserIds = followedUsersQuerySnapshot.docs.map((doc) => doc.data().following_id);
                         setUserFollows(followedUserIds)
 
-
                         const bookmarksQuerySnapshot = await getDocs(query(bookmarksCollectionRef, where('bookmarker_id', '==', authenticatedUser.uid)));
                         const userBookmarkIds = bookmarksQuerySnapshot.docs.map((doc) => doc.data().post_id);
                         setUserBookmarks(userBookmarkIds);
+
+                     
                     }
                     catch (error: any) {
                         if (error.code === "failed-precondition") {

@@ -1,5 +1,4 @@
 import React, { useContext } from 'react'
-import { TPost } from '../types'
 import Link from 'next/link'
 import { cleanUpPostQuillEditorContent } from '@/utils/quillEditor'
 import { Avatar, Badge, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, LinkButton, Tooltip } from '@/components/ui'
@@ -12,8 +11,10 @@ import { UseAddPostToBookmark, UseFollowUser, UseRemovePostFromBookmark, UseUnFo
 import { SmallSpinner } from '@/components/icons'
 import { UserContext } from '@/contexts'
 import { launchNotification } from '@/utils/notifications'
-import { useBooleanStateControl } from '@/app/hooks'
+import { useBooleanStateControl } from '@/hooks'
 import PostShareModal from './PostShareModal'
+import { TPost } from '../types'
+import { format } from 'date-fns'
 
 interface Props {
   post: TPost
@@ -21,8 +22,8 @@ interface Props {
 const PostCard: React.FC<Props> = ({ post }) => {
   const [user, loading] = useAuthState(auth)
   const { userFollows } = useContext(UserContext)
-  const { mutate: addBookmark, isPending: isSavingBookmark } = UseAddPostToBookmark()
-  const { mutate: deleteBookmark, isPending: isRemovingBookmark } = UseRemovePostFromBookmark()
+  const { mutate: addBookmark, isPending: isSavingBookmark } = UseAddPostToBookmark({})
+  const { mutate: deleteBookmark, isPending: isRemovingBookmark } = UseRemovePostFromBookmark({})
   const { mutate: followUser, isPending: isFollowingUser } = UseFollowUser()
   const { mutate: unfollowUser, isPending: isUnfollowingUser } = UseUnFollowUser()
   const {
@@ -81,7 +82,7 @@ const PostCard: React.FC<Props> = ({ post }) => {
           <Avatar alt={post.author_username} src={post.author_avatar} fallback={"AUGE BORN"} />
           <h6>{post.author_name}</h6>
         </Link>
-        <time className='text-muted-foreground text-sm'>{new Date(post.created_at).toDateString()}</time>
+        <time className='text-muted-foreground text-sm'>{format(post.created_at.toDate(), 'dd MMM, yyyy')}</time>
 
 
         <DropdownMenu>

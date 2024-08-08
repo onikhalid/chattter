@@ -1,3 +1,5 @@
+import { Timestamp } from "firebase/firestore";
+
 export type TPost = {
     author_avatar: string;
     author_name: string;
@@ -5,7 +7,7 @@ export type TPost = {
     author_username: string;
     content: string;
     cover_image: string;
-    created_at: Date;
+    created_at: Timestamp;
     post_id: string;
     tags: string[];
     title: string;
@@ -26,4 +28,8 @@ export type TBookmark = {
 export type TFollow = {
     follower_id: string;
     followed_id: string;
+}
+export type TLike = {
+    liker_id: string;
+    post_id: string;
 }

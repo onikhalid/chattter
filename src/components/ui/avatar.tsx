@@ -28,10 +28,10 @@ const AvatarComponent: React.FC<AvatarProps> = ({ src, alt, fallback, size = "me
                 src &&
                 <AvatarImage src={src} alt={alt || "avatar"} />
             }
-            <AvatarFallback className={cn("max-md:bg-white max-md:text-primary",
+            <AvatarFallback className={cn("bg-primary text-foreground",
                 size === "small" && "text-xs font-normal",
                 size === "medium" && "text-sm",
-                size === "large" && "text-base",
+                size === "large" && "text-[1.125rem]",
                 fallbackClass
             )}>
                 {getInitials(fallback || "")}

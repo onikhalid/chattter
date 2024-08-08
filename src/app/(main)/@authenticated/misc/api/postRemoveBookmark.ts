@@ -1,5 +1,5 @@
 import { doc, collection, updateDoc, addDoc, getDoc, setDoc, arrayUnion, deleteDoc, writeBatch, query, where, getDocs, arrayRemove } from "firebase/firestore";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { db } from "@/utils/firebaseConfig";
 
 
@@ -25,10 +25,23 @@ const RemovePostFromBookmark = async (bookmark_id: string) => {
   }
 };
 
-const UseRemovePostFromBookmark = () => {
+interface UseRemovePostFromBookmarkProps {
+  homepage?: boolean;
+  post_id?: string;
+}
+const UseRemovePostFromBookmark = ({ homepage = false, post_id }: UseRemovePostFromBookmarkProps) => {
+  const queryClient = useQueryClient()
+
   return useMutation({
     mutationKey: ["removeBookmark"],
     mutationFn: RemovePostFromBookmark,
+    onSuccess() {
+      if (post_id) {
+        queryClient.invalidateQueries({
+          queryKey: ['get-single-post-details', post_id]
+        });
+      }
+    },
   });
 }
 

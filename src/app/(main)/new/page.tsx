@@ -4,8 +4,7 @@ import React, { Suspense, useCallback, useContext, useEffect, useRef, useState }
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { Controller, set, useForm } from 'react-hook-form';
-import { useSearchParams } from 'next/navigation';
-import { z } from 'zod';
+import { useRouter, useSearchParams } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import 'react-quill/dist/quill.snow.css';
@@ -20,24 +19,58 @@ import { cn } from '@/lib/utils';
 import { presetArticleTags } from '@/constants';
 import { UseCreateNewPost, UseGetPostDetails, UseUpdateNewPost } from './misc/api';
 import { deleteImageFromDatabase, extractImageUrl, findDeletedImage, uploadCoverImage } from './misc/utils';
-import { CreateNewPostFormSchema } from './misc/schemas';
+import { z, ZodError } from "zod";
 
 
 
 
 
-type createNewPostFormDataType = z.infer<typeof CreateNewPostFormSchema>
+
 
 const WriteNewStoryPage = () => {
     const params = useSearchParams()
+    const router = useRouter()
+    const postToEditId = params.get('edit');
+    const CreateNewPostFormSchema = z.object({
+        title: z.string({ message: 'Title is required' }).min(5, { message: 'Title must be at least 5 characters' }),
+        content: z.string({ message: 'You cannot post an empty article' }).min(50, { message: 'Article must be at least 50 characters' }),
+        tags: z.array(z.string()).min(1, { message: 'Please select at least one tag' }),
+        cover_image: z.any().nullable().refine(
+            file => {
+                if ((!postToEditId && !file)) {
+                    throw ZodError.create([{
+                        path: ['cover_image'],
+                        message: 'Please select a cover image.',
+                        code: 'custom',
+                    }]);
+                }
+                if ((!postToEditId && !file.type.startsWith('image/'))) {
+                    throw ZodError.create([{
+                        path: ['cover_image'],
+                        message: 'Please select a valid image file.',
+                        code: 'custom',
+                    }]);
+                }
+                if (!postToEditId && file) {
+                    return file.size <= 10000000;
+                }
+                else return true
+            },
+
+            {
+                message: 'Max image size is 10MB.',
+            }
+        ),
+    });
+    type createNewPostFormDataType = z.infer<typeof CreateNewPostFormSchema>
+
     const [user, loading] = useAuthState(auth);
     const { userData } = useContext(UserContext);
-    
-    const postToEditId = params.get('edit');
+
     const { data: postData, isLoading: isFetchingPostData } = UseGetPostDetails(postToEditId)
     const { mutate: createPost, isPending: isCreatingPost } = UseCreateNewPost()
     const { mutate: updatePost, isPending: isUpdatingPost } = UseUpdateNewPost()
-    
+
     const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
 
 
@@ -54,7 +87,7 @@ const WriteNewStoryPage = () => {
             title: postData?.title || "",
             tags: postData?.tags || [],
         },
-        mode: "onBlur",
+        // mode: "onBlur",
     });
     useEffect(() => {
         if (postData) {
@@ -62,6 +95,7 @@ const WriteNewStoryPage = () => {
             setValue('tags', postData.tags)
             setValue('content', postData.content)
             setCoverImgURL(postData.cover_image)
+
         }
     }, [isFetchingPostData, postData, setValue])
 
@@ -81,7 +115,7 @@ const WriteNewStoryPage = () => {
             author_avatar: userData?.avatar || "",
             author_username: userData?.username || "",
             author_name: userData?.name || "",
-            created_at: postData?.created_at.toString() || new Date(),
+            created_at: postData?.created_at || new Date(),
             title_for_search: data.title.split(/[,:.\s-]+/).filter(word => word !== ''),
             cover_image: postData?.cover_image || "",
         };
@@ -98,6 +132,9 @@ const WriteNewStoryPage = () => {
                         await uploadCoverImage({ imageFile: selectedImage!, postId: postToEditId });
                     }
                     reset();
+                    setCoverImgURL(null)
+                    setSelectedImage(null)
+                    router.push(`/p/${postToEditId}`)
                 },
                 onError: (error) => {
                     console.error('Error updating post:', error);
@@ -110,7 +147,7 @@ const WriteNewStoryPage = () => {
                 onSuccess: async (data) => {
                     console.log(data, 'Post created successfully');
                     const newDocId = data?.id as string || "";
-
+                    
                     console.log(`New post ID: ${newDocId}`);
 
                     deletedImages.filter((imageUrl) => submittedData?.content.includes(imageUrl));
@@ -119,6 +156,7 @@ const WriteNewStoryPage = () => {
                     }
                     await uploadCoverImage({ imageFile: selectedImage!, postId: newDocId });
                     reset();
+                    router.push(`/v?=all`)
                 },
                 onError: (error) => {
                     console.error('Error creating post:', error);
@@ -329,6 +367,7 @@ const WriteNewStoryPage = () => {
                                 onChange={(content, delta, source, editor) => {
                                     const previousContent = watch('content');
                                     field.onChange(content);
+
                                     const deletedImage = findDeletedImage(previousContent, content);
 
                                     if (deletedImage) {

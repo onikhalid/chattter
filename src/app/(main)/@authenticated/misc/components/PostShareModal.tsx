@@ -5,6 +5,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { FacebookIcon, FacebookIcon2, LinkedInIcon, TwitterIcon } from '@/components/icons'
 import toast from 'react-hot-toast'
+import { format } from 'date-fns'
 // import {  } from 'lucide-react'
 
 interface Props {
@@ -59,7 +60,7 @@ const PostShareModal: React.FC<Props> = ({ post, isModalOpen, closeModal }) => {
                                 <Avatar alt={post.author_username} src={post.author_avatar} fallback={"AUGE BORN"} />
                                 <h6>{post.author_name}</h6>
                             </Link>
-                            <time className='text-muted-foreground text-sm'>{new Date(post.created_at).toDateString()}</time>
+                            <time className='text-muted-foreground text-sm'>{format(post.created_at.toDate(), 'dd MMM, yyyy')}</time>
                         </div>
                     </div>
                 </article>

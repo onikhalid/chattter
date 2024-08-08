@@ -30,7 +30,7 @@ const getPosts = async ({ pageParam = null, queryKey }: QueryFunctionContext<Que
   const snapshot = await getDocs(q);
 
   const posts = snapshot.docs.map(doc => {
-    return { ...doc.data(), created_at: doc.data().created_at.toDate() } as TPost;
+    return doc.data() as TPost;
 
   });
 
@@ -52,7 +52,7 @@ const useFollowsPostsInfiniteQuery = (follows: string[]) => {
 
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const posts = snapshot.docs.map(doc => {
-        return { ...doc.data(), created_at: doc.data().created_at.toDate() } as TPost;
+        return { ...doc.data() } as TPost;
       });
 
       const lastVisible = snapshot.docs.length > 0 ? snapshot.docs[snapshot.docs.length - 1] : null;

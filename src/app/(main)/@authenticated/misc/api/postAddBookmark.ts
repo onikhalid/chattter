@@ -11,7 +11,6 @@ const AddPostToBookmark = async (bookmarkData: TBookmark) => {
         const { bookmarker_id, post_id } = bookmarkData
         const bookmarkId = `${bookmarker_id}_${post_id}`
         const bookmarkRef = doc(collection(db, 'bookmarks'), bookmarkId);
-        // const bookmarkDoc = await getDoc(bookmarkRef);
         const postDocRef = doc(db, `posts/${post_id}`);
 
 
@@ -22,14 +21,17 @@ const AddPostToBookmark = async (bookmarkData: TBookmark) => {
     }
 };
 
-const UseAddPostToBookmark = (homepage: boolean = false) => {
+interface UseAddPostToBookmarkProps {
+    post_id?: string;
+}
+const UseAddPostToBookmark = ({ post_id }: UseAddPostToBookmarkProps) => {
     const queryClient = useQueryClient()
     return useMutation({
         mutationKey: ["addBookmark"],
-        onSettled() {
-            if (homepage) {
+        onSuccess() {
+             if (post_id) {
                 queryClient.invalidateQueries({
-                    queryKey: ['all-posts']
+                    queryKey: ['get-single-post-details', post_id]
                 });
             }
         },
