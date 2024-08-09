@@ -3,3 +3,16 @@ export type UserData ={
     email: string;
     id: string;
 }
+
+
+export type TUpdateUser = {
+    name: string;
+    username: string;
+    interests: string[];
+    bio: string;
+    twitter?: string;
+    facebook?: string;
+    linkedin?: string;
+    instagram?: string;
+    avatar: File | null;
+};

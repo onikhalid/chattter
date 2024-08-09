@@ -348,6 +348,8 @@ const WriteNewStoryPage = () => {
                             onTagsChange={field.onChange}
                             className='mt-10 mb-1'
                             triggerclassName="!py-6"
+                            hasError={!!errors.tags}
+                            errorMessage={errors.tags?.message}
                         />
                     )}
                 />

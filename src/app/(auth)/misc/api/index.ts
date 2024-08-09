@@ -1,0 +1,1 @@
+export { useUpdateUserProfile } from './patchUpdateUserProfile'

@@ -101,6 +101,9 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
                                 position: "top-center"
                             })
                         }
+                        else{
+                            console.error(error)
+                        }
                     }
                 }
                 else {

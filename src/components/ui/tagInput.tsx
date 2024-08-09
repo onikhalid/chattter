@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Badge } from "@/components/ui/badge"
 import { Input } from './input'
+import FormError from './formError'
 
 interface TagInputProps {
     name?: string
@@ -14,9 +15,13 @@ interface TagInputProps {
     onTagsChange: (newTags: string[]) => void
     className?: string
     triggerclassName?: string
+    selectedClassName?: string
+    hasError?: boolean
+    errorMessage?: string
+    errorMessageClass?: string
 }
 
-export default function TagInput({ presetTags = [], selectedTags, onTagsChange, name = "tag", className, triggerclassName }: TagInputProps) {
+export default function TagInput({ presetTags = [], selectedTags, onTagsChange, name = "tag", className, triggerclassName, selectedClassName, hasError, errorMessage, errorMessageClass }: TagInputProps) {
     const [open, setOpen] = useState(false)
     const [searchText, setSearchText] = useState("")
     const [optionsToDisplay, setOptionsToDisplay] = useState(presetTags)
@@ -107,7 +112,7 @@ export default function TagInput({ presetTags = [], selectedTags, onTagsChange, 
                     </ul>
                 </PopoverContent>
             </Popover>
-            <div className={cn("flex flex-wrap gap-4 gap-y-5", optionsToDisplay.length > 0 && "my-2")}>
+            <div className={cn("flex flex-wrap gap-4 gap-y-5", optionsToDisplay.length > 0 && "my-2", selectedClassName)}>
                 {
                     selectedTags.map((tag) => (
                         <Badge key={tag} variant="secondary" className="text-sm cursor-pointer font-sans font-normal hover:bg-primary/20" onClick={() => handleRemove(tag)}>
@@ -119,6 +124,9 @@ export default function TagInput({ presetTags = [], selectedTags, onTagsChange, 
                     ))
                 }
             </div>
+            {
+                hasError && <FormError className={errorMessageClass} errorMessage={errorMessage} />
+            }
         </div>
     )
 }

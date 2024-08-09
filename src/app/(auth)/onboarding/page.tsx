@@ -3,12 +3,11 @@
 import React, { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
 import { z, ZodError } from 'zod';
 import { getDoc, doc, setDoc, query, collection, where, getDocs, writeBatch, updateDoc } from 'firebase/firestore';
-import { GoogleAuthProvider, signInWithPopup, updateProfile } from 'firebase/auth';
+import { updateProfile } from 'firebase/auth';
 
-import { Button, ChatterLogo, FormError, Input, TagInput, Textarea } from '@/components/ui';
+import { Button, ChatterLogo, FormError, Input, LoadingModal, TagInput, Textarea } from '@/components/ui';
 import { FacebookIcon, GoogleIcon, SmallSpinner, TrashIcon, UploadIcon } from '@/components/icons';
 import { auth, db, storage } from '@/utils/firebaseConfig';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -21,48 +20,60 @@ import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import Image from 'next/image';
 import { TUser } from '@/contexts';
 import { cn } from '@/lib/utils';
+import { useUpdateUserProfile } from '../misc/api';
+import { TUpdateUser } from '../misc/types';
 
 
 
-const OnboardingForm = z.object({
-    name: z.string({ required_error: 'Enter your name' }).min(3, { message: 'Name must be at least 3 characters' }),
-    username: z.string({ required_error: 'Enter username' }).min(3, { message: 'Username must be at least 3 characters' }),
-    interests: z.array(z.string()).min(3, { message: 'Please select at least three interest' }),
-    bio: z.string({ required_error: 'Enter bio' }).min(20, { message: 'Bio must be at least 20 characters' }),
-    twitter: z.string().url().optional(),
-    facebook: z.string().url().optional(),
-    linkedin: z.string().url().optional(),
-    instagram: z.string().url().optional(),
-    avatar: z.any().nullable().refine(
-        file => {
-            if (!file) {
-                throw ZodError.create([{
-                    path: ['avatar'],
-                    message: 'Please select a profile image.',
-                    code: 'custom',
-                }]);
-            }
-            if (!file.type.startsWith('image/')) {
-                throw ZodError.create([{
-                    path: ['avatar'],
-                    message: 'Please select a valid image file.',
-                    code: 'custom',
-                }]);
-            }
-            return file.size <= 10000000;
-        },
 
-        {
-            message: 'Max image size is 10MB.',
-        }
-    ),
-});
-type OnboardingFormType = z.infer<typeof OnboardingForm>
 
 
 const Login: React.FC = () => {
     const [user, loading] = useAuthState(auth);
-    const { handleSubmit, register, formState: { errors, isDirty, isValid }, control, watch, setError, setValue } = useForm<OnboardingFormType>({
+    const router = useRouter();
+    const [isLoading, setIsLoading] = useState(false)
+    const [profileImgURL, setProfileImgURL] = useState<string | null>(null)
+    const [selectedImage, setSelectedImage] = useState<File | null>(null)
+    const [userData, setUserData] = useState<TUser | undefined | null>(null);
+    const OnboardingForm = z.object({
+        name: z.string({ required_error: 'Enter your name' }).min(3, { message: 'Name must be at least 3 characters' }),
+        username: z.string({ required_error: 'Enter username' }).min(3, { message: 'Username must be at least 3 characters' }),
+        interests: z.array(z.string()).min(3, { message: 'Please select at least three interest' }),
+        bio: z.string({ required_error: 'Enter bio' }).min(20, { message: 'Bio must be at least 20 characters' }),
+        twitter: z.string().optional(),
+        facebook: z.string().optional(),
+        linkedin: z.string().optional(),
+        instagram: z.string().optional(),
+        avatar: z.any().nullable().refine(
+            file => {
+                if (!userData?.avatar && !file) {
+                    throw ZodError.create([{
+                        path: ['avatar'],
+                        message: 'Please select a profile image.',
+                        code: 'custom',
+                    }]);
+                }
+                if (file && !file.type.startsWith('image/')) {
+                    throw ZodError.create([{
+                        path: ['avatar'],
+                        message: 'Please select a valid image file.',
+                        code: 'custom',
+                    }]);
+                }
+                if (file) {
+                    return file?.size <= 10000000
+                }
+                else {
+                    return !!userData?.avatar
+                }
+            },
+
+            {
+                message: 'Max image size is 10MB.',
+            }
+        ),
+    });
+    const { handleSubmit, register, formState: { errors, isDirty, isValid }, control, watch, setError, setValue } = useForm<TUpdateUser>({
         defaultValues: {
             name: user?.displayName || '',
             username: '',
@@ -71,12 +82,7 @@ const Login: React.FC = () => {
         },
         resolver: zodResolver(OnboardingForm)
     });
-    const router = useRouter();
-    const [isLoading, setIsLoading] = useState(false)
-    const [profileImgURL, setProfileImgURL] = useState<string | null>(null)
-    const [selectedImage, setSelectedImage] = useState<File | null>(null)
-    const newUserPic = "/assets/img/unknown_user_profile_picture.png"
-    const [userData, setUserData] = useState<TUser | undefined | null>(null);
+
 
     useEffect(() => {
         if (!loading && user) {
@@ -87,6 +93,7 @@ const Login: React.FC = () => {
                 setUserData(userData)
 
                 if (userData) {
+                    setValue('name', userData.name || '')
                     setValue('username', userData.username || '')
                     setValue('bio', userData.bio || '')
                     setValue('interests', userData.interests || [])
@@ -104,128 +111,29 @@ const Login: React.FC = () => {
 
 
 
-    const handleUploadImage = async (imageFile: File) => {
-        const picRef = ref(storage, `avatars/${user?.uid}.jpg`);
-        // const fileExists = await checkFileExists(picRef);
-
-        // if (fileExists) {
-        //   await deleteObject(picRef)
-        // }
-
-        const snapshot = await uploadBytes(picRef, imageFile)
-        const downloadURL = await getDownloadURL(snapshot.ref)
-
-        return downloadURL;
-    };
-
-    const handleUpdateProfile = async (data: OnboardingFormType) => {
-        document.body.scrollTo({ top: 0, behavior: "smooth" });
-        window.scrollTo({ top: 0, behavior: "smooth" })
-
+    const updateUserProfileMutation = useUpdateUserProfile({ user: user!, selectedImage, profileImgURL: profileImgURL! });
+    const handleUpdateProfile = async (data: TUpdateUser) => {
         try {
-            const newImageURL = selectedImage && await handleUploadImage(selectedImage)
-            const userData = {
-                id: user?.uid,
-                name: data.name,
-                username: data.username,
-                bio: data.bio,
-                avatar: selectedImage ? newImageURL : profileImgURL,
+            await updateUserProfileMutation.mutateAsync(data,
+                {
+                    onSuccess(data, variables, context) {
+                        toast.success("Profile updated successfully", {
+                            position: "top-center",
+                            duration: 2000,
+                        });
+                        router.push(`/`);
+                    },
+                }
+            );
 
-                twitter: data.twitter,
-                instagram: data.instagram,
-                facebook: data.facebook,
-            }
-
-            const userDocRef = doc(db, `users/${user?.uid}`);
-            await updateDoc(userDocRef, { ...userData });
-            if (user) {
-                await updateProfile(user, { photoURL: selectedImage ? newImageURL : profileImgURL, displayName: data.name })
-            }
-            const batch = writeBatch(db);
-
-
-
-
-
-            //////////////////////////////////////////////////////////////////////////////////
-            /////   UPDATE NAME AND AVATAR IN POSTS USER HAS PREVIOUSLY CREATED/FEATURED IN
-            /////  POSTS
-            const allUsersPostsQuery = query(collection(db, 'posts'), where('authorId', '==', user?.uid));
-            const allUsersPostsSnap = await getDocs(allUsersPostsQuery)
-
-            allUsersPostsSnap.docs.forEach(async (posts) => {
-                const post = posts.data();
-                const postDocRef = doc(db, `posts/${post.post_id}`)
-
-                batch.update(postDocRef, {
-                    author_name: data.name,
-                    author_avatar: selectedImage ? newImageURL : profileImgURL,
-                    author_username: data.username
-                })
-            })
-
-
-            /////  BOOKMARKS
-            const allUsersPostsBookmarkssQuery = query(collection(db, 'bookmarks'), where('authorId', '==', user?.uid));
-            const allUsersPostsBookmarksSnap = await getDocs(allUsersPostsBookmarkssQuery)
-            allUsersPostsBookmarksSnap.docs.forEach(async (allBookmarks) => {
-                const bookmark = allBookmarks.data();
-                const bookmsrkDocRef = doc(db, `bookmarks/${bookmark.bookmarkId}`)
-
-                batch.update(bookmsrkDocRef, {
-                    post_author_name: data.name,
-                    post_author_avatar: selectedImage ? newImageURL : profileImgURL
-                })
-            });
-
-
-
-
-            /////  FOLDERS
-            const allUsersFoldersQuery = query(collection(db, 'folders'), where('userId', '==', user?.uid));
-            const allUsersFoldersSnap = await getDocs(allUsersFoldersQuery)
-            allUsersFoldersSnap.docs.forEach(async (allFolders) => {
-                const folder = allFolders.data();
-                const folderDocRef = doc(db, `folders/${folder.folderId}`)
-
-                batch.update(folderDocRef, {
-                    folder_owner_name: data.name,
-                    folder_owner_avatar: selectedImage ? newImageURL : profileImgURL
-                })
-            });
-
-
-
-            /////  CONTRIBUTIONS
-            const allUsersContributionsQuery = query(collection(db, 'contributions'), where('authorId', '==', user?.uid));
-            const allUsersContributionSnap = await getDocs(allUsersContributionsQuery)
-
-            allUsersContributionSnap.docs.forEach(async (allContributions) => {
-                const contribution = allContributions.data();
-                const contributionDocRef = doc(db, `contributions/${contribution.contributeId}`)
-
-                batch.update(contributionDocRef, {
-                    author_name: data.name,
-                    author_avatar: selectedImage ? newImageURL : profileImgURL,
-                    author_username: data.username
-                })
-            });
-
-            await batch.commit();
-
-
-            toast.success("Profile updated successfully", {
-                position: 'top-center',
-                duration: 2000,
-            })
-
-            router.push(`/`)
         } catch (error) {
-            console.log(error)
+            console.error(error);
+            toast.error("Failed to update profile", {
+                position: "top-center",
+                duration: 2000,
+            });
         }
-    }
-
-
+    };
 
 
     const handleImageSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -285,14 +193,14 @@ const Login: React.FC = () => {
                                     <div className='relative w-full aspect-video'>
                                         <Image
                                             className=''
-                                            src={                                                (() => {
-                                                    if (userData?.avatar && !selectedImage && !profileImgURL) {
-                                                        return userData?.avatar
-                                                    }
-                                                    else {
-                                                        return profileImgURL || watch('avatar') || ""
-                                                    }
-                                                })()
+                                            src={(() => {
+                                                if (userData?.avatar && !selectedImage && !profileImgURL) {
+                                                    return userData?.avatar
+                                                }
+                                                else {
+                                                    return profileImgURL || ""
+                                                }
+                                            })()
                                             }
                                             alt="Preview"
                                             objectFit='cover'
@@ -304,7 +212,7 @@ const Login: React.FC = () => {
                                                 onClick={() => {
                                                     setSelectedImage(null)
                                                     setProfileImgURL(null)
-                                                    setValue('avatar', undefined)
+                                                    setValue('avatar', null)
                                                 }}
                                             >
                                                 <TrashIcon fill='red' />
@@ -346,6 +254,9 @@ const Login: React.FC = () => {
                         hasError={!!errors.bio}
                         errorMessage={errors.bio?.message}
                         rows={7}
+                        showCharacterCount
+                        maxLength={300}
+                        currentLength={watch('bio')?.length || 0}
                     />
 
                     <Controller
@@ -356,35 +267,41 @@ const Login: React.FC = () => {
                                 presetTags={presetArticleTags}
                                 selectedTags={field.value || []}
                                 onTagsChange={field.onChange}
-                                className='mt-2 mb-1'
+                                className='mt-0 mb-1'
                                 triggerclassName="!py-6"
+                                selectedClassName="gap-3"
                             />
                         )}
                     />
 
-
-                    <div className='flex flex-col gap-4'>
-                        <Input
-                            type="text"
-                            placeholder="Twitter"
-                            {...register('twitter')}
-                        />
-                        <Input
-                            type="text"
-                            placeholder="Facebook"
-                            {...register('facebook')}
-                        />
-                        <Input
-                            type="text"
-                            placeholder="Linkedin"
-                            {...register('linkedin')}
-                        />
-                        <Input
-                            type="text"
-                            placeholder="Instagram"
-                            {...register('instagram')}
-                        />
-                    </div>
+                    <section>
+                        <h5 className='mt-3 mb-1.5'>
+                            Socials {" "}
+                            <span className='text-muted-foreground'>(optional)</span>
+                        </h5>
+                        <div className='flex flex-col gap-5'>
+                            <Input
+                                type="text"
+                                placeholder="Twitter"
+                                {...register('twitter')}
+                            />
+                            <Input
+                                type="text"
+                                placeholder="Facebook"
+                                {...register('facebook')}
+                            />
+                            <Input
+                                type="text"
+                                placeholder="Linkedin"
+                                {...register('linkedin')}
+                            />
+                            <Input
+                                type="text"
+                                placeholder="Instagram"
+                                {...register('instagram')}
+                            />
+                        </div>
+                    </section>
 
 
                     <Button type="submit" className='w-full space-x-2 bg-[#5574FB]' size="cta">
@@ -395,6 +312,11 @@ const Login: React.FC = () => {
                     </Button>
                 </form>
             </article>
+
+            <LoadingModal
+                isModalOpen={updateUserProfileMutation.isPending}
+                errorMsg={'Please have patience while we update your profile'}
+            />
         </div>
     );
 };
