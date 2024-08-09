@@ -28,7 +28,7 @@ const AvatarComponent: React.FC<AvatarProps> = ({ src, alt, fallback, size = "me
                 src &&
                 <AvatarImage src={src} alt={alt || "avatar"} />
             }
-            <AvatarFallback className={cn("bg-primary text-foreground",
+            <AvatarFallback className={cn("bg-primary text-primary-foreground",
                 size === "small" && "text-xs font-normal",
                 size === "medium" && "text-sm",
                 size === "large" && "text-[1.125rem]",

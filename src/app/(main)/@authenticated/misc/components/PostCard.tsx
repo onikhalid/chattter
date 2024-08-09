@@ -152,13 +152,13 @@ const PostCard: React.FC<Props> = ({ post }) => {
       <Link href={`/p/${post.post_id}`} className='inline-block'>
         <section className='flex max-md:flex-col-reverse items-stretch justify-between gap-8'>
           <div>
-            <h2 className='text-2xl font-medium h-[2lh]'>{post.title}</h2>
+            <h2 className='text-2xl font-medium h-[2lh]  max-w-[90%] text-balance [display:-webkit-box] [-webkit-box-orient:vertical] overflow-hidden [overflow-wrap:anywhere] [-webkit-line-clamp:2]'>{post.title}</h2>
             <p className='text-muted-foreground max-w-[45ch] [display:-webkit-box] [-webkit-box-orient:vertical] overflow-hidden [overflow-wrap:anywhere] [-webkit-line-clamp:3]'>
               {cleanUpPostQuillEditorContent(post.content || "")}
             </p>
           </div>
 
-          <div className='relative w-full md:max-w-[200px] h-[150px] aspect-[16/9] '>
+          <div className='relative w-full md:max-w-[250px] h-[150px] aspect-[16/9] '>
             <Image
               src={post.cover_image}
               alt={post.title}

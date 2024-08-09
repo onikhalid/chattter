@@ -1,14 +1,17 @@
-'use context'
+'use client';
+
 import { useInView } from 'react-intersection-observer';
 import React, { useContext, useEffect } from 'react';
 import { TPost } from '../types';
 import { useFollowsPostsInfiniteQuery } from '../api';
 import { QueryResult } from '../api/getPostsAll';
 import PostCard from './PostCard';
+import PostCardSkeleton from './PostCardSkeleton';
+import { LinkButton } from '@/components/ui';
 import { UserContext } from '@/contexts';
 
 const FollowsPostsList: React.FC = () => {
-  const { userData } = useContext(UserContext)
+  const { userFollows } = useContext(UserContext)
   const {
     data,
     fetchNextPage,
@@ -17,8 +20,8 @@ const FollowsPostsList: React.FC = () => {
     isLoading,
     status,
     error
-  } = useFollowsPostsInfiniteQuery(userData?.followings || ['']);
-  console.log(error)
+  } = useFollowsPostsInfiniteQuery(userFollows);
+  console.log(error, data)
   const { ref, inView } = useInView();
 
   useEffect(() => {
@@ -27,14 +30,47 @@ const FollowsPostsList: React.FC = () => {
     }
   }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage]);
 
-  if (isLoading) return <div>Loading...</div>;
   if (status === 'error') return <div>Error fetching posts</div>;
+
+
+
+
 
   return (
     <>
+      <div className='flex flex-col divide-y-[1.5px] w-full divide-muted-foreground dark:divide-muted'>
+        {
+          isLoading && Array.from({ length: 10 }).map((_, i) => (
+            <PostCardSkeleton key={i} />
+          ))
+        }
+      </div>
+
+      {
+        data?.pages.length === 0 && !isLoading && (
+          <></>
+        )
+      }
+
       {
         data?.pages.map((page: QueryResult, i: number) => (
           <div key={i} className='flex flex-col divide-y-[1.5px] w-full divide-muted-foreground dark:divide-muted'>
+            {
+              page.posts.length === 0 && (
+                <div className='flex flex-col items-center justify-center h-[50vh] w-full'>
+                  <article className='bg-background p-6 lg:p-10 rounded-3xl max-md:rounded-b-none mx-auto w-full max-w-[525px]'>
+                    <h3 className='text-5xl font-medium'>No posts found.</h3>
+                    <p className='mt-2'>
+                      No posts was found, either you&apos;re not following anyone or the people you follow haven&apos;t made any posts. You can either try again later, follow more people or create a new post.
+                    </p>
+                    <LinkButton href='/new' className='mt-4 md:mt-10 px-12 py-6 text-lg'>
+                      Create a new post
+                    </LinkButton>
+                  </article>
+                </div>
+              )
+            }
+
             {
               page.posts.map((post: TPost) => (
                 <PostCard
@@ -44,12 +80,39 @@ const FollowsPostsList: React.FC = () => {
             }
           </div>
         ))}
-      <div ref={ref}>
-        {isFetchingNextPage
-          ? 'Loading more...'
-          : hasNextPage
-            ? 'Load More'
-            : 'No more posts'}
+
+      <div ref={ref} className='w-full'>
+        {
+          isFetchingNextPage
+            ?
+            <div className='flex flex-col divide-y-[1.5px] w-full divide-muted-foreground dark:divide-muted'>
+              {
+                Array.from({ length: 4 }).map((_, i) => (
+                  <PostCardSkeleton key={i} />
+                ))
+              }
+            </div>
+
+            :
+            hasNextPage
+              ? ''
+              :
+              <>
+                {
+                  data?.pages.map((page: QueryResult, i: number) => (
+                    <React.Fragment key={i}>
+                      {
+                        page.posts.length > 0 && (
+                          <div className='mt-4 py-5 w-full text-center'>
+                            - End -
+                          </div>
+                        )
+                      }
+                    </React.Fragment>
+                  ))
+                }
+              </>
+        }
       </div>
     </>
   );

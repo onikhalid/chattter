@@ -8,7 +8,7 @@ import { Avatar } from '@/components/ui'
 import Link from 'next/link'
 import { format, parse } from 'date-fns'
 import { Badge, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, LinkButton, Tooltip } from '@/components/ui'
-import { ArrowRight, BookmarkX, BookmarkPlus, Ellipsis, Trash, PenBoxIcon, Eye, UserPlus, Share, Heart, Clock, Book } from 'lucide-react'
+import { ArrowRight, BookmarkX, BookmarkPlus, Ellipsis, Trash, PenBoxIcon, Eye, UserPlus, Share, Heart, Clock, Book, Share2, MessageSquareText } from 'lucide-react'
 import { auth } from '@/utils/firebaseConfig'
 import { useAuthState } from 'react-firebase-hooks/auth'
 import toast from 'react-hot-toast'
@@ -19,6 +19,7 @@ import { useBooleanStateControl } from '@/hooks'
 import PostShareModal from '../../@authenticated/misc/components/PostShareModal'
 import { UseAddPostToBookmark, UseFollowUser, UseLikePost, UseRemovePostFromBookmark, UseUnFollowUser, UseUnlikePost } from '../../@authenticated/misc/api'
 import { averageReadingTime } from '@/utils/quillEditor'
+import { TPost } from '../../@authenticated/misc/types'
 
 
 const PostDetailsPage = ({ params }: { params: { post_id: string } }) => {
@@ -119,20 +120,20 @@ const PostDetailsPage = ({ params }: { params: { post_id: string } }) => {
                                 </div>
 
                                 <div className='flex flex-col gap-4 items-center justify-center p-4 py-6 lg:py-10 h-full text-center'>
-                                    <h1 className='text-3xl xl:text-5xl font-semibold font-display'>{post.title}</h1>
+                                    <h1 className='text-3xl xl:text-5xl font-semibold font-display !text-balance'>{post.title}</h1>
                                     <div className='flex items-center gap-5'>
                                         <Link href={`/u/${post.author_username}`} className='flex items-center gap-2'>
-                                            <Avatar alt={post.author_username} src={post.author_avatar} fallback={post.author_name || "AUGE BORN"} size='large'/>
+                                            <Avatar alt={post.author_username} src={post.author_avatar} fallback={post.author_name || "AUGE BORN"} size='large' />
                                             <h6 className='text-[1.125rem]'>{post.author_name}</h6>
                                         </Link>
 
                                         <time className='flex items-center gap-1 text-muted-foreground text-sm'>
-                                            <Clock size={14}/>
+                                            <Clock size={14} />
                                             {post.created_at ? format(post.created_at?.toDate(), 'dd MMM, yyyy') : 'Invalid date'}
                                         </time>
 
                                         <p className='flex items-center gap-1 text-muted-foreground text-sm'>
-                                            <Book size={14}/>
+                                            <Book size={14} />
                                             {timetoRead} min read
                                         </p>
                                     </div>
@@ -141,21 +142,6 @@ const PostDetailsPage = ({ params }: { params: { post_id: string } }) => {
                                     {
                                         user &&
                                         <div className='flex items-center gap-4'>
-                                            <Tooltip content={post.bookmarks?.includes(user?.uid) ? "Remove post from archive" : "Save post"} className='flex items-center gap-1'>
-                                                {
-                                                    isSavingBookmark || isRemovingBookmark ?
-                                                        <SmallSpinner className='text-primary' />
-                                                        :
-                                                        post.bookmarks?.includes(user?.uid) ?
-                                                            <BookmarkX onClick={saveUnsave} className='text-foreground stroke-[2.5px] cursor-pointer fill-foreground' />
-                                                            :
-                                                            <BookmarkPlus onClick={saveUnsave} className='text-foreground hover:text-primary cursor-pointer' />
-                                                }
-                                                <span className='font-medium text-lg'>
-                                                    {post.bookmarks?.length || 0}
-                                                </span>
-                                            </Tooltip>
-
                                             <Tooltip content={user && post.likes?.includes(user?.uid) ? "Unlike post" : "Like post"} className='flex items-center gap-1'>
                                                 {
                                                     isLikingPost || isUnLikingPost ?
@@ -170,9 +156,34 @@ const PostDetailsPage = ({ params }: { params: { post_id: string } }) => {
                                                     {post.likes?.length || 0}
                                                 </span>
                                             </Tooltip>
+
+                                            <Tooltip content='Share post' className='flex items-center gap-1 mr-1.5'>
+                                                <Share2 onClick={openShareModal} className='text-foreground cursor-pointer' />
+                                            </Tooltip>
+
+                                            <Tooltip content='See comments' className='flex items-center gap-1'>
+                                                <Link href={`/p/${post_id}/discuss`}>
+                                                    <MessageSquareText className='text-foreground cursor-pointer' />
+                                                </Link>
+                                            </Tooltip>
+
+                                            <Tooltip content={post.bookmarks?.includes(user?.uid) ? "Remove post from archive" : "Save post"} className='flex items-center gap-1'>
+                                                {
+                                                    isSavingBookmark || isRemovingBookmark ?
+                                                        <SmallSpinner className='text-primary' />
+                                                        :
+                                                        post.bookmarks?.includes(user?.uid) ?
+                                                            <BookmarkX onClick={saveUnsave} className='text-foreground stroke-[2.5px] cursor-pointer fill-foreground' />
+                                                            :
+                                                            <BookmarkPlus onClick={saveUnsave} className='text-foreground hover:text-primary cursor-pointer' />
+                                                }
+                                                <span className='font-medium text-lg'>
+                                                    {post.bookmarks?.length || 0}
+                                                </span>
+                                            </Tooltip>
                                         </div>
                                     }
-                                    <Link href={`/p/${post_id}/discuss`}>D</Link>
+
                                 </div>
                             </header>
 
@@ -186,6 +197,15 @@ const PostDetailsPage = ({ params }: { params: { post_id: string } }) => {
                         <div>
                             Post not found
                         </div>
+
+            }
+            {
+                !isLoading && post &&
+                <PostShareModal
+                    post={post || {} as TPost}
+                    isModalOpen={isShareModalOpen}
+                    closeModal={closeShareModal}
+                />
             }
         </main>
     )

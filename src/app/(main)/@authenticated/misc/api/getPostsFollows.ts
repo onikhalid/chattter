@@ -18,7 +18,7 @@ const getPosts = async ({ pageParam = null, queryKey }: QueryFunctionContext<Que
   const postsCollectionRef = collection(db, "posts");
   let q = query(
     postsCollectionRef,
-    where("author_id", "in", follows),
+    where("author_id", "in", follows.length > 0 ? follows : [""]),
     orderBy("created_at", 'desc'),
     limit(POSTS_PER_FETCH)
   );

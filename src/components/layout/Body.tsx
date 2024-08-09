@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { MoonIcon, SunIcon, PenIcon, ArrowLeftSquare } from 'lucide-react';
+import { MoonIcon, SunIcon, PenIcon, Settings2, User, LogOut, Folder, SettingsIcon } from 'lucide-react';
 
 import AllProviders from '@/utils/providers';
 import { cn } from '@/lib/utils';
@@ -88,16 +88,30 @@ const Body = ({ children }: { children: React.ReactNode }) => {
                   <DropdownMenuTrigger className='ml-auto'>
                     <Avatar alt={user.displayName || "user"} src={user.photoURL} fallback={getInitials(user.displayName || "F N")} />
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent>
-                    <DropdownMenuItem>
-                      <Link href='/profile'>Profile</Link>
+                  <DropdownMenuContent align='end' className='flex flex-col gap-1.5'>
+                    <DropdownMenuItem className='rounded-lg'>
+                      <Link href={`/u/${user?.uid}`} className='flex items-center gap-2 text-lg pr-10'>
+                        <User size={20} />
+                        Profile
+                      </Link>
                     </DropdownMenuItem>
-                    <DropdownMenuItem>
-                      <Link href='/settings'>Settings</Link>
+                    <DropdownMenuItem className='rounded-lg'>
+                      <Link href='/bookmarks' className='flex items-center gap-2 text-lg pr-10'>
+                        <Folder size={20} />
+                        Bookmarks
+                      </Link>
                     </DropdownMenuItem>
-                    <DropdownMenuItem className='flex items-center gap-2'>
-                      <ArrowLeftSquare size={15} />
-                      <button onClick={logout}>Logout</button>
+                    <DropdownMenuItem className='rounded-lg'>
+                      <Link href='/settings' className='flex items-center gap-2 text-lg pr-10'>
+                        <SettingsIcon size={20} />
+                        Settings
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem className=' rounded-lg'>
+                      <button onClick={logout} className='flex items-center gap-2 text-lg  pr-10'>
+                      <LogOut size={20} />
+                        Logout
+                      </button>
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>

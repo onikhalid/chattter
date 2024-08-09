@@ -5,6 +5,7 @@ import { useAllPostsInfiniteQuery } from '../api';
 import { QueryResult } from '../api/getPostsAll';
 import PostCard from './PostCard';
 import PostCardSkeleton from './PostCardSkeleton';
+import { LinkButton } from '@/components/ui';
 
 const PostsList: React.FC = () => {
   const {
@@ -37,6 +38,22 @@ const PostsList: React.FC = () => {
       </div>
 
       {
+        data?.pages.length === 0 && !isLoading && (
+          <div className='flex flex-col items-center justify-center h-[50vh] w-full'>
+            <article className='bg-background p-6 lg:p-10 rounded-3xl max-md:rounded-b-none mx-auto w-full max-w-[525px]'>
+              <h3 className='text-5xl font-medium'>No posts found.</h3>
+              <p>
+                No posts has been created on Chatter, try again later or create a new post.
+              </p>
+              <LinkButton href='/new' className='mt-4'>
+                Create a new post
+              </LinkButton>
+            </article>
+          </div>
+        )
+      }
+
+      {
         data?.pages.map((page: QueryResult, i: number) => (
           <div key={i} className='flex flex-col divide-y-[1.5px] w-full divide-muted-foreground dark:divide-muted'>
             {
@@ -49,7 +66,7 @@ const PostsList: React.FC = () => {
           </div>
         ))}
 
-      <div ref={ref}>
+      <div ref={ref} className='w-full'>
         {
           isFetchingNextPage
             ?
@@ -65,7 +82,7 @@ const PostsList: React.FC = () => {
             hasNextPage
               ? 'Load More'
               :
-              <div className='mt-4 py-5'>
+              <div className='mt-4 py-5 w-full text-center'>
                 - End -
               </div>
         }
