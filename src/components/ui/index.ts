@@ -73,4 +73,7 @@ export { Tabs, TabsList, TabsTrigger, TabsContent } from './tabs'
 
 export { default as TagInput } from './tagInput'
 
+export { Textarea } from './textarea'
+
 export { default as Tooltip } from './tooltipCustom'
+

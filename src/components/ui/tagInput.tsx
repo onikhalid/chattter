@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Badge } from "@/components/ui/badge"
+import { Input } from './input'
 
 interface TagInputProps {
     name?: string
@@ -67,7 +68,7 @@ export default function TagInput({ presetTags = [], selectedTags, onTagsChange, 
                         variant="outline"
                         role="combobox"
                         aria-expanded={open}
-                        className={cn("w-full justify-between rounded-md py-3.5 font-normal", triggerclassName)}
+                        className={cn("w-full justify-between rounded-lg py-3.5 font-normal !text-muted-foreground focus-within:border-primary active:border-primary hover:border-primary transition-all", triggerclassName)}
                         ref={triggerRef}
                     >
                         Select or type {name}...
@@ -75,7 +76,7 @@ export default function TagInput({ presetTags = [], selectedTags, onTagsChange, 
                 </PopoverTrigger>
                 <PopoverContent className="w-full p-0 !bg-background text-foreground" style={{ width }}>
                     <div className="p-2">
-                        <input
+                        <Input
                             className="w-full px-3 py-1.5 !border-input rounded text-sm !focus:border-primary"
                             placeholder="Search tags..."
                             value={searchText}

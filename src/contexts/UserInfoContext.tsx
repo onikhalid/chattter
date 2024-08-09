@@ -11,7 +11,7 @@ import { User } from 'firebase/auth';
 import toast from 'react-hot-toast';
 
 
-interface TUser {
+export interface TUser {
     uid: string;
     name: string;
     username: string;
@@ -23,6 +23,11 @@ interface TUser {
     created_at: Date;
     interests: string[];
     likes: string[];
+    twitter: string;
+    instagram: string;
+    facebook: string;
+    website: string;
+    linkedin: string;
 }
 
 

@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { z } from 'zod';
-import { getDoc, doc, setDoc } from 'firebase/firestore';
+import { getDoc, doc, setDoc, updateDoc } from 'firebase/firestore';
 import { GoogleAuthProvider, signInWithPopup, updateProfile } from 'firebase/auth';
 
 import { useAuth } from '@/contexts/userAuthContext';
@@ -44,13 +44,14 @@ const Login: React.FC = () => {
             const userDocSnap = await getDoc(userDocRef)
 
             const userData = userDocSnap.data()
-
+            await updateProfile(user.user, { displayName: `Writer ${user.user.uid.substring(0,8)}` })
+            await updateDoc(userDocRef, { lastLogin: new Date() })
 
             if (userData?.hasOwnProperty('username')) {
                 router.push('/')
             }
             else {
-                router.push('/auth/complete-profile')
+                router.push('/onboarding')
             }
             launchNotification('success', 'Logged in successfully 😎')
         }
@@ -101,9 +102,9 @@ const Login: React.FC = () => {
 
             if (!userDocSnap.exists()) {
                 const userData = {
-                    id: user.uid,
+                    uid: user.uid,
                     name: user.displayName,
-                    profilePicture: user.photoURL
+                    avatar: user.photoURL
                 }
                 await setDoc(userDocRef, userData)
                 router.push("/onboarding");

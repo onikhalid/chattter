@@ -98,7 +98,7 @@ const Register: React.FC = () => {
           router.push('/')
           // router.back()
         } else {
-          router.push('/auth/complete-profile')
+          router.push('/onboarding')
         }
       }
     } catch (error: any) {
@@ -119,7 +119,7 @@ const Register: React.FC = () => {
 
   return (
     <div className='bg-primary-foreground min-h-screen font-display w-full'>
-                <AuthLayoutHeader />
+      <AuthLayoutHeader />
 
 
       <article className='bg-background p-6 lg:p-10 rounded-3xl max-md:rounded-b-none mx-auto w-full max-w-[525px]'>
