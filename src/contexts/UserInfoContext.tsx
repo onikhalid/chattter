@@ -61,67 +61,55 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     const [userInterests, setUserInterests] = useState<string[]>([])
 
 
-    useLayoutEffect(() => {
-        const getUserData = async () => {
-            if (!loadingauthenticatedUser) {
-                if (authenticatedUser) {
-                    const userDocRef = doc(db, `users/${authenticatedUser.uid}`)
-                    const postsCollectionRef = collection(db, "posts");
-                    const followsCollectionRef = collection(db, 'follows');
-                    const bookmarksCollectionRef = collection(db, 'bookmarks');
-                    const likesCollectionRef = collection(db, 'likes');
+    useEffect(() => {
+        if (authenticatedUser) {
+            const userDocRef = doc(db, `users/${authenticatedUser.uid}`);
+            const followsCollectionRef = collection(db, 'follows');
+            const bookmarksCollectionRef = collection(db, 'bookmarks');
 
-                    try {
-                        onSnapshot(userDocRef, (snapshot) => {
-                            setUserData(snapshot.data() as TUser || {})
-                            setUserInterests(snapshot.data()?.interests || [])
-                        })
+            // Real-time listener for user data
+            const unsubscribeUserData = onSnapshot(userDocRef, (snapshot) => {
+                const userData = snapshot.data() as TUser;
+                setUserData(userData);
+                setUserInterests(userData.interests || []);
+            });
 
-                        const followedUsersQuerySnapshot = await getDocs(query(followsCollectionRef, where('follower_id', '==', authenticatedUser.uid)));
-                        const followedUserIds = followedUsersQuerySnapshot.docs.map((doc) => doc.data().following_id);
-                        setUserFollows(followedUserIds)
-
-                        const bookmarksQuerySnapshot = await getDocs(query(bookmarksCollectionRef, where('bookmarker_id', '==', authenticatedUser.uid)));
-                        const userBookmarkIds = bookmarksQuerySnapshot.docs.map((doc) => doc.data().post_id);
-                        setUserBookmarks(userBookmarkIds);
-
-                     
-                    }
-                    catch (error: any) {
-                        if (error.code === "failed-precondition") {
-                            toast.error("Poor internet connection")
-                        }
-                        else if (error.code === "auth/network-request-failed" || "unavailable") {
-                            toast.error("There appears to be a problem with your connection", {
-                                position: "top-center"
-                            })
-                        }
-                        else if (error.message.includes("Backend didn't respond" || "[code=unavailable]")) {
-                            toast.error("There appears to be a problem with your connection", {
-                                position: "top-center"
-                            })
-                        }
-                        else{
-                            console.error(error)
-                        }
-                    }
+            // Real-time listener for follows
+            const unsubscribeFollows = onSnapshot(
+                query(followsCollectionRef, where('follower_id', '==', authenticatedUser.uid)),
+                (snapshot) => {
+                    const followedUserIds = snapshot.docs.map((doc) => doc.data().followed_id);
+                    setUserFollows(followedUserIds);
+                },
+                (error) => {
+                    console.error("Error fetching follows:", error);
                 }
-                else {
-                    setUserData(null)
+            );
+
+            // Real-time listener for bookmarks
+            const unsubscribeBookmarks = onSnapshot(
+                query(bookmarksCollectionRef, where('bookmarker_id', '==', authenticatedUser.uid)),
+                (snapshot) => {
+                    const userBookmarkIds = snapshot.docs.map((doc) => doc.data().post_id);
+                    setUserBookmarks(userBookmarkIds);
+                },
+                (error) => {
+                    console.error("Error fetching bookmarks:", error);
                 }
-            }
+            );
+
+            return () => {
+                unsubscribeUserData();
+                unsubscribeFollows();
+                unsubscribeBookmarks();
+            };
+        } else {
+            setUserData(null);
+            setUserFollows([]);
+            setUserBookmarks([]);
+            setUserInterests([]);
         }
-
-
-
-        getUserData()
-        return () => { };
-    }, [authenticatedUser, loadingauthenticatedUser]);
-
-
-
-
-
+    }, [authenticatedUser]);
 
     return (
         <UserContext.Provider value={{ userData, authenticatedUser, userFollows, userBookmarks, userInterests, loadingauthenticatedUser }}>
@@ -129,6 +117,3 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
         </UserContext.Provider>
     );
 };
-
-
-

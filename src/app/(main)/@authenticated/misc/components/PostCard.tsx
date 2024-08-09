@@ -2,7 +2,7 @@ import React, { useContext } from 'react'
 import Link from 'next/link'
 import { cleanUpPostQuillEditorContent } from '@/utils/quillEditor'
 import { Avatar, Badge, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, LinkButton, Tooltip } from '@/components/ui'
-import { ArrowRight, BookmarkX, BookmarkPlus, Ellipsis, Trash, PenBoxIcon, Eye, UserPlus, Share } from 'lucide-react'
+import { ArrowRight, BookmarkX, BookmarkPlus, Ellipsis, Trash, PenBoxIcon, Eye, UserPlus, Share, UserMinus } from 'lucide-react'
 import Image from 'next/image'
 import { auth } from '@/utils/firebaseConfig'
 import { useAuthState } from 'react-firebase-hooks/auth'
@@ -64,10 +64,12 @@ const PostCard: React.FC<Props> = ({ post }) => {
         follower_id: user.uid || '',
         followed_id: post.author_id
       }
-      if (userFollows?.includes(user?.uid)) {
+      if (userFollows?.includes(post.author_id)) {
         unfollowUser(data)
+        toast.success(`Unfollowed ${post.author_name}`)
       } else {
         followUser(data)
+        toast.success(`Followed ${post.author_name}`)
       }
     }
   }
@@ -93,7 +95,7 @@ const PostCard: React.FC<Props> = ({ post }) => {
           <DropdownMenuContent>
             <DropdownMenuItem>
               <Link href={`/p/${post.post_id}`} className='flex items-center gap-1.5 w-full'>
-                <Eye size={16} /> Read
+                <Eye size={16} /> Read Post
               </Link>
             </DropdownMenuItem>
             {
@@ -101,12 +103,12 @@ const PostCard: React.FC<Props> = ({ post }) => {
               <>
                 <DropdownMenuItem>
                   <Link href={`/new?edit=${post.post_id}`} className='flex items-center gap-1.5 w-full'>
-                    <PenBoxIcon size={15} />Edit
+                    <PenBoxIcon size={15} />Edit Post
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem>
                   <Link href={`/p/${post.post_id}/delete`} className='flex items-center gap-1.5 w-full'>
-                    <Trash size={15} />Delete
+                    <Trash size={15} />Delete Post
                   </Link>
                 </DropdownMenuItem>
               </>
@@ -120,28 +122,26 @@ const PostCard: React.FC<Props> = ({ post }) => {
                       isUnfollowingUser || isFollowingUser ?
                         <SmallSpinner className='text-primary' />
                         :
-                        <UserPlus size={15} />
+                        userFollows?.includes(post.author_id || "") ?
+                          <UserMinus size={15} />
+                          :
+                          <UserPlus size={15} />
                     }
 
                     {
-                      userFollows?.includes(user?.uid || "") ?
+                      userFollows?.includes(post.author_id || "") ?
                         isUnfollowingUser ? "Unfollowing" : "Unfollow"
                         :
                         isFollowingUser ? "Following" : "Follow"
                     }
-                    Author
+                    {" "} Author
                   </button>
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <Link href={`/p/${post.post_id}/delete`} className='flex items-center gap-1.5 w-full'>
-                    <Trash size={15} />Delete
-                  </Link>
                 </DropdownMenuItem>
               </>
             }
             <DropdownMenuItem>
               <button onClick={openShareModal} className='flex items-center gap-1.5 w-full'>
-                <Share size={15} /> Share
+                <Share size={15} /> Share Post
               </button>
             </DropdownMenuItem>
           </DropdownMenuContent>

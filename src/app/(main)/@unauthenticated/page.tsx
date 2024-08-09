@@ -1,12 +1,46 @@
-import React from 'react'
+'use client';
+
+import React, { useEffect, useState } from 'react'
 import { ChatterLogo, LinkButton } from '@/components/ui'
+import { MoonIcon, SunIcon } from 'lucide-react';
 
 const UnAuthenticatedUserHomePage = () => {
+    const [theme, setTheme] = useState('light');
+    useEffect(() => {
+        const savedTheme = localStorage.getItem("theme");
+        if (savedTheme) {
+            setTheme(savedTheme);
+            document.documentElement.classList.toggle('dark', savedTheme === 'dark');
+        }
+    }, []);
+
+    useEffect(() => {
+        document.documentElement.classList.toggle('dark', theme === 'dark');
+    }, [theme]);
+
+    const toggleTheme = () => {
+        const updatedTheme = theme === "light" ? 'dark' : 'light';
+        setTheme(updatedTheme);
+        localStorage.setItem("theme", updatedTheme);
+    };
+
+
+
+
     return (
         <main className="flex h-screen w-screen flex-col items-center justify-between font-display">
             <header className="sticky top-0 flex items-center justify-between w-full p-5 md:px-10 md:py-6">
                 <ChatterLogo />
                 <section className='flex items-center gap-4'>
+                    <div onClick={toggleTheme} className='cursor-pointer'>
+                        {
+                            theme == 'dark'
+                                ?
+                                <SunIcon size={24} strokeWidth={1.5} />
+                                :
+                                <MoonIcon size={24} strokeWidth={1.5} />
+                        }
+                    </div>
                     <LinkButton href='/login'>
                         Login
                     </LinkButton>
@@ -18,6 +52,15 @@ const UnAuthenticatedUserHomePage = () => {
             </header>
 
             <div className="flex flex-col justify-center gap-2 w-full max-w-5xl text-sm grow max-md:px-5 md:max-lg:px-[7.5vw]">
+                <div onClick={toggleTheme} className='cursor-pointer'>
+                    {
+                        theme == 'dark'
+                            ?
+                            <SunIcon size={24} strokeWidth={1.5} />
+                            :
+                            <MoonIcon size={24} strokeWidth={1.5} />
+                    }
+                </div>
                 <span>Welcome to Chatter,</span>
                 <h1 className="text-[3rem] md:text-[4rem] lg:text-[6rem] font-semibold leading-[1] max-w-[12ch]">
                     A traditional bookworm&apos;s heaven.
@@ -28,11 +71,11 @@ const UnAuthenticatedUserHomePage = () => {
                 </LinkButton>
             </div>
 
-            <footer className="sticky bottom-0 flex items-center justify-between bg-black text-background w-full p-4 max-md:text-xs">
+            <footer className="sticky bottom-0 flex items-center justify-between bg-black dark:bg-foreground dark:text-primary-foreground text-background w-full p-4 max-md:text-xs">
                 <small>&copy; 2024 Chatter. All rights reserved</small>
                 <span>
                     Built with ❤️ by
-                    <a href="https://github.com/onikhalid" target="_blank" className="ml-1.5 underline decoration-white hover:decoration-primary">
+                    <a href="https://github.com/onikhalid" target="_blank" className="ml-1.5 underline decoration-white dark:decoration-primary-foreground hover:decoration-primary">
                         Khalid.
                     </a>
                 </span>

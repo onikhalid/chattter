@@ -44,7 +44,7 @@ const Login: React.FC = () => {
             const userDocSnap = await getDoc(userDocRef)
 
             const userData = userDocSnap.data()
-            await updateProfile(user.user, { displayName: `Writer ${user.user.uid.substring(0,8)}` })
+            await updateProfile(user.user, { displayName: `Writer ${user.user.uid.substring(0, 8)}` })
             await updateDoc(userDocRef, { lastLogin: new Date() })
 
             if (userData?.hasOwnProperty('username')) {
@@ -115,7 +115,7 @@ const Login: React.FC = () => {
                     router.push('/')
                     // router.back()
                 } else {
-                    router.push('/auth/complete-profile')
+                    router.push('/onboarding')
                 }
             }
         } catch (error: any) {
@@ -175,23 +175,23 @@ const Login: React.FC = () => {
                     </Button>
                 </form>
 
-                <p className='text-center mb-6 text-sm font-light'>
-                    &mdash; or &mdash;
+                <p className='text-sm text-muted-foreground text-center mb-6'>
+                    &mdash;&mdash; or &mdash;&mdash;
                 </p>
 
                 <div className='flex flex-col lg:grid grid-cols-2 gap-3'>
-                    <Button variant='outline' className='flex items-center gap-2 text-body' size='cta' onClick={GoogleSignup}>
+                    <Button variant='outline' className='flex items-center gap-2 text-muted-foreground' size='cta' onClick={GoogleSignup}>
                         <GoogleIcon />
                         Google
                     </Button>
 
-                    <Button variant='outline' className='flex items-center gap-2 text-body' size='cta'>
+                    <Button variant='outline' className='flex items-center gap-2 text-muted-foreground' size='cta'>
                         <FacebookIcon />
                         Facebook
                     </Button>
                 </div>
 
-                <footer className='mt-10 md:mt-16 flex items-center justify-center gap-1.5 text-body text-sm'>
+                <footer className='mt-10 md:mt-16 flex items-center justify-center gap-1.5 text-muted-foreground text-sm'>
                     No account? <Link href='/register' className='text-primary font-medium hover:underline decoration-primary decoration-[2px]'>Sign up</Link>
                 </footer>
 

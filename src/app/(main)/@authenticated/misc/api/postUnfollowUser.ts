@@ -8,7 +8,7 @@ const UnFollowUser = async (followerData: TFollow) => {
     try {
         const { follower_id, followed_id } = followerData
         const followId = `${follower_id}_${followed_id}`
-        const followDocRef = doc(collection(db, 'bookmarks'), followId);
+        const followDocRef = doc(collection(db, 'follows'), followId);
         await deleteDoc(followDocRef)
     } catch (error) {
         console.log(error)

@@ -79,7 +79,7 @@ const PostShareModal: React.FC<Props> = ({ post, isModalOpen, closeModal }) => {
 
 
                 <div className='text-sm text-muted-foreground text-center'>
-                    &mdash;&mdash;  or share on:  &mdash;&mdash;
+                    &mdash;&mdash; or share on: &mdash;&mdash;
                 </div>
 
 

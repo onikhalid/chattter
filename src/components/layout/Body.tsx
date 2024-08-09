@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { MoonIcon, SunIcon, PenIcon, Settings2, User, LogOut, Folder, SettingsIcon } from 'lucide-react';
@@ -11,12 +11,14 @@ import { auth } from '@/utils/firebaseConfig';
 import { getInitials } from '@/utils/strings';
 
 import { Avatar, Button, ChatterLogo, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, LinkButton } from '../ui';
+import { UserContext } from '@/contexts';
 
 
 
 
 const Body = ({ children }: { children: React.ReactNode }) => {
   const [user, loading] = useAuthState(auth);
+  const { userData } = useContext(UserContext)
   const [theme, setTheme] = useState('light');
   const params = useSearchParams();
   const pathName = usePathname();
@@ -86,9 +88,9 @@ const Body = ({ children }: { children: React.ReactNode }) => {
                 </div>
                 <DropdownMenu>
                   <DropdownMenuTrigger className='ml-auto'>
-                    <Avatar alt={user.displayName || "user"} src={user.photoURL} fallback={getInitials(user.displayName || "F N")} />
+                    <Avatar alt={user.displayName || "user"} src={user.photoURL || userData?.avatar} fallback={getInitials(user.displayName || "F N")} />
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align='end' className='flex flex-col gap-1.5'>
+                  <DropdownMenuContent align='end' className='flex flex-col gap-1.5 px-2.5'>
                     <DropdownMenuItem className='rounded-lg'>
                       <Link href={`/u/${user?.uid}`} className='flex items-center gap-2 text-lg pr-10'>
                         <User size={20} />
@@ -109,7 +111,7 @@ const Body = ({ children }: { children: React.ReactNode }) => {
                     </DropdownMenuItem>
                     <DropdownMenuItem className=' rounded-lg'>
                       <button onClick={logout} className='flex items-center gap-2 text-lg  pr-10'>
-                      <LogOut size={20} />
+                        <LogOut size={20} />
                         Logout
                       </button>
                     </DropdownMenuItem>

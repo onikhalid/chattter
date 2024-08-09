@@ -1,25 +1,23 @@
 'use client'
 
 import React, { useEffect, useState } from 'react';
-import { Controller, useForm } from 'react-hook-form';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import { Controller, useForm } from 'react-hook-form';
 import { z, ZodError } from 'zod';
-import { getDoc, doc, setDoc, query, collection, where, getDocs, writeBatch, updateDoc } from 'firebase/firestore';
-import { updateProfile } from 'firebase/auth';
-
-import { Button, ChatterLogo, FormError, Input, LoadingModal, TagInput, Textarea } from '@/components/ui';
-import { FacebookIcon, GoogleIcon, SmallSpinner, TrashIcon, UploadIcon } from '@/components/icons';
-import { auth, db, storage } from '@/utils/firebaseConfig';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { launchNotification } from '@/utils/notifications';
+import { getDoc, doc } from 'firebase/firestore';
 import { useAuthState } from 'react-firebase-hooks/auth';
+import toast from 'react-hot-toast';
+
+import { Button,FormError, Input, LoadingModal, TagInput, Textarea } from '@/components/ui';
+import { SmallSpinner, TrashIcon, UploadIcon } from '@/components/icons';
+import { auth, db,  } from '@/utils/firebaseConfig';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { AuthLayoutHeader } from '../misc/components';
 import { presetArticleTags } from '@/constants';
-import toast from 'react-hot-toast';
-import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
-import Image from 'next/image';
 import { TUser } from '@/contexts';
 import { cn } from '@/lib/utils';
+
 import { useUpdateUserProfile } from '../misc/api';
 import { TUpdateUser } from '../misc/types';
 
@@ -28,7 +26,7 @@ import { TUpdateUser } from '../misc/types';
 
 
 
-const Login: React.FC = () => {
+const NewUserOnboarding: React.FC = () => {
     const [user, loading] = useAuthState(auth);
     const router = useRouter();
     const [isLoading, setIsLoading] = useState(false)
@@ -74,15 +72,9 @@ const Login: React.FC = () => {
         ),
     });
     const { handleSubmit, register, formState: { errors, isDirty, isValid }, control, watch, setError, setValue } = useForm<TUpdateUser>({
-        defaultValues: {
-            name: user?.displayName || '',
-            username: '',
-            interests: [],
-            bio: ''
-        },
         resolver: zodResolver(OnboardingForm)
     });
-
+console.log(errors)
 
     useEffect(() => {
         if (!loading && user) {
@@ -102,7 +94,6 @@ const Login: React.FC = () => {
                     setValue('linkedin', userData.linkedin || '')
                     setValue('instagram', userData.instagram || '')
                     setProfileImgURL(userData.avatar || null)
-                    // setValue(userData.profilePicture || newUserPic)
                 }
             }
             getUserData()
@@ -268,6 +259,8 @@ const Login: React.FC = () => {
                                 selectedTags={field.value || []}
                                 onTagsChange={field.onChange}
                                 className='mt-0 mb-1'
+                                hasError={!!errors.interests}
+                                errorMessage={errors.interests?.message}
                                 triggerclassName="!py-6"
                                 selectedClassName="gap-3"
                             />
@@ -321,4 +314,4 @@ const Login: React.FC = () => {
     );
 };
 
-export default Login;
+export default NewUserOnboarding;
