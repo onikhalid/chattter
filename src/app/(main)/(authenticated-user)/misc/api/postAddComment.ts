@@ -1,7 +1,7 @@
 import { collection, query, where, orderBy, addDoc, updateDoc, doc } from 'firebase/firestore';
 import { db } from '@/utils/firebaseConfig';
-import { TCreateComment } from "@/app/(main)/@authenticated/misc/types";
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { TCreateComment } from '../types';
 
 
 export const addComment = async (commentData: Omit<TCreateComment, 'comment_id'>) => {
