@@ -3,13 +3,15 @@
 'use client'
 import React, { useContext, useEffect, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
+
 import { Badge, LinkButton, Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui';
+
 import { TPost } from '../types';
 import { usePostsByTagInfiniteQuery } from '../api';
 import { QueryResult } from '../api/getPostsAll';
 import PostCard from './PostCard';
 import PostCardSkeleton from './PostCardSkeleton';
-import { UserContext } from '@/contexts';
+import { cn } from '@/lib/utils';
 
 type SortOption = 'date_desc' | 'date_asc' | 'alpha_asc' | 'alpha_desc' | 'likes_desc' | 'likes_asc';
 
@@ -26,7 +28,7 @@ const PostsByTagList: React.FC<{ tag_name: string }> = ({ tag_name }) => {
     error,
     refetch
   } = usePostsByTagInfiniteQuery(tag_name, sortBy);
-  console.log(error)
+
   const { ref, inView } = useInView();
 
   useEffect(() => {
@@ -45,7 +47,9 @@ const PostsByTagList: React.FC<{ tag_name: string }> = ({ tag_name }) => {
   return (
     <>
       <section className='relative flex flex-col w-full max-w-[1200px] mx-auto'>
-        <div className='flex items-center border-b-[1.5px] w-full border-muted-foreground dark:border-muted py-4'>
+        <div className={cn('flex items-center border-b-[1.5px] w-full border-muted-foreground dark:border-muted py-4',
+          data?.pages.reduce((total, page) => total + page.posts.length, 0) == 0 && "hidden")}
+        >
           <Select onValueChange={handleSortChange} defaultValue={sortBy}>
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="Sort by" />
@@ -72,14 +76,14 @@ const PostsByTagList: React.FC<{ tag_name: string }> = ({ tag_name }) => {
 
 
         {
-          data?.pages.length === 0 && !isLoading && (
-            <div className='flex flex-col items-center justify-center h-[50vh] w-full'>
+          data?.pages.reduce((total, page) => total + page.posts.length, 0) == 0 && !isLoading && (
+            <div className='flex flex-col items-center justify-center w-full my-auto'>
               <article className='bg-background p-6 lg:p-10 rounded-3xl max-md:rounded-b-none mx-auto w-full max-w-[525px]'>
                 <h3 className='text-5xl font-medium'>No posts found.</h3>
-                <p>
-                  No posts has been created on Chatter, try again later or create a new post.
+                <p className='my-5'>
+                  We couldn&apos;t find any post with this tag "{tag_name}" on Chatter, try again later or be the first to create a post with this tag.
                 </p>
-                <LinkButton href='/new' className='mt-4'>
+                <LinkButton href={`/new?tag=${tag_name}`} className='mt-4'>
                   Create a new post
                 </LinkButton>
               </article>
@@ -117,9 +121,9 @@ const PostsByTagList: React.FC<{ tag_name: string }> = ({ tag_name }) => {
 
               :
               hasNextPage
-                ? ''
+                ? null
                 :
-                <div className='mt-4 py-5 w-full text-center'>
+                <div className={cn('mt-4 py-5 w-full text-center', data?.pages.reduce((total, page) => total + page.posts.length, 0) == 0 && "hidden")}>
                   - End -
                 </div>
           }
@@ -128,19 +132,20 @@ const PostsByTagList: React.FC<{ tag_name: string }> = ({ tag_name }) => {
 
       <section className='sticky top-0 max-h-96  pt-8'>
         <article className='size-full p-4 xl:p-8 border-[0.3px] border-muted-foreground/60 dark:border-muted-foreground/20 rounded-xl mt-'>
-          <h2 className='flex items-center gap-1 text-4xl font-display font-medium'>{tag_name} <Badge variant="secondary">tag</Badge></h2>
+          <h2 className='flex items-center gap-1 text-3xl font-display font-medium'>{tag_name} <Badge variant="secondary">tag</Badge></h2>
 
           <div className='flex items-center gap-4 text-muted-foreground'>
             <p>
               {data?.pages.reduce((total, page) => total + page.posts.length, 0)}
+              {" "}
               posts.
             </p>
             <p>
               {data?.pages.flatMap((page) => page.posts.map((post) => post.author_id)).filter((value, index, self) => self.indexOf(value) === index).length}
-              Authors
+              {" "}
+              authors.
             </p>
           </div>
-
         </article>
       </section>
     </>

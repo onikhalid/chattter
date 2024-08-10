@@ -42,7 +42,7 @@ const PostsList: React.FC = () => {
       </div>
 
       {
-        data?.pages.length === 0 && !isLoading && (
+        data?.pages.reduce((total, page) => total + page.posts.length, 0) == 0 && !isLoading && (
           <div className='flex flex-col items-center justify-center h-[50vh] w-full'>
             <article className='bg-background p-6 lg:p-10 rounded-3xl max-md:rounded-b-none mx-auto w-full max-w-[525px]'>
               <h3 className='text-5xl font-medium'>No posts found.</h3>
