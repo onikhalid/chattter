@@ -23,6 +23,7 @@ import PostShareModal from '../../@authenticated/misc/components/PostShareModal'
 import { UseAddPostToBookmark, UseFollowUser, UseLikePost, UseRemovePostFromBookmark, UseUnFollowUser, UseUnlikePost } from '../../@authenticated/misc/api'
 import { TPost } from '../../@authenticated/misc/types'
 import { cn } from '@/lib/utils'
+import Head from 'next/head'
 
 
 
@@ -111,7 +112,18 @@ const PostDetailsPage = ({ params }: { params: { post_id: string } }) => {
 
     return (
         <main className="relative grow flex flex-col w-full px-4 lg:px-[7.5vw] max-h-[calc(100vh_-_4.5rem)] overflow-y-scroll">
-
+            <Head>
+                <title>{post ? `${post.title} - Your Site Name` : 'Loading...'}</title>
+                {/* <meta name="description" content={post?.description || 'Loading...'} /> */}
+                <meta property="og:title" content={post?.title || 'Loading...'} />
+                {/* <meta property="og:description" content={post?.description || 'Loading...'} /> */}
+                <meta property="og:image" content={post?.cover_image || '/default-image.png'} />
+                <meta property="og:url" content={`https://yourwebsite.com/p/${post_id}`} />
+                <meta name="twitter:card" content="summary_large_image" />
+                <meta name="twitter:title" content={post?.title || 'Loading...'} />
+                {/* <meta name="twitter:description" content={post?.description || 'Loading...'} /> */}
+                <meta name="twitter:image" content={post?.cover_image || '/default-image.png'} />
+            </Head>
             {
                 isLoading ?
                     <div className='flex items-center justify-center size-full'>

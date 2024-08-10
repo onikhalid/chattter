@@ -6,6 +6,7 @@ export type TCreatePost = {
     content: string;
     cover_image: string;
     tags: string[];
+    tags_lower: string[];
     created_at: Timestamp | Date; 
     author_id: string;
     author_name: string;
@@ -20,5 +21,6 @@ export type TUpdatePost = {
     content?: string;
     cover_image?: string;
     tags?: string[];
+    tags_lower?: string[];
     created_at?: Timestamp | Date;
 }

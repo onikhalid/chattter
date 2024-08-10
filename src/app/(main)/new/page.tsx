@@ -116,6 +116,7 @@ const WriteNewStoryPage = () => {
             author_username: userData?.username || "",
             author_name: userData?.name || "",
             created_at: postData?.created_at || new Date(),
+            tags_lower: data.tags.map(tag => tag.toLowerCase() || ""),
             title_for_search: data.title.split(/[,:.\s-]+/).filter(word => word !== ''),
             cover_image: postData?.cover_image || "",
         };

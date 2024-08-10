@@ -1,4 +1,5 @@
-import { useEffect } from 'react';
+// api.ts
+import { useEffect, useState } from 'react';
 import { useInfiniteQuery, useQueryClient, QueryFunctionContext, InfiniteData } from '@tanstack/react-query';
 import { db } from "@/utils/firebaseConfig";
 import { collection, query, orderBy, limit, startAfter, onSnapshot, QueryDocumentSnapshot, DocumentData, getDocs, where } from "firebase/firestore";
@@ -36,11 +37,11 @@ const getPosts = async ({ pageParam = null, queryKey }: QueryFunctionContext<Que
       orderDirection = 'desc';
       break;
     case 'likes_desc':
-      orderByField = 'likes';
+      orderByField = 'likes_count';
       orderDirection = 'desc';
       break;
     case 'likes_asc':
-      orderByField = 'likes';
+      orderByField = 'likes_count';
       orderDirection = 'asc';
       break;
     default:
@@ -48,11 +49,9 @@ const getPosts = async ({ pageParam = null, queryKey }: QueryFunctionContext<Que
       orderDirection = 'desc';
   }
 
-
   let q = query(
     postsCollectionRef,
     where("tags_lower", "array-contains", tag_name),
-    // orderBy("created_at", 'desc'),
     orderBy(orderByField, orderDirection),
     limit(POSTS_PER_FETCH)
   );
@@ -62,90 +61,15 @@ const getPosts = async ({ pageParam = null, queryKey }: QueryFunctionContext<Que
   }
 
   const snapshot = await getDocs(q);
-
   const posts = snapshot.docs.map(doc => {
     return doc.data() as TPost;
-
   });
-
-
-  if (sortBy === 'likes_asc') {
-    posts.sort((a, b) => b.likes.length - a.likes.length);
-  } else if (sortBy === 'likes_desc') {
-    posts.sort((a, b) => a.likes.length - b.likes.length);
-  }
-
   const lastVisible = snapshot.docs.length > 0 ? snapshot.docs[snapshot.docs.length - 1] : null;
-
   return { posts, lastVisible };
 };
 
-
-
-
 const usePostsByTagInfiniteQuery = (tag_name: string, sortBy: SortOption) => {
   const queryClient = useQueryClient();
-
-  useEffect(() => {
-    let orderByField: string;
-    let orderDirection: 'asc' | 'desc';
-
-    switch (sortBy) {
-      case 'date_asc':
-        orderByField = 'created_at';
-        orderDirection = 'asc';
-        break;
-      case 'alpha_asc':
-        orderByField = 'title';
-        orderDirection = 'asc';
-        break;
-      case 'alpha_desc':
-        orderByField = 'title';
-        orderDirection = 'desc';
-        break;
-      case 'likes_desc':
-        orderByField = 'likes';
-        orderDirection = 'desc';
-        break;
-      case 'likes_asc':
-        orderByField = 'likes';
-        orderDirection = 'asc';
-        break;
-      default:
-        orderByField = 'created_at';
-        orderDirection = 'desc';
-    }
-    const postsCollectionRef = collection(db, "posts");
-    const q = query(
-      postsCollectionRef,
-      orderBy(orderByField, orderDirection),
-      limit(POSTS_PER_FETCH)
-    );
-
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const posts = snapshot.docs.map(doc => {
-        return { ...doc.data() } as TPost;
-      });
-
-      const lastVisible = snapshot.docs.length > 0 ? snapshot.docs[snapshot.docs.length - 1] : null;
-
-      queryClient.setQueryData<InfiniteData<QueryResult>>(['posts-by-tag'], (oldData) => {
-        if (!oldData) {
-          return {
-            pageParams: [null],
-            pages: [{ posts, lastVisible }]
-          };
-        }
-
-        return {
-          ...oldData,
-          pages: [{ posts, lastVisible }]
-        };
-      });
-    });
-
-    return () => unsubscribe();
-  }, [queryClient]);
 
   return useInfiniteQuery<QueryResult, Error, InfiniteData<QueryResult>, QueryKey, QueryDocumentSnapshot<DocumentData> | null>({
     queryKey: ['posts-by-tag', { tag_name, sortBy }],

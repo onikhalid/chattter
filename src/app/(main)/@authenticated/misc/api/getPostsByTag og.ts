@@ -11,49 +11,15 @@ export interface QueryResult {
   lastVisible: QueryDocumentSnapshot<DocumentData> | null;
 }
 
-type SortOption = 'date_desc' | 'date_asc' | 'alpha_asc' | 'alpha_desc' | 'likes_desc' | 'likes_asc';
-
-type QueryKey = ['posts-by-tag', { tag_name: string, sortBy: SortOption }];
+type QueryKey = ['posts-by-tag', { tag_name: string }];
 
 const getPosts = async ({ pageParam = null, queryKey }: QueryFunctionContext<QueryKey, QueryDocumentSnapshot<DocumentData> | null>): Promise<QueryResult> => {
-  const [, { tag_name, sortBy }] = queryKey;
+  const [, { tag_name }] = queryKey; 
   const postsCollectionRef = collection(db, "posts");
-
-  let orderByField: string;
-  let orderDirection: 'asc' | 'desc';
-
-  switch (sortBy) {
-    case 'date_asc':
-      orderByField = 'created_at';
-      orderDirection = 'asc';
-      break;
-    case 'alpha_asc':
-      orderByField = 'title';
-      orderDirection = 'asc';
-      break;
-    case 'alpha_desc':
-      orderByField = 'title';
-      orderDirection = 'desc';
-      break;
-    case 'likes_desc':
-      orderByField = 'likes';
-      orderDirection = 'desc';
-      break;
-    case 'likes_asc':
-      orderByField = 'likes';
-      orderDirection = 'asc';
-      break;
-    default:
-      orderByField = 'created_at';
-      orderDirection = 'desc';
-  }
-
-
   let q = query(
     postsCollectionRef,
     where("tags_lower", "array-contains", tag_name),
-    // orderBy("created_at", 'desc'),
-    orderBy(orderByField, orderDirection),
+    orderBy("created_at", 'desc'),
     limit(POSTS_PER_FETCH)
   );
 
@@ -68,57 +34,19 @@ const getPosts = async ({ pageParam = null, queryKey }: QueryFunctionContext<Que
 
   });
 
-
-  if (sortBy === 'likes_asc') {
-    posts.sort((a, b) => b.likes.length - a.likes.length);
-  } else if (sortBy === 'likes_desc') {
-    posts.sort((a, b) => a.likes.length - b.likes.length);
-  }
-
   const lastVisible = snapshot.docs.length > 0 ? snapshot.docs[snapshot.docs.length - 1] : null;
 
   return { posts, lastVisible };
 };
 
-
-
-
-const usePostsByTagInfiniteQuery = (tag_name: string, sortBy: SortOption) => {
+const usePostsByTagInfiniteQuery = (tag_name: string) => {
   const queryClient = useQueryClient();
 
   useEffect(() => {
-    let orderByField: string;
-    let orderDirection: 'asc' | 'desc';
-
-    switch (sortBy) {
-      case 'date_asc':
-        orderByField = 'created_at';
-        orderDirection = 'asc';
-        break;
-      case 'alpha_asc':
-        orderByField = 'title';
-        orderDirection = 'asc';
-        break;
-      case 'alpha_desc':
-        orderByField = 'title';
-        orderDirection = 'desc';
-        break;
-      case 'likes_desc':
-        orderByField = 'likes';
-        orderDirection = 'desc';
-        break;
-      case 'likes_asc':
-        orderByField = 'likes';
-        orderDirection = 'asc';
-        break;
-      default:
-        orderByField = 'created_at';
-        orderDirection = 'desc';
-    }
     const postsCollectionRef = collection(db, "posts");
     const q = query(
       postsCollectionRef,
-      orderBy(orderByField, orderDirection),
+      orderBy("created_at", 'desc'),
       limit(POSTS_PER_FETCH)
     );
 
@@ -148,7 +76,7 @@ const usePostsByTagInfiniteQuery = (tag_name: string, sortBy: SortOption) => {
   }, [queryClient]);
 
   return useInfiniteQuery<QueryResult, Error, InfiniteData<QueryResult>, QueryKey, QueryDocumentSnapshot<DocumentData> | null>({
-    queryKey: ['posts-by-tag', { tag_name, sortBy }],
+    queryKey: ['posts-by-tag', { tag_name }],
     queryFn: getPosts,
     getNextPageParam: (lastPage) => lastPage.lastVisible,
     initialPageParam: null

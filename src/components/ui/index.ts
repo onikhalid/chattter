@@ -73,6 +73,19 @@ export { Popover, PopoverTrigger, PopoverContent } from './popover'
 
 export { Skeleton } from './skeleton'
 
+export {
+  Select,
+  SelectGroup,
+  SelectValue,
+  SelectTrigger,
+  SelectContent,
+  SelectLabel,
+  SelectItem,
+  SelectSeparator,
+  SelectScrollUpButton,
+  SelectScrollDownButton,
+} from './select'
+
 export { Tabs, TabsList, TabsTrigger, TabsContent } from './tabs'
 
 export { default as TagInput } from './tagInput'
