@@ -247,18 +247,22 @@ const PostDetailsPage = ({ params }: { params: { post_id: string } }) => {
                                         <Badge variant="secondary">Author</Badge>
                                     </div>
 
-                                    <Button onClick={followUnfollow} className='flex items-center gap-1.5 w-max' variant="secondary">
-                                        {
-                                            isUnfollowingUser || isFollowingUser ?
-                                                <SmallSpinner className='text-primary' />
-                                                :
 
-                                                userFollows?.includes(post.author_id || "") ?
-                                                    isUnfollowingUser ? "Unfollowing" : "Unfollow"
+                                    {
+                                        user?.uid !== post.author_id &&
+                                        <Button onClick={followUnfollow} className='flex items-center gap-1.5 w-max' variant="secondary">
+                                            {
+                                                isUnfollowingUser || isFollowingUser ?
+                                                    <SmallSpinner className='text-primary' />
                                                     :
-                                                    isFollowingUser ? "Following" : "Follow"
-                                        }
-                                    </Button>
+
+                                                    userFollows?.includes(post.author_id || "") ?
+                                                        isUnfollowingUser ? "Unfollowing" : "Unfollow"
+                                                        :
+                                                        isFollowingUser ? "Following" : "Follow"
+                                            }
+                                        </Button>
+                                    }
                                 </div>
 
 
@@ -330,6 +334,7 @@ const PostDetailsPage = ({ params }: { params: { post_id: string } }) => {
                         </div>
 
             }
+            
             {
                 !isLoading && post &&
                 <PostShareModal

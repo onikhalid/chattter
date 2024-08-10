@@ -9,7 +9,7 @@ import { getDoc, doc, setDoc, updateDoc } from 'firebase/firestore';
 import { GoogleAuthProvider, signInWithPopup, updateProfile } from 'firebase/auth';
 
 import { useAuth } from '@/contexts/userAuthContext';
-import { Button, ChatterLogo, Input } from '@/components/ui';
+import { Button, ChattterLogo, Input } from '@/components/ui';
 import { FacebookIcon, GoogleIcon, SmallSpinner } from '@/components/icons';
 import { auth, db } from '@/utils/firebaseConfig';
 import { zodResolver } from '@hookform/resolvers/zod';

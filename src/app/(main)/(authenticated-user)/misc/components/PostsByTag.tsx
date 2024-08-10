@@ -81,7 +81,7 @@ const PostsByTagList: React.FC<{ tag_name: string }> = ({ tag_name }) => {
               <article className='bg-background p-6 lg:p-10 rounded-3xl max-md:rounded-b-none mx-auto w-full max-w-[525px]'>
                 <h3 className='text-5xl font-medium'>No posts found.</h3>
                 <p className='my-5'>
-                  We couldn&apos;t find any post with this tag &quot;{tag_name}&quot; on Chatter, try again later or be the first to create a post with this tag.
+                  We couldn&apos;t find any post with this tag &quot;{tag_name}&quot; on Chattter, try again later or be the first to create a post with this tag.
                 </p>
                 <LinkButton href={`/new?tag=${tag_name}`} className='mt-4'>
                   Create a new post

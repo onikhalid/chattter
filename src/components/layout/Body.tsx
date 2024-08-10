@@ -10,7 +10,7 @@ import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth } from '@/utils/firebaseConfig';
 import { getInitials } from '@/utils/strings';
 
-import { Avatar, Button, ChatterLogo, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, LinkButton } from '../ui';
+import { Avatar, Button, ChattterLogo, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, LinkButton, Sheet, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from '../ui';
 import { UserContext } from '@/contexts';
 
 
@@ -59,7 +59,7 @@ const Body = ({ children }: { children: React.ReactNode }) => {
           !loading && user && !authPathNames.includes(pathName) &&
           (
             <header className="sticky top-0 flex items-center justify-between w-full px-5 py-3 md:px-10 md:py-4 border-b-[0.6px] border-muted-foreground dark:border-b-muted font-display">
-              <ChatterLogo />
+              <ChattterLogo />
               <section className='flex items-center gap-4'>
                 {
                   pathName === '/new' &&
@@ -73,7 +73,10 @@ const Body = ({ children }: { children: React.ReactNode }) => {
                 {
                   pathName !== '/new' && (
                     <LinkButton href='/new' shape='rounded' variant='outline' className='flex items-center gap-2 rounded-lg border-muted py-1.5'>
-                      Write story <PenIcon size={15} />
+                      <span className='max-md:hidden'>
+                        Write story
+                      </span>
+                      <PenIcon size={15} />
                     </LinkButton>
                   )
                 }
@@ -86,8 +89,56 @@ const Body = ({ children }: { children: React.ReactNode }) => {
                       <MoonIcon size={24} strokeWidth={1.5} />
                   }
                 </div>
+
+                <Sheet>
+                  <SheetTrigger className='md:hidden'>
+                    <Avatar alt={user.displayName || "user"} src={user.photoURL || userData?.avatar} fallback={getInitials(user.displayName || "F N")} />
+                  </SheetTrigger>
+
+                  <SheetContent className='flex flex-col items-center justify-between py-[10vh]'>
+                    <SheetHeader>
+                    </SheetHeader>
+
+                    <div className='flex flex-col '>
+                      <Link href={`/me/profile`} className='flex items-center gap-2 text-base px-3 rounded-none w-full mb-5'>
+                        <Avatar alt={user.displayName || "user"} src={user.photoURL || userData?.avatar} fallback={getInitials(user.displayName || "F N")} />
+                        <div>
+                          <p className='text-lg font-display max-w-[20ch]'>{user.displayName}</p>
+                          <p className='text-muted-foreground text-sm'>{user.email}</p>
+                        </div>
+                      </Link>
+                      <Link href={`/u/${user?.uid}`} className='flex items-center gap-2 text-base pl-3 py-4 rounded-none w-full'>
+                        <User size={20} />
+                        Public Profile
+                      </Link>
+                      <Link href='/bookmarks' className='flex items-center gap-2 text-base pl-3 py-4 rounded-none w-full'>
+                        <Folder size={20} />
+                        Bookmarks
+                      </Link>
+                      <Link href='/settings' className='flex items-center gap-2 text-base pl-3 py-4 rounded-none w-full'>
+                        <SettingsIcon size={20} />
+                        Settings
+                      </Link>
+
+
+                    </div>
+
+                    <SheetFooter className='flex flex-col gap-4 w-full'>
+                      <LinkButton href='/new' variant='default' className='flex items-center gap-2 border-muted py-6'>
+                        Write story
+                        <PenIcon size={18} />
+                      </LinkButton>
+                      <Button variant="destructive" onClick={logout} className='flex items-center gap-2 py-6 w-full'>
+                        <LogOut size={16} className='dark:text-red-400 text-white' />
+                        Logout
+                      </Button>
+                    </SheetFooter>
+                  </SheetContent>
+                </Sheet>
+
+
                 <DropdownMenu>
-                  <DropdownMenuTrigger className='ml-auto'>
+                  <DropdownMenuTrigger className='ml-auto max-md:hidden'>
                     <Avatar alt={user.displayName || "user"} src={user.photoURL || userData?.avatar} fallback={getInitials(user.displayName || "F N")} />
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align='end' className='flex flex-col gap-1.5 px-0'>
@@ -133,7 +184,7 @@ const Body = ({ children }: { children: React.ReactNode }) => {
 
 
                     <div className='py-2 mt-4'>
-                      <p className='text-muted-foreground text-sm text-center'>Chatter v1.0.0</p>
+                      <p className='text-muted-foreground text-sm text-center'>Chattter v1.0.0</p>
                     </div>
                   </DropdownMenuContent>
                 </DropdownMenu>

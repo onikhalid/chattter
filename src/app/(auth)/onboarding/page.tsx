@@ -143,7 +143,7 @@ console.log(errors)
 
             <article className='bg-background p-6 lg:p-10 rounded-3xl max-md:rounded-b-none mx-auto w-full max-w-[525px]'>
                 <header className='text-center'>
-                    <h1 className='font-bold font-display text-primary text-2xl'>Complete your Chatter profile</h1>
+                    <h1 className='font-bold font-display text-primary text-2xl'>Complete your Chattter profile</h1>
                     <p className='text-muted-foreground text-sm text-balance'>Welcome, complete your profile to enjoy a rich and personalized experience of this platform 🤝</p>
                 </header>
 

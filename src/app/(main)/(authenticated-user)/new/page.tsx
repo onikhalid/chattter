@@ -9,7 +9,7 @@ import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import 'react-quill/dist/quill.snow.css';
 
-import { Avatar, Button, ChatterLogo, FormError, Input, LinkButton, LoadingModal, TagInput } from '@/components/ui'
+import { Avatar, Button, ChattterLogo, FormError, Input, LinkButton, LoadingModal, TagInput } from '@/components/ui'
 import { auth, storage } from '@/utils/firebaseConfig';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { PenIcon, TrashIcon, UploadIcon, ViewIcon } from '@/components/icons';

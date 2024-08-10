@@ -9,7 +9,7 @@ import { getDoc, doc, setDoc } from 'firebase/firestore';
 import { GoogleAuthProvider, signInWithPopup, updateProfile } from 'firebase/auth';
 
 import { useAuth } from '@/contexts/userAuthContext';
-import { Button, ChatterLogo, Input } from '@/components/ui';
+import { Button, ChattterLogo, Input } from '@/components/ui';
 import { FacebookIcon, GoogleIcon, SmallSpinner } from '@/components/icons';
 import { auth, db } from '@/utils/firebaseConfig';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -125,7 +125,7 @@ const Register: React.FC = () => {
       <article className='bg-background p-6 lg:p-10 rounded-3xl max-md:rounded-b-none mx-auto w-full max-w-[525px]'>
         <header className='text-center'>
           <h1 className='font-bold font-display text-primary text-2xl'>Sign Up</h1>
-          <p className='text-body'>Welcome to the Chatter Platfrom</p>
+          <p className='text-body'>Welcome to the Chattter Platfrom</p>
         </header>
 
         <form onSubmit={handleSubmit(handleRegister)} className='flex flex-col gap-6 mt-12 md:mt-16 mb-6'>
@@ -150,7 +150,7 @@ const Register: React.FC = () => {
           />
 
           <p className='text-center text-sm max-w-[45ch] my-2 mx-auto'>
-            By creating your account you agree to Chatter <span className='text-primary'>Terms of Use</span> and <span className='text-primary'>Privacy Policy</span>
+            By creating your account you agree to Chattter <span className='text-primary'>Terms of Use</span> and <span className='text-primary'>Privacy Policy</span>
           </p>
 
 

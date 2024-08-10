@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { Link, ArrowLeftSquare } from 'lucide-react'
 import { useAuthState } from 'react-firebase-hooks/auth'
 
-import { ChatterLogo } from '@/components/ui'
+import { ChattterLogo } from '@/components/ui'
 import { getInitials } from '@/utils/strings'
 import { Avatar, DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from '@/components/ui'
 import { auth } from '@/utils/firebaseConfig'
@@ -20,7 +20,7 @@ const AuthLayoutHeader = () => {
 
     return (
         <header className="sticky top-0 flex items-center justify-between w-full p-5 md:px-10 md:py-6">
-            <ChatterLogo />
+            <ChattterLogo />
 
             {
                 !loading && user &&

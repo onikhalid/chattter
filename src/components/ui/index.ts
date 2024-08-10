@@ -62,7 +62,7 @@ export {
   DropdownMenuSubTrigger,
   DropdownMenuRadioGroup,
 } from './dropdown-menu'
-export { default as ChatterLogo } from './logo'
+export { default as ChattterLogo } from './logo'
 export { default as FormError } from './formError'
 export { Input } from './input'
 export { LinkButton } from './linkButton'
@@ -85,6 +85,19 @@ export {
   SelectScrollUpButton,
   SelectScrollDownButton,
 } from './select'
+
+export {
+  Sheet,
+  SheetPortal,
+  SheetOverlay,
+  SheetTrigger,
+  SheetClose,
+  SheetContent,
+  SheetHeader,
+  SheetFooter,
+  SheetTitle,
+  SheetDescription,
+} from './sheet'
 
 export { Tabs, TabsList, TabsTrigger, TabsContent } from './tabs'
 
