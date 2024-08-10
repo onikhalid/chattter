@@ -6,7 +6,7 @@ import { useSearchParams } from 'next/navigation';
 import { LinkButton, Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui'
 import { cn } from '@/lib/utils';
 
-import { SectionAll, SectionFollowing, SectionForYou } from '../misc/components';
+import { SectionAll, SectionFollowing, SectionForYou } from '../(authenticated-user)/misc/components';
 
 
 

@@ -2,8 +2,8 @@ import { collection, query, where, orderBy, addDoc } from 'firebase/firestore';
 import { db } from '@/utils/firebaseConfig';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { onSnapshot } from 'firebase/firestore';
-import { TComment } from "@/app/(main)/@authenticated/misc/types";
 import { organizeComments } from '../components/CommentsList';
+import { TComment } from '../types';
 
 
 

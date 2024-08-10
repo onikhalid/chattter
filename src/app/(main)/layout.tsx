@@ -3,10 +3,7 @@
 
 import React from 'react'
 import { Spinner } from "@/components/icons";
-import { Button, ChatterLogo } from "@/components/ui";
-import { LinkButton } from "@/components/ui/linkButton";
 import { auth } from "@/utils/firebaseConfig";
-import Image from "next/image";
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { usePathname } from 'next/navigation';
 interface Props {
