@@ -10,6 +10,7 @@ const FollowUser = async (followerData: TFollow) => {
         const followId = `${follower_id}_${followed_id}`
         const followDocRef = doc(collection(db, 'follows'), followId);
         await setDoc(followDocRef, followerData)
+
     } catch (error) {
         console.log(error)
     }

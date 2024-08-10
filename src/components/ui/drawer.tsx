@@ -34,21 +34,47 @@ const DrawerOverlay = React.forwardRef<
 ))
 DrawerOverlay.displayName = DrawerPrimitive.Overlay.displayName
 
+// const DrawerContent = React.forwardRef<
+//   React.ElementRef<typeof DrawerPrimitive.Content>,
+//   React.ComponentPropsWithoutRef<typeof DrawerPrimitive.Content>
+// >(({ className, children, ...props }, ref) => (
+//   <DrawerPortal>
+//     <DrawerOverlay />
+//     <DrawerPrimitive.Content
+//       ref={ref}
+//       className={cn(
+//         "fixed inset-x-0 bottom-0 z-50 mt-24 flex h-auto flex-col max-md:rounded-t-[12px] border bg-white",
+//         className
+//       )}
+//       {...props}
+//     >
+//       {/* <div className="mx-auto mt-4 h-2 w-[100px] rounded-full bg-muted" /> */}
+//       {children}
+//     </DrawerPrimitive.Content>
+//   </DrawerPortal>
+// ))
+
 const DrawerContent = React.forwardRef<
   React.ElementRef<typeof DrawerPrimitive.Content>,
-  React.ComponentPropsWithoutRef<typeof DrawerPrimitive.Content>
->(({ className, children, ...props }, ref) => (
+  React.ComponentPropsWithoutRef<typeof DrawerPrimitive.Content> & {
+    direction?: 'left' | 'right' | 'top' | 'bottom'
+  }
+>(({ className, children, direction = 'bottom', ...props }, ref) => (
   <DrawerPortal>
     <DrawerOverlay />
     <DrawerPrimitive.Content
       ref={ref}
       className={cn(
-        "fixed inset-x-0 bottom-0 z-50 mt-24 flex h-auto flex-col max-md:rounded-t-[12px] border bg-white",
+        "fixed z-50 bg-background text-foreground border",
+        direction === 'left' && "left-0 top-0 h-full max-md:w-full md:w-1/2",
+        direction === 'right' && "right-0 top-0 h-full max-md:w-full md:w-1/2",
+        direction === 'top' && "top-0 left-0 w-full h-1/2",
+        direction === 'bottom' && "bottom-0 left-0 w-full h-1/2",
+        "max-md:rounded-t-[12px]",
         className
       )}
       {...props}
     >
-      {/* <div className="mx-auto mt-4 h-2 w-[100px] rounded-full bg-muted" /> */}
       {children}
     </DrawerPrimitive.Content>
   </DrawerPortal>

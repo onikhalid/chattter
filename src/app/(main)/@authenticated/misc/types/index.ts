@@ -33,3 +33,28 @@ export type TLike = {
     liker_id: string;
     post_id: string;
 }
+
+export type TComment = {
+    post_id: string;
+    comment_id: string;
+    commentor_id: string;
+    commentor_username: string;
+    commentor_name: string;
+    commentor_avatar: string;
+    content: string;
+    parent_comment_id?: string | null;
+    replies?: TComment[];
+    created_at: Timestamp;
+};
+export type TCreateComment = {
+    post_id: string;
+    comment_id: string;
+    commentor_id: string;
+    commentor_username: string;
+    commentor_name: string;
+    commentor_avatar: string;
+    content: string;
+    parent_comment_id?: string | null;
+    replies?: TComment[];
+    created_at: Timestamp | Date;
+};

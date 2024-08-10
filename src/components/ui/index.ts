@@ -4,6 +4,8 @@ export { Badge, badgeVariants } from './badge'
 
 export { Button } from './button';
 
+export { Collapsible, CollapsibleTrigger, CollapsibleContent } from './collapsible'
+
 export {
   Command,
   CommandDialog,
@@ -15,6 +17,8 @@ export {
   CommandShortcut,
   CommandSeparator,
 } from './command'
+
+export { default as ConfirmDeleteModal } from './confirmDeleteModal'
 
 export {
   Dialog,

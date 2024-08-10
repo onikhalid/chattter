@@ -1,17 +1,20 @@
-import React, { useEffect } from 'react';
+'use client'
+
+import React, { useContext, useEffect } from 'react';
 import { useInView } from 'react-intersection-observer';
 
 import { LinkButton } from '@/components/ui';
 
 import { TPost } from '../types';
-import { useAllPostsInfiniteQuery } from '../api';
+import { usePostsByTagInfiniteQuery } from '../api';
 import { QueryResult } from '../api/getPostsAll';
 import PostCard from './PostCard';
 import PostCardSkeleton from './PostCardSkeleton';
+import { UserContext } from '@/contexts';
 
 
 
-const PostsList: React.FC = () => {
+const PostsByTagList: React.FC<{ tag_name: string }> = ({ tag_name }) => {
   const {
     data,
     fetchNextPage,
@@ -19,7 +22,7 @@ const PostsList: React.FC = () => {
     isFetchingNextPage,
     isLoading,
     status
-  } = useAllPostsInfiniteQuery();
+  } = usePostsByTagInfiniteQuery(tag_name);
 
   const { ref, inView } = useInView();
 
@@ -95,4 +98,4 @@ const PostsList: React.FC = () => {
   );
 };
 
-export default PostsList;
+export default PostsByTagList;

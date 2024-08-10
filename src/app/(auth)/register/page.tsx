@@ -87,7 +87,7 @@ const Register: React.FC = () => {
         const userData = {
           uid: user.uid,
           name: user.displayName,
-          profilePicture: user.photoURL
+          avatar: user.photoURL
         }
         await setDoc(userDocRef, userData)
         router.push("/onboarding");

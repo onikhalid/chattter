@@ -14,7 +14,6 @@ export function averageReadingTime(content: string): number {
     const words = countWordsInQuillEditor(content);
     const wordsPerMinute = 200;
     const minutes = words / wordsPerMinute;
-    const roundedReadingTimeInSeconds = Math.ceil(minutes * 60); // Rounded to the nearest second
-    console.log('roundedReadingTimeInSeconds', roundedReadingTimeInSeconds);
+    const roundedReadingTimeInSeconds = Math.ceil(minutes * 60);
     return roundedReadingTimeInSeconds;
 }

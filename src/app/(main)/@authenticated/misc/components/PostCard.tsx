@@ -92,7 +92,7 @@ const PostCard: React.FC<Props> = ({ post }) => {
             <Ellipsis />
           </DropdownMenuTrigger>
 
-          <DropdownMenuContent>
+          <DropdownMenuContent align='end'>
             <DropdownMenuItem>
               <Link href={`/p/${post.post_id}`} className='flex items-center gap-1.5 w-full'>
                 <Eye size={16} /> Read Post
@@ -180,7 +180,7 @@ const PostCard: React.FC<Props> = ({ post }) => {
           {
             post.tags.length &&
             <Tooltip content='See more related posts'>
-              <Link href={`/tags/${post.tags[0]}`} passHref>
+              <Link href={`/tags/${post.tags[0].toLowerCase()}`} passHref>
                 <Badge>{post.tags[0]}</Badge>
               </Link>
             </Tooltip>

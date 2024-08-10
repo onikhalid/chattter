@@ -1,13 +1,10 @@
-import { Dialog, DialogContent } from '@/components/ui'
+'use client'
 import React from 'react'
+import { CommentsDrawer } from '@/app/(main)/@authenticated/misc/components'
 
-const InterceptedDiscussPage = () => {
+const InterceptedDiscussPage = ({ searchParams: { post_id } }: { searchParams: { post_id: string } }) => {
   return (
-    <Dialog open={true}>
-        <DialogContent>
-            InterceptedDiscussPage
-        </DialogContent>
-    </Dialog>
+    <CommentsDrawer searchParams={{ post_id }} />
   )
 }
 
