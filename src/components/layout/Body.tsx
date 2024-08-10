@@ -92,45 +92,47 @@ const Body = ({ children }: { children: React.ReactNode }) => {
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align='end' className='flex flex-col gap-1.5 px-0'>
 
-                    <DropdownMenuItem className='flex items-center gap-2 pl-3 pr-8 dark:border-b-muted border-b-muted-foreground border-b rounded-none'>
-                      <Avatar alt={user.displayName || "user"} src={user.photoURL || userData?.avatar} fallback={getInitials(user.displayName || "F N")} />
-                      <div>
-                        <p className='text-lg font-display'>{user.displayName}</p>
-                        <p className='text-muted-foreground text-sm'>{user.email}</p>
-                      </div>
-                    </DropdownMenuItem>
-
-
-                    <DropdownMenuItem className='rounded-lg'>
-                      <Link href={`/u/${user?.uid}`} className='flex items-center gap-2 text-base pl-3 rounded-none w-full'>
-                        <User size={20} />
-                        Profile
+                    <DropdownMenuItem className='px-3 w-64 dark:border-b-muted border-b-muted-foreground border-b rounded-none'>
+                      <Link href={`/me/profile`} className='flex items-center gap-2 text-base px-3 rounded-none w-full'>
+                        <Avatar alt={user.displayName || "user"} src={user.photoURL || userData?.avatar} fallback={getInitials(user.displayName || "F N")} />
+                        <div>
+                          <p className='text-lg font-display max-w-[20ch]'>{user.displayName}</p>
+                          <p className='text-muted-foreground text-sm'>{user.email}</p>
+                        </div>
                       </Link>
                     </DropdownMenuItem>
 
-                    <DropdownMenuItem className='rounded-lg'>
+
+                    <DropdownMenuItem className='!rounded-none'>
+                      <Link href={`/u/${user?.uid}`} className='flex items-center gap-2 text-base pl-3 rounded-none w-full'>
+                        <User size={20} />
+                        Public Profile
+                      </Link>
+                    </DropdownMenuItem>
+
+                    <DropdownMenuItem className='!rounded-none'>
                       <Link href='/bookmarks' className='flex items-center gap-2 text-base pl-3 rounded-none w-full'>
                         <Folder size={20} />
                         Bookmarks
                       </Link>
                     </DropdownMenuItem>
 
-                    <DropdownMenuItem className='rounded-lg'>
+                    <DropdownMenuItem className='!rounded-none'>
                       <Link href='/settings' className='flex items-center gap-2 text-base pl-3 rounded-none w-full'>
                         <SettingsIcon size={20} />
                         Settings
                       </Link>
                     </DropdownMenuItem>
 
-                    <DropdownMenuItem className=' rounded-lg'>
-                      <button onClick={logout} className='flex items-center gap-2 text-base pl-3 rounded-none w-full'>
-                        <LogOut size={20} />
+                    <DropdownMenuItem className=' !rounded-none'>
+                      <button onClick={logout} className='flex items-center gap-2 text-base pl-3 rounded-none w-full text-red-400'>
+                        <LogOut size={20} className='text-red-400' />
                         Logout
                       </button>
                     </DropdownMenuItem>
 
 
-                    <div className='py-2'>
+                    <div className='py-2 mt-4'>
                       <p className='text-muted-foreground text-sm text-center'>Chatter v1.0.0</p>
                     </div>
                   </DropdownMenuContent>

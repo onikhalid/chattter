@@ -98,7 +98,7 @@ console.log(errors)
             }
             getUserData()
         }
-    }, [user, loading])
+    }, [user, loading, setValue])
 
 
 

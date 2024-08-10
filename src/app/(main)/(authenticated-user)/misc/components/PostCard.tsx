@@ -1,20 +1,23 @@
 import React, { useContext } from 'react'
 import Link from 'next/link'
-import { cleanUpPostQuillEditorContent } from '@/utils/quillEditor'
-import { Avatar, Badge, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, LinkButton, Tooltip } from '@/components/ui'
-import { ArrowRight, BookmarkX, BookmarkPlus, Ellipsis, Trash, PenBoxIcon, Eye, UserPlus, Share, UserMinus } from 'lucide-react'
 import Image from 'next/image'
+import { format } from 'date-fns'
+import { ArrowRight, BookmarkX, BookmarkPlus, Ellipsis, Trash, PenBoxIcon, Eye, UserPlus, Share, UserMinus, Share2 } from 'lucide-react'
+import toast from 'react-hot-toast'
+
+import { cleanUpPostQuillEditorContent } from '@/utils/quillEditor'
+import { Avatar, Badge, ConfirmDeleteModal, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, LinkButton, Tooltip } from '@/components/ui'
 import { auth } from '@/utils/firebaseConfig'
 import { useAuthState } from 'react-firebase-hooks/auth'
-import toast from 'react-hot-toast'
-import { UseAddPostToBookmark, UseFollowUser, UseRemovePostFromBookmark, UseUnFollowUser } from '../api'
 import { SmallSpinner } from '@/components/icons'
 import { UserContext } from '@/contexts'
 import { launchNotification } from '@/utils/notifications'
 import { useBooleanStateControl } from '@/hooks'
+
+import { UseAddPostToBookmark, useDeletePost, UseFollowUser, UseRemovePostFromBookmark, UseUnFollowUser } from '../api'
 import PostShareModal from './PostShareModal'
 import { TPost } from '../types'
-import { format } from 'date-fns'
+
 
 interface Props {
   post: TPost
@@ -31,6 +34,20 @@ const PostCard: React.FC<Props> = ({ post }) => {
     setTrue: openShareModal,
     setFalse: closeShareModal
   } = useBooleanStateControl()
+  const {
+    state: isConfirmDeleteModalOpen,
+    setTrue: openConfirmDeleteModal,
+    setFalse: closeConfirmDeleteModal
+  } = useBooleanStateControl()
+  const { mutate: deleteComment, isPending: isDeletingComment } = useDeletePost()
+
+
+  const handleDelete = () => {
+    const data = { post_id: post.post_id }
+    deleteComment(data)
+    closeConfirmDeleteModal()
+    toast.success("Post deleted successfully")
+  }
 
   const saveUnsave = () => {
     if (!loading && !user) {
@@ -92,40 +109,46 @@ const PostCard: React.FC<Props> = ({ post }) => {
             <Ellipsis />
           </DropdownMenuTrigger>
 
-          <DropdownMenuContent align='end'>
-            <DropdownMenuItem>
-              <Link href={`/p/${post.post_id}`} className='flex items-center gap-1.5 w-full'>
-                <Eye size={16} /> Read Post
+          <DropdownMenuContent align='end' className='flex flex-col p-0 xl:w-36'>
+            <DropdownMenuItem className='rounded-none p-'>
+              <Link href={`/p/${post.post_id}`} className='flex items-center gap-2.5 w-full p-0 text-[0.9remm]'>
+                <Eye size={18} /> Read Post
               </Link>
+            </DropdownMenuItem>
+
+            <DropdownMenuItem className='rounded-none p-'>
+              <button onClick={openShareModal} className='flex items-center gap-2.5 w-full p-0 text-[0.9remm]'>
+                <Share2 size={18} /> Share Post
+              </button>
             </DropdownMenuItem>
             {
               user?.uid === post.author_id &&
               <>
-                <DropdownMenuItem>
-                  <Link href={`/new?edit=${post.post_id}`} className='flex items-center gap-1.5 w-full'>
-                    <PenBoxIcon size={15} />Edit Post
+                <DropdownMenuItem className='rounded-none p-'>
+                  <Link href={`/new?edit=${post.post_id}`} className='flex items-center gap-2.5 w-full p-0 text-[0.9remm]'>
+                    <PenBoxIcon size={18} />Edit Post
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem>
-                  <Link href={`/p/${post.post_id}/delete`} className='flex items-center gap-1.5 w-full'>
-                    <Trash size={15} />Delete Post
-                  </Link>
+                  <button onClick={openConfirmDeleteModal} className='flex items-center gap-2.5 w-full p-0 text-base text-red-400'>
+                    <Trash size={18} className='text-red-400' />Delete Post
+                  </button>
                 </DropdownMenuItem>
               </>
             }
             {
               user?.uid !== post.author_id &&
               <>
-                <DropdownMenuItem>
-                  <button onClick={followUnfollow} className='flex items-center gap-1.5 w-full'>
+                <DropdownMenuItem className='rounded-none p-'>
+                  <button onClick={followUnfollow} className='flex items-center gap-2.5 w-full p-0 text-[0.9remm]'>
                     {
                       isUnfollowingUser || isFollowingUser ?
                         <SmallSpinner className='text-primary' />
                         :
                         userFollows?.includes(post.author_id || "") ?
-                          <UserMinus size={15} />
+                          <UserMinus size={18} />
                           :
-                          <UserPlus size={15} />
+                          <UserPlus size={18} />
                     }
 
                     {
@@ -139,11 +162,7 @@ const PostCard: React.FC<Props> = ({ post }) => {
                 </DropdownMenuItem>
               </>
             }
-            <DropdownMenuItem>
-              <button onClick={openShareModal} className='flex items-center gap-1.5 w-full'>
-                <Share size={15} /> Share Post
-              </button>
-            </DropdownMenuItem>
+
           </DropdownMenuContent>
         </DropdownMenu>
       </header>
@@ -208,6 +227,16 @@ const PostCard: React.FC<Props> = ({ post }) => {
         isModalOpen={isShareModalOpen}
         closeModal={closeShareModal}
       />
+
+      <ConfirmDeleteModal
+        isModalOpen={isConfirmDeleteModalOpen}
+        closeModal={closeConfirmDeleteModal}
+        deleteFunction={handleDelete}
+        title="Delete Post"
+        isDeletePending={isDeletingComment}
+      >
+        <p>Are you sure you want to delete this post?. Please note that this action is irreversible</p>
+      </ConfirmDeleteModal>
     </article>
   )
 }

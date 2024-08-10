@@ -145,7 +145,7 @@ const usePostsByTagInfiniteQuery = (tag_name: string, sortBy: SortOption) => {
     });
 
     return () => unsubscribe();
-  }, [queryClient]);
+  }, [queryClient, sortBy]);
 
   return useInfiniteQuery<QueryResult, Error, InfiniteData<QueryResult>, QueryKey, QueryDocumentSnapshot<DocumentData> | null>({
     queryKey: ['posts-by-tag', { tag_name, sortBy }],

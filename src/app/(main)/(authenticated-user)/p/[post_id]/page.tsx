@@ -17,13 +17,13 @@ import { SmallSpinner } from '@/components/icons'
 import { UserContext } from '@/contexts'
 import { useBooleanStateControl } from '@/hooks'
 import { averageReadingTime } from '@/utils/quillEditor'
+import { cn } from '@/lib/utils'
 
 import { UseGetPostDetails } from '../../new/misc/api'
-import PostShareModal from '../../@authenticated/misc/components/PostShareModal'
-import { UseAddPostToBookmark, UseFollowUser, UseLikePost, UseRemovePostFromBookmark, UseUnFollowUser, UseUnlikePost } from '../../@authenticated/misc/api'
-import { TPost } from '../../@authenticated/misc/types'
-import { cn } from '@/lib/utils'
 import Head from 'next/head'
+import PostShareModal from '../../misc/components/PostShareModal'
+import { TPost } from '../../misc/types'
+import { UseAddPostToBookmark, UseFollowUser, UseLikePost, UseRemovePostFromBookmark, UseUnFollowUser, UseUnlikePost } from '../../misc/api'
 
 
 

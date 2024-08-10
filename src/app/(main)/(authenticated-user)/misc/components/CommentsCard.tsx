@@ -4,6 +4,7 @@ import { format } from 'date-fns';
 import { ChevronDown, Dot, Trash } from 'lucide-react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { addDoc, collection } from 'firebase/firestore';
+import toast from 'react-hot-toast';
 
 import { Avatar, Button, Collapsible, CollapsibleTrigger, CollapsibleContent, Textarea, ConfirmDeleteModal } from '@/components/ui';
 import { auth, db } from '@/utils/firebaseConfig';
@@ -14,7 +15,6 @@ import { useBooleanStateControl } from '@/hooks';
 
 import { TComment } from '../types';
 import { useDeleteComment } from '../api';
-import toast from 'react-hot-toast';
 
 
 

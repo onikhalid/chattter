@@ -1,5 +1,6 @@
 export { useAddNewComment } from './postAddComment'
 export { useDeleteComment } from './deleteComment'
+export { useDeletePost } from './deletePost'
 export { useGetComments } from './getPostComments'
 export { default as UseAddPostToBookmark } from './postAddBookmark'
 export { default as useAllPostsInfiniteQuery } from './getPostsAll'

@@ -56,7 +56,7 @@ const FollowsPostsList: React.FC = () => {
             <article className='bg-background p-6 lg:p-10 rounded-3xl max-md:rounded-b-none mx-auto w-full max-w-[525px]'>
               <h3 className='text-5xl font-medium'>No posts found.</h3>
               <p>
-                No posts was found, either you're not following anyone or the people you follow haven't made any posts. You can either try again later, follow more people or create a new post.
+                No posts was found, either you&apos;re not following anyone or the people you follow haven&apos;t made any posts. You can either try again later, follow more people or create a new post.
               </p>
               <LinkButton href='/new' className='mt-4 md:mt-10 px-12 py-6 text-lg'>
                 Create a new post

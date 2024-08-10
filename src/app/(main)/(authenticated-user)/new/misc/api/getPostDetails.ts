@@ -1,7 +1,7 @@
 import { getDoc, doc } from "firebase/firestore";
 import { useQuery } from "@tanstack/react-query";
 import { db } from "@/utils/firebaseConfig";
-import { TPost } from "@/app/(main)/@authenticated/misc/types";
+import { TPost } from "../../../misc/types";
 
 const fetchPostToEdit = async (postId: string) => {
   const postToEditRef = doc(db, `posts/${postId}`);

@@ -9,10 +9,9 @@ import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import 'react-quill/dist/quill.snow.css';
 
-import { Avatar, Button, ChatterLogo, FormError, Input, LinkButton, LoadingModal, Popover, PopoverContent, PopoverTrigger, TagInput } from '@/components/ui'
+import { Avatar, Button, ChatterLogo, FormError, Input, LinkButton, LoadingModal, TagInput } from '@/components/ui'
 import { auth, storage } from '@/utils/firebaseConfig';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { getInitials } from '@/utils/strings';
 import { PenIcon, TrashIcon, UploadIcon, ViewIcon } from '@/components/icons';
 import { UserContext } from '@/contexts';
 import { cn } from '@/lib/utils';

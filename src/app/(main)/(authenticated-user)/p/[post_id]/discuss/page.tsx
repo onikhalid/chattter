@@ -1,13 +1,13 @@
 'use client'
 
 import React from 'react'
-import { CommentsDiscussPage } from '@/app/(main)/@authenticated/misc/components'
-import { UseGetPostDetails } from '@/app/(main)/new/misc/api'
 import { Avatar, Badge, LinkButton, Skeleton } from '@/components/ui'
 import { format } from 'date-fns'
 import { ArrowRight } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
+import { UseGetPostDetails } from '../../../new/misc/api'
+import { CommentsDiscussPage } from '../../../misc/components'
 
 
 

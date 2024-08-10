@@ -3,7 +3,6 @@
 
 import React from 'react'
 import { Spinner } from "@/components/icons";
-import { AuthenticatedHomepage, UnauthenticatedHomepage } from "@/components/layout";
 import { Button, ChatterLogo } from "@/components/ui";
 import { LinkButton } from "@/components/ui/linkButton";
 import { auth } from "@/utils/firebaseConfig";
@@ -12,11 +11,11 @@ import { useAuthState } from 'react-firebase-hooks/auth';
 import { usePathname } from 'next/navigation';
 interface Props {
     children: React.ReactNode
-    authenticated: React.ReactNode
-    unauthenticated: React.ReactNode
+    homeauthenticated: React.ReactNode
+    homeunauthenticated: React.ReactNode
 
 }
-const MainLayout: React.FC<Props> = ({ children, authenticated, unauthenticated }) => {
+const MainLayout: React.FC<Props> = ({ children, homeauthenticated, homeunauthenticated }) => {
 
     const [user, loading] = useAuthState(auth);
     const pathName = usePathname()
@@ -33,9 +32,9 @@ const MainLayout: React.FC<Props> = ({ children, authenticated, unauthenticated 
                             </div>
                             :
                             user ?
-                                authenticated
+                            homeauthenticated
                                 :
-                                unauthenticated
+                                homeunauthenticated
                     }
                 </>
             }
