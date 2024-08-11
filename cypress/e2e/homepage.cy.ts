@@ -17,6 +17,7 @@ describe('Homepage for Unauthenticated User', () => {
   
     it('should navigate to sign up page when sign up button is clicked', () => {
       cy.get('[data-testid="signup-button"]').click();
+      cy.wait(1500);
       cy.url().should('include', '/register');
     });
   

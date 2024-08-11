@@ -14,6 +14,7 @@ import { Avatar, Button, ChattterLogo, DropdownMenu, DropdownMenuContent, Dropdo
 import { UserContext } from '@/contexts';
 import { useBooleanStateControl } from '@/hooks';
 import SearchModal from './SearchModal';
+import { AuthLayoutHeader } from '@/app/(auth)/misc/components';
 
 
 
@@ -215,6 +216,30 @@ const Body = ({ children }: { children: React.ReactNode }) => {
 
             </header>
           )
+        }
+        {
+          !loading && !user && !authPathNames.includes(pathName) && pathName !== "/" &&
+          <header className="sticky top-0 flex items-center justify-between w-full p-5 md:px-10 md:py-6">
+            <ChattterLogo />
+            <section className='flex items-center gap-4'>
+              <div onClick={toggleTheme} className='cursor-pointer'>
+                {
+                  theme == 'dark'
+                    ?
+                    <SunIcon size={24} strokeWidth={1.5} />
+                    :
+                    <MoonIcon size={24} strokeWidth={1.5} />
+                }
+              </div>
+              <LinkButton href='/login' data-testid="login-button-link">
+                Login
+              </LinkButton>
+              <LinkButton href="/register" data-testid="signup-button">
+                Get Started
+              </LinkButton>
+
+            </section>
+          </header>
         }
         {children}
       </div>

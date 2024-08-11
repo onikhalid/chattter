@@ -26,6 +26,6 @@ export const useGetComments = (postId: string) => {
           });
           return () => unsubscribe();
         }),
-      refetchOnWindowFocus: false,
+      refetchOnWindowFocus: true,
     });
   };

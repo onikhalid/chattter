@@ -63,6 +63,9 @@ const PostsByTagList: React.FC<{ tag_name: string }> = ({ tag_name }) => {
         }
       })
     }
+    else{
+      toast.error('You need to be signed in to follow a tag')
+    }
   }
 
   const handleRemoveInterest = () => {

@@ -272,7 +272,7 @@ const PostDetailsPage = ({ params }: { params: { post_id: string } }) => {
                                         {
                                             post.tags.map((tag, index) => (
                                                 <Badge key={index} variant="secondary" className='text-sm font-normal'>
-                                                    <Link href={`/tags/${tag}`}>
+                                                    <Link href={`/tags/${tag.toLowerCase()}`}>
                                                         {tag}
                                                     </Link>
                                                 </Badge>

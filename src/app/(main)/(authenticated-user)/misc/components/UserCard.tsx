@@ -19,11 +19,12 @@ const UserCard = ({ user }: Props) => {
     const { mutate: unfollowUser, isPending: isUnfollowingUser } = UseUnFollowUser()
 
     const followUnfollow = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+      
         e.stopPropagation()
         e.preventDefault()
 
 
-        if (!loading && !user) {
+        if (!loading && !currentUser) {
             toast.error("Login to follow users")
         } else if (currentUser) {
             const data = {
@@ -68,7 +69,7 @@ const UserCard = ({ user }: Props) => {
                 )
             }
 
-            <Button onClick={(e) => followUnfollow(e)} className='flex items-center gap-2.5 w-full text-[1rem] max-md:text-base max-sm:mt-4'
+            <Button onClick={(e) => followUnfollow(e)} className='flex items-center gap-2.5 w-full text-[1rem] max-md:text-base max-sm:mt-4 md:max-w-max'
                 variant={userFollows?.includes(user.uid || "") ? "secondary" : "default"}
             >
                 {

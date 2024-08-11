@@ -10,12 +10,15 @@ import { getInitials } from '@/utils/strings'
 import { Avatar, DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from '@/components/ui'
 import { auth } from '@/utils/firebaseConfig'
 
-const AuthLayoutHeader = () => {
+interface Props {
+    isAuthenticated?: boolean
+}
+const AuthLayoutHeader = ({ isAuthenticated = true }: Props) => {
     const [user, loading] = useAuthState(auth)
     const router = useRouter();
     const logout = () => {
-      auth.signOut();
-      router.push('/login')
+        auth.signOut();
+        router.push('/login')
     }
 
     return (
@@ -23,7 +26,7 @@ const AuthLayoutHeader = () => {
             <ChattterLogo />
 
             {
-                !loading && user &&
+                !loading && user && isAuthenticated &&
                 <DropdownMenu>
                     <DropdownMenuTrigger className='ml-auto' data-testid="menu-button">
                         <Avatar alt={user?.displayName || "user"} src={user?.photoURL} fallback={getInitials(user.displayName || "F N")} />
@@ -36,6 +39,13 @@ const AuthLayoutHeader = () => {
                         </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
+            }
+
+            {
+                !isAuthenticated &&
+                <div>
+                    
+                </div>
             }
         </header>
     )
