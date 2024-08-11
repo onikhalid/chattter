@@ -2,7 +2,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { MoonIcon, SunIcon, PenIcon, Settings2, User, LogOut, Folder, SettingsIcon } from 'lucide-react';
+import { MoonIcon, SunIcon, PenIcon, Settings2, User, LogOut, Folder, SettingsIcon, SearchIcon } from 'lucide-react';
 
 import AllProviders from '@/utils/providers';
 import { cn } from '@/lib/utils';
@@ -12,6 +12,8 @@ import { getInitials } from '@/utils/strings';
 
 import { Avatar, Button, ChattterLogo, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, LinkButton, Sheet, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from '../ui';
 import { UserContext } from '@/contexts';
+import { useBooleanStateControl } from '@/hooks';
+import SearchModal from './SearchModal';
 
 
 
@@ -26,7 +28,11 @@ const Body = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
   const authPathNames = ['/login', '/register', '/onboarding', '/forgot-password', '/reset-password', '/complete-profile']
 
-
+  const {
+    state: isSearchModalOpen,
+    setTrue: openSearchModal,
+    setFalse: closeSearchModal
+  } = useBooleanStateControl()
   useEffect(() => {
     const savedTheme = localStorage.getItem("theme");
     if (savedTheme) {
@@ -61,24 +67,27 @@ const Body = ({ children }: { children: React.ReactNode }) => {
             <header className="sticky top-0 flex items-center justify-between w-full px-5 py-3 md:px-10 md:py-4 border-b-[0.6px] border-muted-foreground dark:border-b-muted font-display">
               <ChattterLogo />
               <section className='flex items-center gap-4'>
+                <SearchIcon onClick={openSearchModal} size={24} className='cursor-pointer' />
+                <SearchModal
+                  isModalOpen={isSearchModalOpen}
+                  closeModal={closeSearchModal}
+                />
                 {
                   pathName === '/new' &&
-                  (
-                    <Button shape='rounded' className='flex items-center gap-2 rounded-lg py-1.5' type='submit' form="form">
-                      {postToEditId ? "Update" : "Submit"}
-                      <PenIcon color={'lightblue'} size={15} />
-                    </Button>
-                  )
+                  <Button shape='rounded' variant="secondary" className='flex items-center gap-2 rounded-lg py-1.5' type='submit' form="form">
+                    {postToEditId ? "Update" : "Submit"}
+                    <PenIcon size={15} />
+                  </Button>
                 }
                 {
-                  pathName !== '/new' && (
-                    <LinkButton href='/new' shape='rounded' variant='outline' className='flex items-center gap-2 rounded-lg border-muted py-1.5'>
-                      <span className='max-md:hidden'>
-                        Write story
-                      </span>
-                      <PenIcon size={15} />
-                    </LinkButton>
-                  )
+                  pathName !== '/new' &&
+                  <LinkButton href='/new' shape='rounded' variant='outline' className='flex items-center gap-2 rounded-lg border-muted py-1.5'>
+                    <span className='max-md:hidden'>
+                      Write story
+                    </span>
+                    <PenIcon size={15} />
+                  </LinkButton>
+
                 }
                 <div onClick={toggleTheme} className='cursor-pointer'>
                   {
@@ -189,6 +198,8 @@ const Body = ({ children }: { children: React.ReactNode }) => {
                   </DropdownMenuContent>
                 </DropdownMenu>
               </section>
+
+
             </header>
           )
         }
