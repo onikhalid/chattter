@@ -51,7 +51,7 @@ const SearchPosts = () => {
 
 
     return (
-        <section className='relative flex flex-col w-full max-w-[550px] lg:max-w-[1200px] mx-auto'>
+        <section className='grow relative flex flex-col w-full max-w-[550px] h-full lg:max-w-[1200px] mx-auto'>
             <div className={cn('flex items-center border-b-[1.5px] w-full border-muted-foreground dark:border-muted py-4',
                 data?.pages.reduce((total, page) => total + page.posts.length, 0) == 0 && "hidden")}
             >
@@ -82,13 +82,14 @@ const SearchPosts = () => {
 
             {
                 data?.pages.reduce((total, page) => total + page.posts.length, 0) == 0 && !isLoading && (
-                    <div className='flex flex-col items-center justify-center w-full my-auto'>
+                    <div className='grow flex flex-col items-center justify-center size-full my-auto'>
                         <article className='bg-background p-6 lg:p-10 rounded-3xl max-md:rounded-b-none mx-auto w-full max-w-[525px]'>
                             <h3 className='text-5xl font-medium'>No posts found.</h3>
                             <p className='my-5'>
-                                We couldn&apos;t find any post with this tag &quot;{search_text}&quot; on Chattter, try again later or be the first to create a post with this tag.
+                                We couldn&apos;t find any post related to this query &quot;{search_text}&quot; on Chattter, change your query and try again later.
                             </p>
-                            <LinkButton href={`/new?tag=${search_text}`} className='mt-4'>
+
+                            <LinkButton href='/new' className='mt-4 md:mt-10 px-12 py-6 text-lg'>
                                 Create a new post
                             </LinkButton>
                         </article>
@@ -128,8 +129,10 @@ const SearchPosts = () => {
                         hasNextPage
                             ? null
                             :
-                            <div className={cn('mt-4 py-5 w-full text-center', data?.pages.reduce((total, page) => total + page.posts.length, 0) == 0 && "hidden")}>
-                                - End -
+                            <div className={cn('mt-8 py-5 w-full text-center ', data?.pages.reduce((total, page) => total + page.posts.length, 0) == 0 && "hidden")}>
+                                <span className='font-sans'>&mdash;&mdash;</span>
+                                {" "}End{" "}
+                                <span className='font-sans'>&mdash;&mdash;</span>
                             </div>
                 }
             </div>

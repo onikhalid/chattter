@@ -80,7 +80,7 @@ const page = ({ params }: { params: { type: string } }) => {
                             key={tab.id}
                             value={tab.id.split("?q=")[0]}
                         >
-                            <div className="flex flex-col items-center justify-start w-full min-h-full rounded-10">
+                            <div className="flex flex-col items-center justify-center w-full min-h-full rounded-10">
                                 {tab.component}
                             </div>
                         </TabsContent>

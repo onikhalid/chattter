@@ -29,6 +29,7 @@ export const updateUserProfile = async (
     const userData = {
         uid: user.uid,
         name: data.name,
+        email: user.email,
         name_for_search:  generateTitleSearchTerms(data.name),
         username: data.username,
         avatar: selectedImage ? newImageURL : profileImgURL,

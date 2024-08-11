@@ -18,7 +18,7 @@ const ToolTip: React.FC<ToolTipProps> = ({ content, children, className, align, 
                 <TooltipTrigger className={className} asChild={asChild}>
                     {children}
                 </TooltipTrigger>
-                <TooltipContent align={align} className={cn(contentClass)}>
+                <TooltipContent align={align} className={cn(contentClass)} >
                     {content}
                 </TooltipContent>
             </Tooltip>

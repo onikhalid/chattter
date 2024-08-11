@@ -9,3 +9,5 @@ export { default as SearchPeople } from './SearchPeople';
 export { default as CommentsList } from './CommentsList';
 export { default as CommentsDrawer } from './CommentsDrawer';
 export { default as CommentsDiscussPage } from './CommentsDiscussPage';
+
+export { default as UserCard } from './UserCard';

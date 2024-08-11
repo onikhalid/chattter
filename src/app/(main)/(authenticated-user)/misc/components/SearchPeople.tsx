@@ -12,6 +12,7 @@ import PostCard from './PostCard';
 import PostCardSkeleton from './PostCardSkeleton';
 import { useUsersBySearchInfiniteQuery } from '../api';
 import { UsersQueryResult } from '../api/getUserBySearch';
+import UserCard from './UserCard';
 
 type SortOption = 'date_desc' | 'date_asc' | 'name_asc' | 'name_desc' | 'likes_desc' | 'likes_asc';
 
@@ -48,7 +49,7 @@ const SearchPeople = () => {
 
 
     return (
-        <section className='relative flex flex-col w-full max-w-[550px] lg:max-w-[1200px] mx-auto'>
+        <section className='grow relative flex flex-col w-full max-w-[550px] lg:max-w-[1200px] mx-auto'>
             <div className={cn('flex items-center border-b-[1.5px] w-full border-muted-foreground dark:border-muted py-4',
                 data?.pages.reduce((total, page) => total + page.users.length, 0) == 0 && "hidden")}
             >
@@ -100,14 +101,7 @@ const SearchPeople = () => {
                     <div key={i} className='flex flex-col divide-y-[1.5px] w-full divide-muted-foreground dark:divide-muted'>
                         {
                             page.users.map((user: TUser) => (
-                                // <PostCard
-                                //     key={user.uid}
-                                //     user={user} />
-
-                                <div>
-                                    {user.username}
-                                    {user.uid}
-                                </div>
+                                <UserCard key={user.uid} user={user} />
                             ))
                         }
                     </div>

@@ -38,6 +38,7 @@ const SearchModal: React.FC<Props> = ({ isModalOpen, closeModal }) => {
             return
         }
         router.push(`/search/posts?q=${searchText}`)
+        closeModal()
     }
 
 
@@ -45,7 +46,7 @@ const SearchModal: React.FC<Props> = ({ isModalOpen, closeModal }) => {
         <Dialog open={isModalOpen} onOpenChange={closeModal}>
             <DialogContent className='p-6'>
                 <DialogHeader>
-                    <DialogTitle>Search Chatter Post</DialogTitle>
+                    <DialogTitle>Search Chattter</DialogTitle>
                 </DialogHeader>
 
                 <form className='w-full min-w-[300px] max-w-lg' onSubmit={(e) => handleSearch(e)}>

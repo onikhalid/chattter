@@ -2,7 +2,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { MoonIcon, SunIcon, PenIcon, Settings2, User, LogOut, Folder, SettingsIcon, SearchIcon } from 'lucide-react';
+import { MoonIcon, SunIcon, PenIcon, Settings2, User, LogOut, Folder, SettingsIcon, SearchIcon, SaveIcon, SendIcon } from 'lucide-react';
 
 import AllProviders from '@/utils/providers';
 import { cn } from '@/lib/utils';
@@ -10,7 +10,7 @@ import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth } from '@/utils/firebaseConfig';
 import { getInitials } from '@/utils/strings';
 
-import { Avatar, Button, ChattterLogo, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, LinkButton, Sheet, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from '../ui';
+import { Avatar, Button, ChattterLogo, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, LinkButton, Sheet, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger, Tooltip } from '../ui';
 import { UserContext } from '@/contexts';
 import { useBooleanStateControl } from '@/hooks';
 import SearchModal from './SearchModal';
@@ -67,21 +67,38 @@ const Body = ({ children }: { children: React.ReactNode }) => {
             <header className="sticky top-0 flex items-center justify-between w-full px-5 py-3 md:px-10 md:py-4 border-b-[0.6px] border-muted-foreground dark:border-b-muted font-display">
               <ChattterLogo />
               <section className='flex items-center gap-4'>
-                <SearchIcon onClick={openSearchModal} size={24} className='cursor-pointer' />
-                <SearchModal
-                  isModalOpen={isSearchModalOpen}
-                  closeModal={closeSearchModal}
-                />
+                <Tooltip content='Search'>
+                  <SearchIcon onClick={openSearchModal} size={24} className='cursor-pointer' />
+                </Tooltip>
+
+                <Tooltip content={theme === 'dark' ? 'Light Mode' : 'Dark Mode'}>
+                  <div onClick={toggleTheme} className='cursor-pointer'>
+
+                    {
+                      theme == 'dark'
+                        ?
+                        <SunIcon size={26} strokeWidth={1.8} />
+                        :
+                        <MoonIcon size={24} strokeWidth={1.8} />
+                    }
+                  </div>
+                </Tooltip>
+
                 {
                   pathName === '/new' &&
                   <Button shape='rounded' variant="secondary" className='flex items-center gap-2 rounded-lg py-1.5' type='submit' form="form">
                     {postToEditId ? "Update" : "Submit"}
-                    <PenIcon size={15} />
+                    {
+                      postToEditId ?
+                        <SaveIcon size={15} />
+                        :
+                        <SendIcon size={15} />
+                    }
                   </Button>
                 }
                 {
                   pathName !== '/new' &&
-                  <LinkButton href='/new' shape='rounded' variant='outline' className='flex items-center gap-2 rounded-lg border-muted py-1.5'>
+                  <LinkButton href='/new' shape='rounded' variant='default' className='flex items-center gap-2 rounded-lg border-muted py-1.5'>
                     <span className='max-md:hidden'>
                       Write story
                     </span>
@@ -89,15 +106,7 @@ const Body = ({ children }: { children: React.ReactNode }) => {
                   </LinkButton>
 
                 }
-                <div onClick={toggleTheme} className='cursor-pointer'>
-                  {
-                    theme == 'dark'
-                      ?
-                      <SunIcon size={24} strokeWidth={1.5} />
-                      :
-                      <MoonIcon size={24} strokeWidth={1.5} />
-                  }
-                </div>
+
 
                 <Sheet>
                   <SheetTrigger className='md:hidden'>
@@ -199,6 +208,10 @@ const Body = ({ children }: { children: React.ReactNode }) => {
                 </DropdownMenu>
               </section>
 
+              <SearchModal
+                isModalOpen={isSearchModalOpen}
+                closeModal={closeSearchModal}
+              />
 
             </header>
           )
