@@ -3,6 +3,7 @@ import { useInfiniteQuery, useQueryClient, QueryFunctionContext, InfiniteData } 
 import { db } from "@/utils/firebaseConfig";
 import { collection, query, orderBy, limit, startAfter, onSnapshot, QueryDocumentSnapshot, DocumentData, getDocs, where } from "firebase/firestore";
 import { TPost } from '../types';
+import { getOrderFieldAndDirection } from '../utils';
 
 const POSTS_PER_FETCH = 10;
 
@@ -18,35 +19,8 @@ type QueryKey = ['posts-by-tag', { tag_name: string, sortBy: SortOption }];
 const getPosts = async ({ pageParam = null, queryKey }: QueryFunctionContext<QueryKey, QueryDocumentSnapshot<DocumentData> | null>): Promise<QueryResult> => {
   const [, { tag_name, sortBy }] = queryKey;
   const postsCollectionRef = collection(db, "posts");
+  const { orderByField, orderDirection } = getOrderFieldAndDirection(sortBy);
 
-  let orderByField: string;
-  let orderDirection: 'asc' | 'desc';
-
-  switch (sortBy) {
-    case 'date_asc':
-      orderByField = 'created_at';
-      orderDirection = 'asc';
-      break;
-    case 'alpha_asc':
-      orderByField = 'title';
-      orderDirection = 'asc';
-      break;
-    case 'alpha_desc':
-      orderByField = 'title';
-      orderDirection = 'desc';
-      break;
-    case 'likes_desc':
-      orderByField = 'likes';
-      orderDirection = 'desc';
-      break;
-    case 'likes_asc':
-      orderByField = 'likes';
-      orderDirection = 'asc';
-      break;
-    default:
-      orderByField = 'created_at';
-      orderDirection = 'desc';
-  }
 
 
   let q = query(
@@ -87,34 +61,7 @@ const usePostsByTagInfiniteQuery = (tag_name: string, sortBy: SortOption) => {
   const queryClient = useQueryClient();
 
   useEffect(() => {
-    let orderByField: string;
-    let orderDirection: 'asc' | 'desc';
-
-    switch (sortBy) {
-      case 'date_asc':
-        orderByField = 'created_at';
-        orderDirection = 'asc';
-        break;
-      case 'alpha_asc':
-        orderByField = 'title';
-        orderDirection = 'asc';
-        break;
-      case 'alpha_desc':
-        orderByField = 'title';
-        orderDirection = 'desc';
-        break;
-      case 'likes_desc':
-        orderByField = 'likes';
-        orderDirection = 'desc';
-        break;
-      case 'likes_asc':
-        orderByField = 'likes';
-        orderDirection = 'asc';
-        break;
-      default:
-        orderByField = 'created_at';
-        orderDirection = 'desc';
-    }
+    const { orderByField, orderDirection } = getOrderFieldAndDirection(sortBy);
     const postsCollectionRef = collection(db, "posts");
     const q = query(
       postsCollectionRef,

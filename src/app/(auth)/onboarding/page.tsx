@@ -9,9 +9,9 @@ import { getDoc, doc } from 'firebase/firestore';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import toast from 'react-hot-toast';
 
-import { Button,FormError, Input, LoadingModal, TagInput, Textarea } from '@/components/ui';
+import { Button, FormError, Input, LoadingModal, TagInput, Textarea } from '@/components/ui';
 import { SmallSpinner, TrashIcon, UploadIcon } from '@/components/icons';
-import { auth, db,  } from '@/utils/firebaseConfig';
+import { auth, db, } from '@/utils/firebaseConfig';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { AuthLayoutHeader } from '../misc/components';
 import { presetArticleTags } from '@/constants';
@@ -20,6 +20,7 @@ import { cn } from '@/lib/utils';
 
 import { useUpdateUserProfile } from '../misc/api';
 import { TUpdateUser } from '../misc/types';
+import { generateTitleSearchTerms } from '@/app/(main)/(authenticated-user)/new/misc/utils';
 
 
 
@@ -74,7 +75,7 @@ const NewUserOnboarding: React.FC = () => {
     const { handleSubmit, register, formState: { errors, isDirty, isValid }, control, watch, setError, setValue } = useForm<TUpdateUser>({
         resolver: zodResolver(OnboardingForm)
     });
-console.log(errors)
+    console.log(errors)
 
     useEffect(() => {
         if (!loading && user) {
@@ -104,8 +105,9 @@ console.log(errors)
 
     const updateUserProfileMutation = useUpdateUserProfile({ user: user!, selectedImage, profileImgURL: profileImgURL! });
     const handleUpdateProfile = async (data: TUpdateUser) => {
+
         try {
-            await updateUserProfileMutation.mutateAsync(data,
+            await updateUserProfileMutation.mutateAsync({ ...data, updated_at: new Date(), name_for_search: generateTitleSearchTerms(data.name) },
                 {
                     onSuccess(data, variables, context) {
                         toast.success("Profile updated successfully", {

@@ -6,6 +6,7 @@ import { db, storage } from "@/utils/firebaseConfig";
 import { useMutation, UseMutationResult, useQueryClient } from "@tanstack/react-query";
 
 import { TUpdateUser } from "../types";
+import { generateTitleSearchTerms } from "@/app/(main)/(authenticated-user)/new/misc/utils";
 
 
 
@@ -28,6 +29,7 @@ export const updateUserProfile = async (
     const userData = {
         uid: user.uid,
         name: data.name,
+        name_for_search:  generateTitleSearchTerms(data.name),
         username: data.username,
         avatar: selectedImage ? newImageURL : profileImgURL,
         bio: data.bio,

@@ -3,7 +3,7 @@
 import { ReactNode } from 'react';
 import { useState, useEffect, useLayoutEffect } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { collection, doc, DocumentData, getDocs, onSnapshot, query, where } from "firebase/firestore";
+import { collection, doc, DocumentData, getDocs, onSnapshot, query, Timestamp, where } from "firebase/firestore";
 
 import { createContext } from 'react';
 import { auth, db } from '@/utils/firebaseConfig';
@@ -14,13 +14,15 @@ import toast from 'react-hot-toast';
 export interface TUser {
     uid: string;
     name: string;
+    name_for_search: string[];
     username: string;
     email: string;
     avatar: string;
     bio: string;
     followers: string[];
     followings: string[];
-    created_at: Date;
+    created_at: Timestamp;
+    updated_at: Timestamp;
     interests: string[];
     likes: string[];
     twitter: string;
@@ -71,7 +73,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
             const unsubscribeUserData = onSnapshot(userDocRef, (snapshot) => {
                 const userData = snapshot.data() as TUser;
                 setUserData(userData);
-                setUserInterests(userData.interests || []);
+                setUserInterests(userData?.interests || []);
             });
 
             // Real-time listener for follows

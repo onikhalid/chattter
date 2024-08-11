@@ -8,17 +8,18 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import 'react-quill/dist/quill.snow.css';
+import { z, ZodError } from "zod";
 
-import { Avatar, Button, FormError, Input, LinkButton, LoadingModal, Popover, PopoverContent, PopoverTrigger, TagInput } from '@/components/ui'
+import { Avatar, Button, FormError, Input, LoadingModal, TagInput } from '@/components/ui'
 import { auth, storage } from '@/utils/firebaseConfig';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { PenIcon, TrashIcon, UploadIcon, ViewIcon } from '@/components/icons';
+import { PenIcon, TrashIcon, UploadIcon, } from '@/components/icons';
 import { UserContext } from '@/contexts';
 import { cn } from '@/lib/utils';
 import { presetArticleTags } from '@/constants';
+
 import { UseCreateNewPost, UseGetPostDetails, UseUpdateNewPost } from './misc/api';
-import { deleteImageFromDatabase, extractImageUrls, findDeletedImage, uploadCoverImage } from './misc/utils';
-import { z, ZodError } from "zod";
+import { deleteImageFromDatabase, extractImageUrls, generateTitleSearchTerms, uploadCoverImage } from './misc/utils';
 
 
 
@@ -118,7 +119,7 @@ const WriteNewStoryPage = () => {
             author_name: userData?.name || "",
             created_at: postData?.created_at || new Date(),
             tags_lower: data.tags.map(tag => tag.toLowerCase() || ""),
-            title_for_search: data.title.split(/[,:.\s-]+/).filter(word => word !== ''),
+            title_for_search: [...generateTitleSearchTerms(data.title), ...(userData?.name || "").toLowerCase().split(" "), userData?.username || ""],
             cover_image: postData?.cover_image || "",
         };
 
@@ -150,15 +151,15 @@ const WriteNewStoryPage = () => {
                     console.log(data, 'Post created successfully');
                     const newDocId = data?.id as string || "";
 
-                    console.log(`New post ID: ${newDocId}`);
-
                     deletedImages.filter((imageUrl) => submittedData?.content.includes(imageUrl));
                     for (const imageUrl of deletedImages) {
                         deleteImageFromDatabase(imageUrl);
                     }
                     await uploadCoverImage({ imageFile: selectedCoverImageFile!, postId: newDocId });
                     reset();
-                    router.push(`/v?=all`)
+                    setSelectedCoverImageFile(null)
+                    setCoverImgURL(null)
+                    router.push(`/?v=all`)
                 },
                 onError: (error) => {
                     console.error('Error creating post:', error);
@@ -359,9 +360,9 @@ const WriteNewStoryPage = () => {
                                         container: [
                                             [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
 
-                                            ['bold', 'italic', 'underline', 'strike'], 
-                                            [{ 'list': 'ordered' }, { 'list': 'bullet' }], 
-                                            [{ 'indent': '-1' }, { 'indent': '+1' }], 
+                                            ['bold', 'italic', 'underline', 'strike'],
+                                            [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+                                            [{ 'indent': '-1' }, { 'indent': '+1' }],
                                             [{ 'align': [] }],
 
                                             ['link', 'image'],

@@ -15,6 +15,7 @@ import { auth, db } from '@/utils/firebaseConfig';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { launchNotification } from '@/utils/notifications';
 import { AuthLayoutHeader } from '../misc/components';
+import { generateTitleSearchTerms } from '@/app/(main)/(authenticated-user)/new/misc/utils';
 
 
 
@@ -52,7 +53,14 @@ const Register: React.FC = () => {
         const userData = {
           id: user.uid,
           name: user.displayName === null ? `Writer_${user.uid.substring(0, 5)}` : user.displayName,
-          profilePicture: user.photoURL === null ? unknownUserPhotoURL : user.photoURL
+          name_for_search: generateTitleSearchTerms(user.displayName === null ? `Writer_${user.uid.substring(0, 5)}` : user.displayName),
+          avatar: user.photoURL === null ? unknownUserPhotoURL : user.photoURL,
+          email: user.email,  
+          followers: [],
+          followings: [],
+          bookmarks: [],
+          created_at: new Date(),
+          updated_at: new Date(),
         }
         await setDoc(userDocRef, userData)
         router.push("/onboarding")
@@ -87,7 +95,14 @@ const Register: React.FC = () => {
         const userData = {
           uid: user.uid,
           name: user.displayName,
-          avatar: user.photoURL
+          name_for_search: generateTitleSearchTerms(user.displayName|| ""),
+          avatar: user.photoURL,
+          email: user.email,  
+          followers: [],
+          followings: [],
+          bookmarks: [],
+          created_at: new Date(),
+          updated_at: new Date(),
         }
         await setDoc(userDocRef, userData)
         router.push("/onboarding");

@@ -25,19 +25,18 @@ const InterestsPostsList: React.FC = () => {
     status,
     error
   } = useInterestsPostsInfiniteQuery(userInterests);
-console.log(error, data)
-  const { ref, inView } = useInView();
 
+  const { ref, inView } = useInView();
   useEffect(() => {
     if (inView && hasNextPage && !isFetchingNextPage) {
       fetchNextPage();
     }
   }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage]);
 
+
+
+
   if (status === 'error') return <div>Error fetching posts</div>;
-
-
-
 
 
   return (

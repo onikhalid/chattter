@@ -3,17 +3,20 @@
 
 import React, { useContext, useEffect, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
+import toast from 'react-hot-toast';
 
 import { Badge, Button, LinkButton, Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui';
-
-import { TPost } from '../types';
-import { useAddInterest, usePostsByTagInfiniteQuery, useRemoveInterest } from '../api';
-import { QueryResult } from '../api/getPostsAll';
 import PostCard from './PostCard';
 import PostCardSkeleton from './PostCardSkeleton';
 import { cn } from '@/lib/utils';
 import { UserContext } from '@/contexts';
-import toast from 'react-hot-toast';
+
+import { TPost } from '../types';
+import { QueryResult } from '../api/getPostsAll';
+import { useAddInterest, usePostsByTagInfiniteQuery, useRemoveInterest } from '../api';
+
+
+
 
 type SortOption = 'date_desc' | 'date_asc' | 'alpha_asc' | 'alpha_desc' | 'likes_desc' | 'likes_asc';
 
@@ -61,6 +64,7 @@ const PostsByTagList: React.FC<{ tag_name: string }> = ({ tag_name }) => {
       })
     }
   }
+
   const handleRemoveInterest = () => {
     if (userData) {
       const data = { interests: tag_name, user_id: userData.uid }

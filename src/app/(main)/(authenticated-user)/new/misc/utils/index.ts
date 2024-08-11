@@ -4,6 +4,7 @@ import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage
 import { toast } from 'react-hot-toast';
 import { db, storage } from '@/utils/firebaseConfig';
 import { doc, updateDoc } from 'firebase/firestore';
+import { capitalizeFirstLetter } from '@/utils/strings';
 
 
 
@@ -80,3 +81,29 @@ export const uploadCoverImage = async ({ imageFile, postId }: uploadCoverImagePr
 
 
 
+export function generateTitleSearchTerms(title: string): string[] {
+    const searchTerms = new Set<string>();
+    
+    // Original title
+    searchTerms.add(title.toLowerCase());
+    
+    // Title without special characters
+    searchTerms.add(title.toLowerCase().replace(/[^a-zA-Z0-9]/g, ''));
+    
+    // Title with spaces replaced by single space
+    searchTerms.add(title.toLowerCase().replace(/\s+/g, ' ').trim());
+    
+    // Title without spaces
+    searchTerms.add(title.toLowerCase().replace(/\s+/g, ''));
+    
+    // Capitalized first letter
+    searchTerms.add(capitalizeFirstLetter(title));
+    
+    // Individual words
+    title.toLowerCase().split(/\s+/).forEach(word => {
+      if (word.length > 0) searchTerms.add(word);
+    });
+  
+    return Array.from(searchTerms);
+  }
+  

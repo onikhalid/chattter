@@ -5,6 +5,7 @@ import { useSearchParams } from 'next/navigation';
 
 import { LinkButton, Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui'
 import { cn } from '@/lib/utils';
+import { SearchPeople, SearchPosts, SearchTags } from '../../misc/components';
 
 
 
@@ -16,20 +17,17 @@ const page = ({ params }: { params: { type: string } }) => {
         {
             label: 'Posts',
             id: query ? `posts?q=${query}` : 'posts',
-            component: <></>
-            // component: <SectionForYou />
+            component: <SearchPosts />
         },
         {
             label: "Tags",
             id: query ? `tags?q=${query}` : 'tags',
-            // component: <SectionAll />
-            component: <></>,
+            component: <SearchTags />
         },
         {
             label: "People",
             id: query ? `people?q=${query}` : 'people',
-            component: <></>,
-            // component: <SectionFollowing />
+            component: <SearchPeople />,
         },
     ]
 
@@ -80,7 +78,7 @@ const page = ({ params }: { params: { type: string } }) => {
                         <TabsContent
                             className="grow mt-0 h-full w-full rounded-sm overflow-x-hidden"
                             key={tab.id}
-                            value={tab.id}
+                            value={tab.id.split("?q=")[0]}
                         >
                             <div className="flex flex-col items-center justify-start w-full min-h-full rounded-10">
                                 {tab.component}
