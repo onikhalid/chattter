@@ -5,8 +5,8 @@ import toast from 'react-hot-toast';
 import { useSearchParams } from 'next/navigation';
 
 import { cn } from '@/lib/utils';
-import { TUser, UserContext } from '@/contexts';
-import { Badge, Button, LinkButton, Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui';
+import { TUser } from '@/contexts';
+import { LinkButton, Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui';
 
 import PostCard from './PostCard';
 import PostCardSkeleton from './PostCardSkeleton';
@@ -19,7 +19,6 @@ const SearchPeople = () => {
     const [sortBy, setSortBy] = useState<SortOption>('date_desc');
     const searchParams = useSearchParams();
     const search_text = searchParams.get('q') || '';
-    console.log(search_text)
 
     const {
         data,
@@ -31,7 +30,6 @@ const SearchPeople = () => {
         error,
         refetch
     } = useUsersBySearchInfiniteQuery(decodeURI(search_text), sortBy);
-    console.log(error, data)
 
     const { ref, inView } = useInView();
     useEffect(() => {
