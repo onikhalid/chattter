@@ -85,7 +85,7 @@ export default function TagInput({ presetTags = [], selectedTags, onTagsChange, 
                             className="w-full px-3 py-1.5 !border-input rounded text-sm !focus:border-primary"
                             placeholder="Search tags..."
                             value={searchText}
-                            onChange={(e) => setSearchText(e.target.value)}
+                            onChange={(e) => setSearchText(e.target.value.toLowerCase())}
                             onKeyDown={handleKeyDown}
                         />
                     </div>

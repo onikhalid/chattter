@@ -92,7 +92,7 @@ const Body = ({ children }: { children: React.ReactNode }) => {
 
                 <Sheet>
                   <SheetTrigger className='md:hidden'>
-                    <Avatar alt={user.displayName || "user"} src={user.photoURL || userData?.avatar} fallback={getInitials(user.displayName || "F N")} />
+                    <Avatar alt={user.displayName || "user"} src={user.photoURL || userData?.avatar} fallback={getInitials(user.displayName || "F N")} size='large' />
                   </SheetTrigger>
 
                   <SheetContent className='flex flex-col items-center justify-between py-[10vh]'>

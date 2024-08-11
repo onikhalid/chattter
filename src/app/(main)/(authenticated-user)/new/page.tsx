@@ -9,7 +9,7 @@ import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import 'react-quill/dist/quill.snow.css';
 
-import { Avatar, Button, ChattterLogo, FormError, Input, LinkButton, LoadingModal, TagInput } from '@/components/ui'
+import { Avatar, Button, FormError, Input, LinkButton, LoadingModal, Popover, PopoverContent, PopoverTrigger, TagInput } from '@/components/ui'
 import { auth, storage } from '@/utils/firebaseConfig';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { PenIcon, TrashIcon, UploadIcon, ViewIcon } from '@/components/icons';
@@ -17,7 +17,7 @@ import { UserContext } from '@/contexts';
 import { cn } from '@/lib/utils';
 import { presetArticleTags } from '@/constants';
 import { UseCreateNewPost, UseGetPostDetails, UseUpdateNewPost } from './misc/api';
-import { deleteImageFromDatabase, extractImageUrl, findDeletedImage, uploadCoverImage } from './misc/utils';
+import { deleteImageFromDatabase, extractImageUrls, findDeletedImage, uploadCoverImage } from './misc/utils';
 import { z, ZodError } from "zod";
 
 
@@ -73,21 +73,13 @@ const WriteNewStoryPage = () => {
     const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
 
 
-
-
-
-
     const {
         register, control, handleSubmit, setValue, watch, setError, clearErrors, formState: { isValid, errors }, reset
     } = useForm<createNewPostFormDataType>({
         resolver: zodResolver(CreateNewPostFormSchema),
-        defaultValues: {
-            content: postData?.content || "",
-            title: postData?.title || "",
-            tags: postData?.tags || [],
-        },
-        // mode: "onBlur",
     });
+
+
     useEffect(() => {
         if (postData) {
             setValue('title', postData.title)
@@ -98,9 +90,9 @@ const WriteNewStoryPage = () => {
         }
     }, [isFetchingPostData, postData, setValue])
 
-    const [selectedImage, setSelectedImage] = useState<File | null>(watch('cover_image') ?? null);
+    const [selectedCoverImageFile, setSelectedCoverImageFile] = useState<File | null>(watch('cover_image') ?? null);
     const [coverImgURL, setCoverImgURL] = useState<string | null>(postData?.cover_image || null)
-    const [deletedImages, setDeletedImages] = useState<string[]>([])
+    const [uploadedImages, setUploadedImages] = useState<string[]>([]);
 
 
 
@@ -108,6 +100,16 @@ const WriteNewStoryPage = () => {
 
     const handleCreateNewPost = async (data: createNewPostFormDataType) => {
         const submittedData = data;
+        const currentContent = watch('content');
+        const currentImages = extractImageUrls(currentContent);
+
+        const deletedImages = uploadedImages.filter(
+            (url) => !currentImages.includes(url)
+        );
+
+        for (const url of deletedImages) {
+            await deleteImageFromDatabase(url);
+        }
         const dataToSubmit = {
             ...data,
             author_id: user?.uid || "",
@@ -128,12 +130,12 @@ const WriteNewStoryPage = () => {
                     for (const imageUrl of deletedImages) {
                         deleteImageFromDatabase(imageUrl);
                     }
-                    if (selectedImage) {
-                        await uploadCoverImage({ imageFile: selectedImage!, postId: postToEditId });
+                    if (selectedCoverImageFile) {
+                        await uploadCoverImage({ imageFile: selectedCoverImageFile!, postId: postToEditId });
                     }
                     reset();
                     setCoverImgURL(null)
-                    setSelectedImage(null)
+                    setSelectedCoverImageFile(null)
                     router.push(`/p/${postToEditId}`)
                 },
                 onError: (error) => {
@@ -147,14 +149,14 @@ const WriteNewStoryPage = () => {
                 onSuccess: async (data) => {
                     console.log(data, 'Post created successfully');
                     const newDocId = data?.id as string || "";
-                    
+
                     console.log(`New post ID: ${newDocId}`);
 
                     deletedImages.filter((imageUrl) => submittedData?.content.includes(imageUrl));
                     for (const imageUrl of deletedImages) {
                         deleteImageFromDatabase(imageUrl);
                     }
-                    await uploadCoverImage({ imageFile: selectedImage!, postId: newDocId });
+                    await uploadCoverImage({ imageFile: selectedCoverImageFile!, postId: newDocId });
                     reset();
                     router.push(`/v?=all`)
                 },
@@ -168,23 +170,21 @@ const WriteNewStoryPage = () => {
 
 
 
-
     const QuillimageSelectionHandler = useCallback(async () => {
         const handleImageUpload = async (file: File): Promise<string> => {
             if (!loading && !user?.uid) {
                 throw new Error("User not authenticated");
             }
-            const storageRef = ref(storage, `post_images/${user?.uid}/${file.name}`);
+            const storageRef = ref(storage, `post_images/${user?.uid}/${file.name}_${new Date().toString()}`);
 
             try {
                 const snapshot = await uploadBytes(storageRef, file, {
                     contentType: file.type,
-                    customMetadata: {
-                        // Add any additional metadata you need for the image
-                    },
+                    customMetadata: {},
                 });
 
                 const downloadURL = await getDownloadURL(snapshot.ref);
+                setUploadedImages((prev) => [...prev, downloadURL]);
                 return downloadURL;
             } catch (error) {
                 console.error(error);
@@ -210,28 +210,11 @@ const WriteNewStoryPage = () => {
 
     }, [setValue, user?.uid, watch, loading]);
 
-    const QuillModules = {
-        toolbar: {
-            container: [
-                [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
-                ['bold', 'italic', 'underline', 'strike'],
-                [{ 'list': 'ordered' }, { 'list': 'bullet' }],
-                ['link', 'image'],
-                [{ 'align': [] }],
-                ['clean']
-            ],
-            handlers: {
-                image: QuillimageSelectionHandler
-            }
-        },
-        clipboard: {
-            matchVisual: false,
-        },
-    };
 
-    const handleImageSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
+
+    const handleCoverImageSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files![0];
-        setSelectedImage(file);
+        setSelectedCoverImageFile(file);
         const newImgURL = URL.createObjectURL(file)
         setCoverImgURL(newImgURL)
     };
@@ -257,7 +240,7 @@ const WriteNewStoryPage = () => {
             <form action="" onSubmit={handleSubmit(handleCreateNewPost)} className=' w-full max-w-[1000px]' id='form'>
 
                 <Input
-                    className='!border-none font-display text-4xl xl:text-5xl mb-4 font-bold focus:border-none placeholder:!text-[#B6B5B5] focus-visible:border-none text-center'
+                    className='!border-none font-display text-4xl xl:text-5xl mb-4 font-bold focus:border-none focus-visible:border-none text-center'
                     {...register('title')}
                     placeholder='Title'
                     hasError={!!errors.title}
@@ -283,7 +266,7 @@ const WriteNewStoryPage = () => {
                                     const file = e.target.files?.[0];
                                     if (file) {
                                         field.onChange(file);
-                                        handleImageSelect(e);
+                                        handleCoverImageSelect(e);
                                     }
                                 }}
                                 className='hidden'
@@ -298,13 +281,13 @@ const WriteNewStoryPage = () => {
                             }
 
                             {
-                                (selectedImage || coverImgURL || watch('cover_image')) &&
+                                (selectedCoverImageFile || coverImgURL || watch('cover_image')) &&
                                 <div className='relative w-full aspect-video'>
                                     <Image
                                         className=''
                                         src={
                                             (() => {
-                                                if (postData?.cover_image && !selectedImage && !coverImgURL) {
+                                                if (postData?.cover_image && !selectedCoverImageFile && !coverImgURL) {
                                                     return postData?.cover_image
                                                 }
                                                 else {
@@ -320,7 +303,7 @@ const WriteNewStoryPage = () => {
                                     <div className='absolute right-0 flex items-center px-4 rounded-lg p-2'>
                                         <Button variant='outline' shape='rounded' className='flex items-center gap-2'
                                             onClick={() => {
-                                                setSelectedImage(null)
+                                                setSelectedCoverImageFile(null)
                                                 setCoverImgURL(null)
                                                 setValue('cover_image', undefined)
                                             }}
@@ -355,8 +338,55 @@ const WriteNewStoryPage = () => {
                 />
 
 
-
                 <Controller
+                    name="content"
+                    control={control}
+                    defaultValue=""
+                    render={({ field }) => (
+                        <div className={''}>
+                            <ReactQuill
+                                theme="snow"
+                                value={field?.value?.replace("<p><br></p>", "") || ''}
+                                onBlur={field.onBlur}
+                                onChange={(content, delta, source, editor) => {
+                                    const updatedContent = content.replace(/<p><br><\/p>/g, '');
+                                    field.onChange(updatedContent);
+
+                                }}
+
+                                modules={{
+                                    toolbar: {
+                                        container: [
+                                            [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+
+                                            ['bold', 'italic', 'underline', 'strike'], 
+                                            [{ 'list': 'ordered' }, { 'list': 'bullet' }], 
+                                            [{ 'indent': '-1' }, { 'indent': '+1' }], 
+                                            [{ 'align': [] }],
+
+                                            ['link', 'image'],
+                                            ['clean']
+                                        ],
+                                        handlers: {
+                                            image: QuillimageSelectionHandler
+                                        }
+                                    },
+                                    clipboard: {
+                                        matchVisual: false,
+                                    },
+                                }}
+
+                                className={`w-full py-4 px-0 mt-2 rounded-lg bg-background text-black outline-none ${errors?.content && errors?.content?.message ? "showcase-input-error" : ""}`}
+                                placeholder='Start writing...'
+                                style={{ border: "none" }}
+                                id="myQuillEditor"
+
+
+                            />
+                        </div>
+                    )}
+                />
+                {/* <Controller
                     name="content"
                     control={control}
                     defaultValue=""
@@ -373,24 +403,21 @@ const WriteNewStoryPage = () => {
                                     const deletedImage = findDeletedImage(previousContent, content);
 
                                     if (deletedImage) {
-                                        const deletedImageUrls = extractImageUrl(deletedImage);
+                                        const deletedImageUrls = extractImageUrls(deletedImage);
                                         setDeletedImages([...deletedImages, ...deletedImageUrls!]);
                                     }
                                 }}
                                 modules={QuillModules}
                                 className={`w-full py-4 px-0 mt-2 rounded-lg bg-background text-black outline-none ${errors?.content && errors?.content?.message ? "showcase-input-error" : ""}`}
-                                placeholder='Write your story...'
+                                placeholder='Start writing...'
                                 id="myQuillEditor"
-                                style={{
-                                    // color: theme === 'dark' ? '#fff' : '#000',
-                                    border: "none",
-                                }}
+                                style={{border: "none"}}
 
                             />
                             {errors.content && <FormError errorMessage={errors.content?.message as string} className='mb-8 text-center mx-6' />}
                         </div>
                     )}
-                />
+                /> */}
             </form>
 
 

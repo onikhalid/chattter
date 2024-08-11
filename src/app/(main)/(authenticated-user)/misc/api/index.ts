@@ -1,4 +1,6 @@
 export { useAddNewComment } from './postAddComment'
+export { useAddInterest } from './postAddInterest'
+export { useRemoveInterest } from './postRemoveInterest'
 export { useDeleteComment } from './deleteComment'
 export { useDeletePost } from './deletePost'
 export { useGetComments } from './getPostComments'

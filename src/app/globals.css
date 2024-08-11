@@ -79,6 +79,7 @@
 .ql-toolbar.ql-snow {
   display: flex;
   justify-content: center;
+  flex-wrap: wrap;
   gap: 0.5rem;
   border-radius: 0.5rem !important;
   border: solid 1.5px hsl(var(--border)) !important;
@@ -130,7 +131,7 @@
   font-family: "Space Grotesk", sans-serif;
   font-optical-sizing: auto;
   font-size: 20px;
-  color: #B6B5B5;
+  color: hsl(var(--muted-foreground));
 }
 
 .ql-bold,

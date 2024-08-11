@@ -26,20 +26,26 @@ export const extractImages = (content: string): string[] => {
 };
 
 
-export const extractImageUrl = (image: string): string | null => {
+export const extractSingleImageUrl = (image: string): string | null => {
     const srcRegex = /src="([^"]+)"/;
     const match = image.match(srcRegex);
     return match ? match[1] : null;
 };
+export const extractImageUrls = (content: string): string[] => {
+    const imageRegex = /<img[^>]+src="([^"]+)"/g;
+    const matches = Array.from(content.matchAll(imageRegex), match => match[1]);
 
-export const deleteImageFromDatabase = (imageUrl: string) => {
+    return matches;
+};
+
+export const deleteImageFromDatabase =async (imageUrl: string) => {
     try {
         const startIndex = imageUrl.indexOf('/o/') + 3;
         const endIndex = imageUrl.indexOf('?alt=media');
         const encodedPath = imageUrl.substring(startIndex, endIndex);
         const storagePath = decodeURIComponent(encodedPath);
         const imageRef = ref(storage, storagePath);
-        deleteObject(imageRef).catch((error) => {
+        await deleteObject(imageRef).catch((error) => {
             if (error.code === "storage/object-not-found") {
                 toast.error("Duplicate delete action, image has already been deleted", {
                     position: "top-center",

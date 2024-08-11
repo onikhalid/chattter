@@ -268,7 +268,7 @@ const PostDetailsPage = ({ params }: { params: { post_id: string } }) => {
 
                                 {
                                     post.tags && post.tags.length > 0 &&
-                                    <div className='flex items-center gap-2'>
+                                    <div className='flex items-center flex-wrap gap-2'>
                                         {
                                             post.tags.map((tag, index) => (
                                                 <Badge key={index} variant="secondary" className='text-sm font-normal'>
@@ -334,7 +334,7 @@ const PostDetailsPage = ({ params }: { params: { post_id: string } }) => {
                         </div>
 
             }
-            
+
             {
                 !isLoading && post &&
                 <PostShareModal

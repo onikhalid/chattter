@@ -109,29 +109,29 @@ const PostCard: React.FC<Props> = ({ post }) => {
             <Ellipsis />
           </DropdownMenuTrigger>
 
-          <DropdownMenuContent align='end' className='flex flex-col p-0 xl:w-36'>
-            <DropdownMenuItem className='rounded-none p-'>
-              <Link href={`/p/${post.post_id}`} className='flex items-center gap-2.5 w-full p-0 text-[0.9remm]'>
-                <Eye size={18} /> Read Post
+          <DropdownMenuContent align='end' className='flex flex-col p-0 w-max xl:w-48 max-md:gap-1'>
+            <DropdownMenuItem className='rounded-none'>
+              <Link href={`/p/${post.post_id}`} className='flex items-center gap-2.5 w-full pb-1.5 pt-2 px-1.5 text-[1.02rem] max-md:text-base'>
+                <Eye className='size-[20px]' /> Read Post
               </Link>
             </DropdownMenuItem>
 
-            <DropdownMenuItem className='rounded-none p-'>
-              <button onClick={openShareModal} className='flex items-center gap-2.5 w-full p-0 text-[0.9remm]'>
-                <Share2 size={18} /> Share Post
+            <DropdownMenuItem className='rounded-none'>
+              <button onClick={openShareModal} className='flex items-center gap-2.5 w-full py-1.5 px-1.5 text-[1.02rem] max-md:text-base'>
+                <Share2 className='size-[20px]' /> Share Post
               </button>
             </DropdownMenuItem>
             {
               user?.uid === post.author_id &&
               <>
-                <DropdownMenuItem className='rounded-none p-'>
-                  <Link href={`/new?edit=${post.post_id}`} className='flex items-center gap-2.5 w-full p-0 text-[0.9remm]'>
-                    <PenBoxIcon size={18} />Edit Post
+                <DropdownMenuItem className='rounded-none'>
+                  <Link href={`/new?edit=${post.post_id}`} className='flex items-center gap-2.5 w-full py-1.5 px-1.5 text-[1.02rem] max-md:text-base'>
+                    <PenBoxIcon className='size-[20px]' />Edit Post
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem>
-                  <button onClick={openConfirmDeleteModal} className='flex items-center gap-2.5 w-full p-0 text-base text-red-400'>
-                    <Trash size={18} className='text-red-400' />Delete Post
+                  <button onClick={openConfirmDeleteModal} className='flex items-center gap-2.5 w-full py-1.5 px-1.5 text-[1.02rem] max-md:text-base text-red-400'>
+                    <Trash className='size-[20px] text-red-400' />Delete Post
                   </button>
                 </DropdownMenuItem>
               </>
@@ -139,16 +139,16 @@ const PostCard: React.FC<Props> = ({ post }) => {
             {
               user?.uid !== post.author_id &&
               <>
-                <DropdownMenuItem className='rounded-none p-'>
-                  <button onClick={followUnfollow} className='flex items-center gap-2.5 w-full p-0 text-[0.9remm]'>
+                <DropdownMenuItem className='rounded-none'>
+                  <button onClick={followUnfollow} className='flex items-center gap-2.5 w-full py-1.5 px-1.5 text-[1.02rem] max-md:text-base'>
                     {
                       isUnfollowingUser || isFollowingUser ?
                         <SmallSpinner className='text-primary' />
                         :
                         userFollows?.includes(post.author_id || "") ?
-                          <UserMinus size={18} />
+                          <UserMinus className='size-[20px]' />
                           :
-                          <UserPlus size={18} />
+                          <UserPlus className='size-[20px]' />
                     }
 
                     {

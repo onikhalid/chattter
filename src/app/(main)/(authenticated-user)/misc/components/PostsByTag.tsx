@@ -1,22 +1,27 @@
 'use client'
 
-'use client'
+
 import React, { useContext, useEffect, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 
-import { Badge, LinkButton, Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui';
+import { Badge, Button, LinkButton, Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui';
 
 import { TPost } from '../types';
-import { usePostsByTagInfiniteQuery } from '../api';
+import { useAddInterest, usePostsByTagInfiniteQuery, useRemoveInterest } from '../api';
 import { QueryResult } from '../api/getPostsAll';
 import PostCard from './PostCard';
 import PostCardSkeleton from './PostCardSkeleton';
 import { cn } from '@/lib/utils';
+import { UserContext } from '@/contexts';
+import toast from 'react-hot-toast';
 
 type SortOption = 'date_desc' | 'date_asc' | 'alpha_asc' | 'alpha_desc' | 'likes_desc' | 'likes_asc';
 
 const PostsByTagList: React.FC<{ tag_name: string }> = ({ tag_name }) => {
   const [sortBy, setSortBy] = useState<SortOption>('date_desc');
+  const { userInterests, userData } = useContext(UserContext)
+  const { mutate: addInterest } = useAddInterest()
+  const { mutate: removeInterest } = useRemoveInterest()
 
   const {
     data,
@@ -42,11 +47,44 @@ const PostsByTagList: React.FC<{ tag_name: string }> = ({ tag_name }) => {
     refetch();
   };
 
+  const handleAddInterest = () => {
+    if (userData) {
+      const data = { interests: tag_name, user_id: userData.uid }
+      addInterest(data, {
+        onSuccess: () => {
+          // refetch()
+          toast.success(`You are now following ${tag_name}`)
+        },
+        onError: (error) => {
+          toast.error(`An error occurred: ${error}`)
+        }
+      })
+    }
+  }
+  const handleRemoveInterest = () => {
+    if (userData) {
+      const data = { interests: tag_name, user_id: userData.uid }
+
+      removeInterest(data, {
+        onSuccess: () => {
+          toast.success(`You have unfollowed ${tag_name}`)
+        },
+        onError: (error) => {
+          toast.error(`An error occurred: ${error}`)
+        }
+      })
+    }
+  }
+
+
+
+
+
   if (status === 'error') return <div>Error fetching posts</div>;
 
   return (
     <>
-      <section className='relative flex flex-col w-full max-w-[1200px] mx-auto'>
+      <section className='relative flex flex-col w-full max-w-[550px] lg:max-w-[1200px] mx-auto'>
         <div className={cn('flex items-center border-b-[1.5px] w-full border-muted-foreground dark:border-muted py-4',
           data?.pages.reduce((total, page) => total + page.posts.length, 0) == 0 && "hidden")}
         >
@@ -130,8 +168,8 @@ const PostsByTagList: React.FC<{ tag_name: string }> = ({ tag_name }) => {
         </div>
       </section>
 
-      <section className='sticky top-0 max-h-96  pt-8'>
-        <article className='size-full p-4 xl:p-8 border-[0.3px] border-muted-foreground/60 dark:border-muted-foreground/20 rounded-xl mt-'>
+      <section className='sticky top-0 max-h-96 pt-4 lg:pt-8 max-lg:w-full max-lg:max-w-[550px] max-lg:mx-auto bg-background'>
+        <article className='flex flex-col size-full p-4 xl:p-8 border-[0.3px] border-muted-foreground/60 dark:border-muted-foreground/20 rounded-xl mt-'>
           <h2 className='flex items-center gap-1 flex-wrap text-3xl font-display font-medium'>{tag_name} <Badge variant="secondary">tag</Badge></h2>
 
           <div className='flex items-center gap-4 text-muted-foreground'>
@@ -146,7 +184,22 @@ const PostsByTagList: React.FC<{ tag_name: string }> = ({ tag_name }) => {
               authors.
             </p>
           </div>
+
+          {
+            userInterests?.some((interest) => interest.toLowerCase() === tag_name.toLowerCase()) ? (
+              <Button className='w-full mt-auto text-base border-[2.5px]' variant="outline" onClick={handleRemoveInterest}>
+                Following
+              </Button>
+            )
+              :
+              (
+                <Button className='w-full mt-auto text-base border-[2.5px]' onClick={handleAddInterest}>
+                  Follow
+                </Button>
+              )
+          }
         </article>
+
       </section>
     </>
 
