@@ -125,7 +125,7 @@ const Body = ({ children }: { children: React.ReactNode }) => {
                           <p className='text-muted-foreground text-sm'>{user.email}</p>
                         </div>
                       </Link>
-                      <Link href={`/u/${user?.uid}`} className='flex items-center gap-2 text-base pl-3 py-4 rounded-none w-full'>
+                      <Link href={`/u/${userData?.username}`} className='flex items-center gap-2 text-base pl-3 py-4 rounded-none w-full'>
                         <User size={20} />
                         Public Profile
                       </Link>

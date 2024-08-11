@@ -21,6 +21,7 @@ import { cn } from '@/lib/utils';
 import { useUpdateUserProfile } from '../misc/api';
 import { TUpdateUser } from '../misc/types';
 import { generateTitleSearchTerms } from '@/app/(main)/(authenticated-user)/new/misc/utils';
+import { checkIfUsernameTaken } from '../misc/utils';
 
 
 
@@ -36,7 +37,7 @@ const NewUserOnboarding: React.FC = () => {
     const [userData, setUserData] = useState<TUser | undefined | null>(null);
     const OnboardingForm = z.object({
         name: z.string({ required_error: 'Enter your name' }).min(3, { message: 'Name must be at least 3 characters' }),
-        username: z.string({ required_error: 'Enter username' }).min(3, { message: 'Username must be at least 3 characters' }),
+        username: z.string({ required_error: 'Enter username' }).min(5, { message: 'Username must be at least 5 characters' }),
         interests: z.array(z.string()).min(3, { message: 'Please select at least three interest' }),
         bio: z.string({ required_error: 'Enter bio' }).min(20, { message: 'Bio must be at least 20 characters' }),
         twitter: z.string().optional(),
@@ -105,6 +106,15 @@ const NewUserOnboarding: React.FC = () => {
 
     const updateUserProfileMutation = useUpdateUserProfile({ user: user!, selectedImage, profileImgURL: profileImgURL! });
     const handleUpdateProfile = async (data: TUpdateUser) => {
+        if (!loading && !user) {
+            toast.error("Login to update profile")
+            return
+        }
+        const validUsername = await checkIfUsernameTaken({ username: data.username, user: user! });
+        if (!validUsername) {
+            setError('username', { message: 'Username already taken' })
+            return
+        }
 
         try {
             await updateUserProfileMutation.mutateAsync({ ...data, updated_at: new Date(), name_for_search: generateTitleSearchTerms(data.name) },

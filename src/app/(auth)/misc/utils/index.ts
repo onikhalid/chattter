@@ -6,7 +6,7 @@ import { collection, getDocs, query, where } from "firebase/firestore";
 interface props {
     username: string;
     user: User | null;
-    isLoading: boolean;
+    // isLoading: boolean;
 }
 export const checkIfUsernameTaken = async ({ username, user }: props) => {
     const q = query(collection(db, 'users'), where('username', '==', username));

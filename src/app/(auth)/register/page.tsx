@@ -52,6 +52,7 @@ const Register: React.FC = () => {
         await updateProfile(user, { photoURL: unknownUserPhotoURL })
         const userData = {
           id: user.uid,
+          username: user.uid,
           name: user.displayName === null ? `Writer_${user.uid.substring(0, 5)}` : user.displayName,
           name_for_search: generateTitleSearchTerms(user.displayName === null ? `Writer_${user.uid.substring(0, 5)}` : user.displayName),
           avatar: user.photoURL === null ? unknownUserPhotoURL : user.photoURL,
@@ -95,6 +96,7 @@ const Register: React.FC = () => {
         const userData = {
           uid: user.uid,
           name: user.displayName,
+          username: user?.uid,
           name_for_search: generateTitleSearchTerms(user.displayName|| ""),
           avatar: user.photoURL,
           email: user.email,  
