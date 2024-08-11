@@ -9,7 +9,6 @@ import { cn } from '@/lib/utils';
 import { SearchPeople, SearchPosts, SearchTags } from '../../misc/components';
 
 
-
 const SearchResultPage = ({ params }: { params: { type: string } }) => {
     const { type } = params
     const searchParams = useSearchParams();
