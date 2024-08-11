@@ -25,14 +25,14 @@ const AuthLayoutHeader = () => {
             {
                 !loading && user &&
                 <DropdownMenu>
-                    <DropdownMenuTrigger className='ml-auto'>
+                    <DropdownMenuTrigger className='ml-auto' data-testid="menu-button">
                         <Avatar alt={user?.displayName || "user"} src={user?.photoURL} fallback={getInitials(user.displayName || "F N")} />
                     </DropdownMenuTrigger>
                     <DropdownMenuContent>
 
                         <DropdownMenuItem className='flex items-center gap-2'>
                             <ArrowLeftSquare size={15} />
-                            <button onClick={logout}>Logout</button>
+                            <button onClick={logout} data-testid="logout-button">Logout</button>
                         </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>

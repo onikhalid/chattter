@@ -3,17 +3,17 @@
 import React, { Suspense, useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import { useAuthState } from 'react-firebase-hooks/auth';
-import { Controller, set, useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { useRouter, useSearchParams } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import 'react-quill/dist/quill.snow.css';
 import { z, ZodError } from "zod";
 
-import { Avatar, Button, FormError, Input, LoadingModal, TagInput } from '@/components/ui'
+import { Button, FormError, Input, LoadingModal, TagInput } from '@/components/ui'
 import { auth, storage } from '@/utils/firebaseConfig';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { PenIcon, TrashIcon, UploadIcon, } from '@/components/icons';
+import { TrashIcon, UploadIcon, } from '@/components/icons';
 import { UserContext } from '@/contexts';
 import { cn } from '@/lib/utils';
 import { presetArticleTags } from '@/constants';

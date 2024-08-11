@@ -150,6 +150,7 @@ const Login: React.FC = () => {
                         className='3.875rem'
                         hasError={!!errors.email}
                         errorMessage={errors.email?.message}
+                        data-testid="email-input"
                     />
 
 
@@ -160,6 +161,7 @@ const Login: React.FC = () => {
                         {...register('password')}
                         hasError={!!errors.password}
                         errorMessage={errors.password?.message}
+                        data-testid="password-input"
                     />
 
                     <p className='text-right text-sm my-2 ml-auto'>
@@ -167,10 +169,10 @@ const Login: React.FC = () => {
                     </p>
 
 
-                    <Button type="submit" className='w-full space-x-2 bg-[#5574FB]' size="cta">
+                    <Button type="submit" className='flex items-center gap-2 w-full space-x-2 bg-[#5574FB]' size="cta" data-testid="login-button">
                         Login
                         {
-                            loading && <SmallSpinner />
+                            loading && <SmallSpinner className='text-primary' />
                         }
                     </Button>
                 </form>

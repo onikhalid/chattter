@@ -41,10 +41,10 @@ const UnAuthenticatedUserHomePage = () => {
                                 <MoonIcon size={24} strokeWidth={1.5} />
                         }
                     </div>
-                    <LinkButton href='/login'>
+                    <LinkButton href='/login' data-testid="login-button-link">
                         Login
                     </LinkButton>
-                    <LinkButton href="/register">
+                    <LinkButton href="/register" data-testid="signup-button">
                         Get Started
                     </LinkButton>
 
@@ -62,7 +62,7 @@ const UnAuthenticatedUserHomePage = () => {
                     }
                 </div>
                 <span>Welcome to Chattter,</span>
-                <h1 className="text-[3rem] md:text-[4rem] lg:text-[6rem] font-semibold leading-[1] max-w-[12ch]">
+                <h1 className="text-[3rem] md:text-[4rem] lg:text-[6rem] font-semibold leading-[1] max-w-[12ch]" data-testid="hero-text">
                     A traditional bookworm&apos;s heaven.
                 </h1>
                 <span className="text-base">A multi-functional platform for authors and readers to create and access content.</span>

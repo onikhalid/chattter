@@ -109,7 +109,7 @@ const Body = ({ children }: { children: React.ReactNode }) => {
 
 
                 <Sheet>
-                  <SheetTrigger className='md:hidden'>
+                  <SheetTrigger className='md:hidden' data-testid="menu-button">
                     <Avatar alt={user.displayName || "user"} src={user.photoURL || userData?.avatar} fallback={getInitials(user.displayName || "F N")} size='large' />
                   </SheetTrigger>
 
@@ -156,7 +156,7 @@ const Body = ({ children }: { children: React.ReactNode }) => {
 
 
                 <DropdownMenu>
-                  <DropdownMenuTrigger className='ml-auto max-md:hidden'>
+                  <DropdownMenuTrigger className='ml-auto max-md:hidden' data-testid="menu-button">
                     <Avatar alt={user.displayName || "user"} src={user.photoURL || userData?.avatar} fallback={getInitials(user.displayName || "F N")} />
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align='end' className='flex flex-col gap-1.5 px-0'>
@@ -194,7 +194,7 @@ const Body = ({ children }: { children: React.ReactNode }) => {
                     </DropdownMenuItem>
 
                     <DropdownMenuItem className=' !rounded-none'>
-                      <button onClick={logout} className='flex items-center gap-2 text-base pl-3 rounded-none w-full text-red-400'>
+                      <button onClick={logout} className='flex items-center gap-2 text-base pl-3 rounded-none w-full text-red-400' data-testid="logout-button">
                         <LogOut size={20} className='text-red-400' />
                         Logout
                       </button>
