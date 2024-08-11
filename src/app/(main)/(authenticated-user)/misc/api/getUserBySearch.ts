@@ -100,7 +100,7 @@ const useUsersBySearchInfiniteQuery = (search_text: string, sortBy: SortOption) 
         });
 
         return () => unsubscribe();
-    }, [queryClient, sortBy]);
+    }, [queryClient, sortBy, search_text]);
 
     return useInfiniteQuery<UsersQueryResult, Error, InfiniteData<UsersQueryResult>, QueryKey, QueryDocumentSnapshot<DocumentData> | null>({
         queryKey: ['users-by-search', { search_text, sortBy }],

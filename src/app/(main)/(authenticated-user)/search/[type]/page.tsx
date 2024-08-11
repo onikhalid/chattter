@@ -5,11 +5,12 @@ import { useSearchParams } from 'next/navigation';
 
 import { LinkButton, Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui'
 import { cn } from '@/lib/utils';
+
 import { SearchPeople, SearchPosts, SearchTags } from '../../misc/components';
 
 
 
-const page = ({ params }: { params: { type: string } }) => {
+const SearchResultPage = ({ params }: { params: { type: string } }) => {
     const { type } = params
     const searchParams = useSearchParams();
     const query = searchParams.get('q');
@@ -91,4 +92,4 @@ const page = ({ params }: { params: { type: string } }) => {
     )
 }
 
-export default page
+export default SearchResultPage

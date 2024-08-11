@@ -111,7 +111,7 @@ const usePostsBySearchInfiniteQuery = (search_text: string, sortBy: SortOption) 
         });
 
         return () => unsubscribe();
-    }, [queryClient, sortBy]);
+    }, [queryClient, sortBy, search_text]);
 
     return useInfiniteQuery<QueryResult, Error, InfiniteData<QueryResult>, QueryKey, QueryDocumentSnapshot<DocumentData> | null>({
         queryKey: ['posts-by-search', { search_text, sortBy }],

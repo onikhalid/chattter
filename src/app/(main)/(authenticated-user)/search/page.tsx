@@ -4,7 +4,7 @@ import { Input } from '@/components/ui'
 import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 
-const page = () => {
+const SearchPage = () => {
     const router = useRouter()
     const [searchText, setSearchText] = useState("")
     const [hasErrors, setHasErrors] = useState(false)
@@ -55,4 +55,4 @@ const page = () => {
     )
 }
 
-export default page
+export default SearchPage
