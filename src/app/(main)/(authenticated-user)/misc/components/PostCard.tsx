@@ -98,7 +98,7 @@ const PostCard: React.FC<Props> = ({ post }) => {
     <article className='flex flex-col gap-4 py-5 px-2 xl:px-4'>
       <header className='flex items-center gap-4'>
         <Link href={`/u/${post.author_username}`} className='flex items-center gap-2'>
-          <Avatar alt={post.author_username} src={post.author_avatar} fallback={"AUGE BORN"} />
+          <Avatar alt={post.author_username} src={post.author_avatar} fallback={post.author_name || "AUGE BORN"} />
           <h6>{post.author_name}</h6>
         </Link>
         <time className='text-muted-foreground text-sm'>{format(post.created_at.toDate(), 'dd MMM, yyyy')}</time>

@@ -9,6 +9,7 @@ import { createContext } from 'react';
 import { auth, db } from '@/utils/firebaseConfig';
 import { User } from 'firebase/auth';
 import toast from 'react-hot-toast';
+import { TBookmark } from '@/app/(main)/(authenticated-user)/misc/types';
 
 
 export interface TUser {
@@ -38,7 +39,8 @@ type UserInfoContextType = {
     userData: TUser | null | undefined;
     loadingauthenticatedUser: boolean;
     userFollows: string[]
-    userBookmarks: string[]
+    userFollowers: string[]
+    userBookmarks: TBookmark[]
     userInterests: string[]
 };
 const initialUserContext: UserInfoContextType = {
@@ -46,6 +48,7 @@ const initialUserContext: UserInfoContextType = {
     userData: {} as TUser | null | undefined,
     loadingauthenticatedUser: false,
     userFollows: [],
+    userFollowers: [],
     userBookmarks: [],
     userInterests: [],
 };
@@ -59,7 +62,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     const [userData, setUserData] = useState<TUser | undefined | null>(null);
     const [userFollowers, setUserFollowers] = useState<string[]>([])
     const [userFollows, setUserFollows] = useState<string[]>([])
-    const [userBookmarks, setUserBookmarks] = useState<string[]>([])
+    const [userBookmarks, setUserBookmarks] = useState<TBookmark[]>([])
     const [userInterests, setUserInterests] = useState<string[]>([])
 
 
@@ -69,14 +72,12 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
             const followsCollectionRef = collection(db, 'follows');
             const bookmarksCollectionRef = collection(db, 'bookmarks');
 
-            // Real-time listener for user data
             const unsubscribeUserData = onSnapshot(userDocRef, (snapshot) => {
                 const userData = snapshot.data() as TUser;
                 setUserData(userData);
                 setUserInterests(userData?.interests || []);
             });
 
-            // Real-time listener for follows
             const unsubscribeFollows = onSnapshot(
                 query(followsCollectionRef, where('follower_id', '==', authenticatedUser.uid)),
                 (snapshot) => {
@@ -88,11 +89,21 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
                 }
             );
 
-            // Real-time listener for bookmarks
+            const unsubscribeFollowers = onSnapshot(
+                query(followsCollectionRef, where('followed_id', '==', authenticatedUser.uid)),
+                (snapshot) => {
+                    const followerUserIds = snapshot.docs.map((doc) => doc.data().follower_id);
+                    setUserFollowers(followerUserIds);
+                },
+                (error) => {
+                    console.error("Error fetching followers:", error);
+                }
+            );
+
             const unsubscribeBookmarks = onSnapshot(
                 query(bookmarksCollectionRef, where('bookmarker_id', '==', authenticatedUser.uid)),
                 (snapshot) => {
-                    const userBookmarkIds = snapshot.docs.map((doc) => doc.data().post_id);
+                    const userBookmarkIds = snapshot.docs.map((doc) => doc.data() as TBookmark);
                     setUserBookmarks(userBookmarkIds);
                 },
                 (error) => {
@@ -103,18 +114,20 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
             return () => {
                 unsubscribeUserData();
                 unsubscribeFollows();
+                unsubscribeFollowers();
                 unsubscribeBookmarks();
             };
         } else {
             setUserData(null);
             setUserFollows([]);
+            setUserFollowers([]);
             setUserBookmarks([]);
             setUserInterests([]);
         }
     }, [authenticatedUser]);
 
     return (
-        <UserContext.Provider value={{ userData, authenticatedUser, userFollows, userBookmarks, userInterests, loadingauthenticatedUser }}>
+        <UserContext.Provider value={{ userData, authenticatedUser, userFollows, userFollowers, userBookmarks, userInterests, loadingauthenticatedUser }}>
             {children}
         </UserContext.Provider>
     );

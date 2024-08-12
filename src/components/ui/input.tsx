@@ -53,14 +53,14 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           }
           {
             type === "password" && (
-              <span className="absolute right-[3%] top-[25%] cursor-pointer" onClick={() => setShow((prev) => !prev)}>
+              <button className="absolute right-[3%] top-[25%] cursor-pointer" onClick={() => setShow((prev) => !prev)}>
                 {
                   show ?
                     <HideIcon fill='#395CF5' />
                     :
                     <ViewIcon fill='#395CF5' width={22} height={22} />
                 }
-              </span>
+              </button>
             )
           }
         </div>

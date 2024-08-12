@@ -28,7 +28,7 @@ const AuthLayoutHeader = ({ isAuthenticated = true }: Props) => {
             {
                 !loading && user && isAuthenticated &&
                 <DropdownMenu>
-                    <DropdownMenuTrigger className='ml-auto' data-testid="menu-button">
+                    <DropdownMenuTrigger className='ml-auto' data-testid="menu-button-desktop">
                         <Avatar alt={user?.displayName || "user"} src={user?.photoURL} fallback={getInitials(user.displayName || "F N")} />
                     </DropdownMenuTrigger>
                     <DropdownMenuContent>
@@ -44,7 +44,7 @@ const AuthLayoutHeader = ({ isAuthenticated = true }: Props) => {
             {
                 !isAuthenticated &&
                 <div>
-                    
+
                 </div>
             }
         </header>
