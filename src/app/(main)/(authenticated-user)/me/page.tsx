@@ -5,15 +5,10 @@ import React, { useContext } from 'react'
 import { Avatar, Badge, Button, LinkButton, Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui'
 import { cn } from '@/lib/utils';
 
-import { EditProfileModal, PublicProfileBookmarks, PublicProfileDetails, PublicProfilePosts, UserProfileDetailsArticle } from '../misc/components';
-import { UseFollowUser, UseGetUserPublicProfileDetails, UseUnFollowUser } from '../misc/api';
-import Image from 'next/image';
+import { EditProfileModal, PrivateProfileAnalyticsDashboard, PublicProfileBookmarks, PublicProfilePosts, UserProfileDetailsArticle } from '../misc/components';
 import { SmallSpinner } from '@/components/icons';
 import { auth } from '@/utils/firebaseConfig';
-import { useAuthState } from 'react-firebase-hooks/auth';
-import toast from 'react-hot-toast';
 import { UserContext } from '@/contexts';
-import Link from 'next/link';
 import { useBooleanStateControl } from '@/hooks';
 
 
@@ -58,7 +53,7 @@ const UserPublicProfilePage = () => {
         {
             label: 'Analytics',
             id: 'analytics',
-            component: <PublicProfileDetails />
+            component: <PrivateProfileAnalyticsDashboard />
         },
       
     ]

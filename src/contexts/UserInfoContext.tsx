@@ -9,7 +9,7 @@ import { createContext } from 'react';
 import { auth, db } from '@/utils/firebaseConfig';
 import { User } from 'firebase/auth';
 import toast from 'react-hot-toast';
-import { TBookmark } from '@/app/(main)/(authenticated-user)/misc/types';
+import { TBookmark, TPost } from '@/app/(main)/(authenticated-user)/misc/types';
 
 
 export interface TUser {
@@ -42,6 +42,7 @@ type UserInfoContextType = {
     userFollows: string[]
     userFollowers: string[]
     userBookmarks: TBookmark[]
+    userPosts: TPost[]
     userInterests: string[]
 };
 const initialUserContext: UserInfoContextType = {
@@ -52,6 +53,7 @@ const initialUserContext: UserInfoContextType = {
     userFollows: [],
     userFollowers: [],
     userBookmarks: [],
+    userPosts: [],
     userInterests: [],
 };
 
@@ -66,6 +68,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     const [userFollowers, setUserFollowers] = useState<string[]>([])
     const [userFollows, setUserFollows] = useState<string[]>([])
     const [userBookmarks, setUserBookmarks] = useState<TBookmark[]>([])
+    const [userPosts, setUserPosts] = useState<TPost[]>([])
     const [userInterests, setUserInterests] = useState<string[]>([])
 
 
@@ -75,6 +78,9 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
                 const userDocRef = doc(db, `users/${authenticatedUser.uid}`);
                 const followsCollectionRef = collection(db, 'follows');
                 const bookmarksCollectionRef = collection(db, 'bookmarks');
+                const postsCollectionRef = collection(db, 'posts');
+
+
 
                 const unsubscribeUserData = onSnapshot(userDocRef, (snapshot) => {
                     const userData = snapshot.data() as TUser;
@@ -86,12 +92,21 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
                     query(followsCollectionRef, where('follower_id', '==', authenticatedUser.uid)),
                     (snapshot) => {
                         const followedUserIds = snapshot.docs.map((doc) => doc.data().followed_id);
-                        console.log("followedUserIds", followedUserIds);
-
                         setUserFollows(followedUserIds);
                     },
                     (error) => {
                         console.error("Error fetching follows:", error);
+                    }
+                );
+
+                const unsubscribePosts = onSnapshot(
+                    query(postsCollectionRef, where('author_id', '==', authenticatedUser.uid)),
+                    (snapshot) => {
+                        const posts = snapshot.docs.map((doc) => doc.data() as TPost);
+                        setUserPosts(posts);
+                    },
+                    (error) => {
+                        console.error("Error fetching followers:", error);
                     }
                 );
 
@@ -122,6 +137,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
                     unsubscribeFollows();
                     unsubscribeFollowers();
                     unsubscribeBookmarks();
+                    unsubscribePosts();
                 };
             } else {
                 setUserData(null);
@@ -129,6 +145,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
                 setUserFollowers([]);
                 setUserBookmarks([]);
                 setUserInterests([]);
+                setUserPosts([]);
             }
         } catch (error) {
 
@@ -140,7 +157,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     }, [authenticatedUser]);
 
     return (
-        <UserContext.Provider value={{ userData, authenticatedUser, userFollows, userFollowers, userBookmarks, userInterests, loadingauthenticatedUser, isUserDataLoading }}>
+        <UserContext.Provider value={{ userData, authenticatedUser, userFollows, userFollowers, userPosts, userBookmarks, userInterests, loadingauthenticatedUser, isUserDataLoading }}>
             {children}
         </UserContext.Provider>
     );

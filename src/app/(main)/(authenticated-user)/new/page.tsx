@@ -10,7 +10,7 @@ import Image from 'next/image';
 import 'react-quill/dist/quill.snow.css';
 import { z, ZodError } from "zod";
 
-import { Button, FormError, Input, LoadingModal, TagInput } from '@/components/ui'
+import { Button, FormError, Input, LoadingModal, TagInput, Textarea } from '@/components/ui'
 import { auth, storage } from '@/utils/firebaseConfig';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { TrashIcon, UploadIcon, } from '@/components/icons';
@@ -240,10 +240,10 @@ const WriteNewStoryPage = () => {
         <main className="relative grow flex items-start justify-center w-full px-4 lg:px-[7.5vw] lg:gap-[5vw] max-h-[calc(100vh_-_4.5rem)] pt-8 overflow-scroll">
             <form action="" onSubmit={handleSubmit(handleCreateNewPost)} className=' w-full max-w-[1000px]' id='form'>
 
-                <Input
+                <Textarea
                     className='!border-none font-display text-4xl xl:text-5xl mb-4 font-bold focus:border-none focus-visible:border-none text-center'
                     {...register('title')}
-                    placeholder='Title'
+                    placeholder='Enter Title'
                     hasError={!!errors.title}
                     errorMessage={errors.title?.message}
                     errorMessageClass='mb-8 text-center rounded-lg'

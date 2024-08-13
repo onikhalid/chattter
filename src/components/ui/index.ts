@@ -20,6 +20,8 @@ export {
 
 export { default as ConfirmDeleteModal } from './confirmDeleteModal'
 
+export { DataTable } from './datatable'
+
 export {
   Dialog,
   DialogTrigger,

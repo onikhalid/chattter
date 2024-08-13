@@ -1,8 +1,9 @@
-import { InstagramIcon, LinkedInIcon, TwitterIcon } from '@/components/icons'
+import React from 'react'
+import Link from 'next/link'
+
+import { FacebookIcon2, InstagramIcon, LinkedInIcon, TwitterIcon } from '@/components/icons'
 import { Avatar, Badge, Button, LinkButton, Tooltip } from '@/components/ui'
 import { TUser } from '@/contexts'
-import Link from 'next/link'
-import React from 'react'
 
 interface Props {
     userData: TUser | null | undefined
@@ -16,13 +17,13 @@ const UserProfileDetailsArticle: React.FC<Props> = ({ userData, userFollowers, u
         <>
             {
                 userData &&
-                <article className='flex flex-col items-center text-center py-10 my-auto'>
+                <article className='flex flex-col gap-4 items-center text-center py-10 my-auto'>
                     <div>
                         <Avatar
                             src={userData.avatar}
                             alt={userData.username}
                             fallback={userData.name!}
-                            className='rounded-full h-28 w-28 '
+                            className='rounded-full h-28 w-28 md:w-36 md:h-36 '
                             fallbackClass='text-2xl'
                         />
                     </div>
@@ -36,7 +37,7 @@ const UserProfileDetailsArticle: React.FC<Props> = ({ userData, userFollowers, u
                         </span>
                     </div>
 
-                    <Button className='w-full max-w-[200px] my-4' onClick={openEditProfileModal} variant={'default'}>
+                    <Button className='w-full max-w-[200px] my-2' onClick={openEditProfileModal} variant={'default'}>
                         Edit profile
                     </Button>
 
@@ -57,7 +58,6 @@ const UserProfileDetailsArticle: React.FC<Props> = ({ userData, userFollowers, u
                     </div>
 
                     <section>
-
                         <p className='text-sm text-foreground py-2.5'>
                             {userData.bio}
                         </p>
@@ -86,8 +86,20 @@ const UserProfileDetailsArticle: React.FC<Props> = ({ userData, userFollowers, u
                             Member since {userData.created_at.toDate().toLocaleDateString()}
                         </p>
 
-
                         <div className='flex items-center gap-5 justify-center w-full'>
+                            {
+                                userData.facebook && userData.facebook.trim() !== "" ? (
+                                    <LinkButton href={userData.facebook} variant='unstyled'>
+                                        <FacebookIcon2 className='text-foreground' />
+                                    </LinkButton>
+                                ) : (
+                                    <Tooltip content='Instagram link not set'>
+                                        <div className='opacity-50 cursor-not-allowed'>
+                                            <FacebookIcon2 className='text-foreground' />
+                                        </div>
+                                    </Tooltip>
+                                )
+                            }
                             {
                                 userData.instagram && userData.instagram.trim() !== "" ? (
                                     <LinkButton href={userData.instagram} variant='unstyled'>
@@ -95,7 +107,7 @@ const UserProfileDetailsArticle: React.FC<Props> = ({ userData, userFollowers, u
                                     </LinkButton>
                                 ) : (
                                     <Tooltip content='Instagram link not set'>
-                                        <div className='opacity-70 cursor-not-allowed'>
+                                        <div className='opacity-50 cursor-not-allowed'>
                                             <InstagramIcon className='text-foreground' />
                                         </div>
                                     </Tooltip>
@@ -108,7 +120,7 @@ const UserProfileDetailsArticle: React.FC<Props> = ({ userData, userFollowers, u
                                     </LinkButton>
                                 ) : (
                                     <Tooltip content='Linkedin link not set'>
-                                        <div className='opacity-70 cursor-not-allowed'>
+                                        <div className='opacity-50 cursor-not-allowed'>
                                             <LinkedInIcon />
                                         </div>
                                     </Tooltip>
@@ -121,15 +133,13 @@ const UserProfileDetailsArticle: React.FC<Props> = ({ userData, userFollowers, u
                                     </LinkButton>
                                 ) : (
                                     <Tooltip content='Twittwr/X link not set'>
-                                        <div className='opacity-70 cursor-not-allowed'>
+                                        <div className='opacity-50 cursor-not-allowed'>
                                             <TwitterIcon />
                                         </div>
                                     </Tooltip>
                                 )
                             }
                         </div>
-
-
                     </footer>
                 </article>
             }

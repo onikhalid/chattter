@@ -15,6 +15,7 @@ export { default as UserCard } from './UserCard';
 export { default as PublicProfilePosts } from './PublicProfilePosts';
 export { default as PublicProfileDetails } from './PublicProfileDetails';
 export { default as PublicProfileBookmarks } from './PublicProfileBookmarks';
+export { default as PrivateProfileAnalyticsDashboard } from './PrivateProfileAnalyticsDashboard';
 
 export { default as BookmarkCard } from './BookmarkCard';
 export { default as EditProfileModal } from './EditProfileModal';

@@ -11,7 +11,7 @@ export interface QueryResult {
   lastVisible: QueryDocumentSnapshot<DocumentData> | null;
 }
 
-type QueryKey = ['all-posts'];
+type QueryKey = ['all-posts-feed'];
 
 const getPosts = async ({ pageParam = null }: QueryFunctionContext<QueryKey, QueryDocumentSnapshot<DocumentData> | null>): Promise<QueryResult> => {
   const postsCollectionRef = collection(db, "posts");
@@ -55,7 +55,7 @@ export const useAllPostsInfiniteQuery = () => {
 
       const lastVisible = snapshot.docs.length > 0 ? snapshot.docs[snapshot.docs.length - 1] : null;
 
-      queryClient.setQueryData<InfiniteData<QueryResult>>(['all-posts'], (oldData) => {
+      queryClient.setQueryData<InfiniteData<QueryResult>>(['all-posts-feed'], (oldData) => {
         if (!oldData) {
           return {
             pageParams: [null],
@@ -74,7 +74,7 @@ export const useAllPostsInfiniteQuery = () => {
   }, [queryClient]);
 
   return useInfiniteQuery<QueryResult, Error, InfiniteData<QueryResult>, QueryKey, QueryDocumentSnapshot<DocumentData> | null>({
-    queryKey: ['all-posts'],
+    queryKey: ['all-posts-feed'],
     queryFn: getPosts,
     getNextPageParam: (lastPage) => lastPage.lastVisible,
     initialPageParam: null
