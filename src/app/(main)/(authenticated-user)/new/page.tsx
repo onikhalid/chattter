@@ -121,6 +121,9 @@ const WriteNewStoryPage = () => {
             tags_lower: data.tags.map(tag => tag.toLowerCase() || ""),
             title_for_search: [...generateTitleSearchTerms(data.title), ...(userData?.name || "").toLowerCase().split(" "), userData?.username || ""],
             cover_image: postData?.cover_image || "",
+            total_reads: postData?.total_reads || 0,
+            likes: postData?.likes || [],
+            bookmarks: postData?.bookmarks || [],
         };
 
         if (postToEditId) {

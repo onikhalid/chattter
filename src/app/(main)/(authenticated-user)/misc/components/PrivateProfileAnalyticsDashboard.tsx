@@ -10,6 +10,10 @@ import Link from 'next/link'
 import { BestPerformingPostsByLikesTable, BestPerformingPostsByViewsTable } from './tables'
 import BestPerformingPostsSection from './tables/BestPerformingPostsSection'
 
+import { Bar, BarChart, CartesianGrid, LabelList, XAxis } from "recharts"
+
+import { ChartConfig, ChartContainer, ChartLegend, ChartLegendContent, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
+import { Label, Pie, PieChart } from "recharts"
 
 const PrivateProfileAnalyticsDashboard = () => {
     const { isUserDataLoading, userData, userFollows, userFollowers, userPosts, userInterests, userBookmarks } = useContext(UserContext)
@@ -21,6 +25,11 @@ const PrivateProfileAnalyticsDashboard = () => {
         const sortedPosts = posts.sort((a, b) => (b.likes?.length || 0) - (a.likes?.length || 0));
         return sortedPosts.slice(0, 5);
     }
+    const getBestPerformingPostsByTotalEngagement = () => {
+        const posts = userPosts;
+        const sortedPosts = posts.sort((a, b) => ((b.likes?.length || 0) + (b.total_reads || 0) + (b.bookmarks?.length || 0)) - ((a.likes?.length || 0) + (a.total_reads || 0) + (a.bookmarks?.length || 0)));
+        return sortedPosts.slice(0, 5);
+    }
     const getWorsePerformingPostsByLikes = () => {
         const posts = userPosts;
         const sortedPosts = posts.sort((a, b) => (a.likes?.length || 0) - (b.likes?.length || 0));
@@ -28,17 +37,17 @@ const PrivateProfileAnalyticsDashboard = () => {
     }
     const getBestPerformingPostsByTotalReads = () => {
         const posts = userPosts;
-        const sortedPosts = posts.sort((a, b) => b.total_reads - a.total_reads);
+        const sortedPosts = posts.sort((a, b) => (b.total_reads || 0) - (a.total_reads || 0));
         return sortedPosts.slice(0, 5);
     }
     const getWorsePerformingPostsByTotalReads = () => {
         const posts = userPosts;
-        const sortedPosts = posts.sort((a, b) => a.total_reads - b.total_reads);
+        const sortedPosts = posts.sort((a, b) => (a.total_reads || 0) - (b.total_reads || 0));
         return sortedPosts.slice(0, 5);
     }
     const getBestPerformingPostsByBookmarks = () => {
         const posts = userPosts;
-        const sortedPosts = posts.sort((a, b) => b.bookmarks.length - a.bookmarks.length);
+        const sortedPosts = posts.sort((a, b) => (b.bookmarks?.length || 0) - (a.bookmarks?.length || 0));
         return sortedPosts.slice(0, 5);
     }
 
@@ -55,20 +64,67 @@ const PrivateProfileAnalyticsDashboard = () => {
     }
 
 
+    const getTotalEngagementData = useMemo(() => {
+        const likes = userPosts.reduce((sum, post) => sum + (post.likes?.length || 0), 0);
+        const bookmarks = userPosts.reduce((sum, post) => sum + (post.bookmarks?.length || 0), 0);
+        const views = userPosts.reduce((sum, post) => sum + (post.total_reads || 0), 0);
+        return { likes, bookmarks, views }
+    }, [userPosts]);
+
+    const totalEngagements = getTotalEngagementData.likes + getTotalEngagementData.bookmarks + getTotalEngagementData.views;
+
     const bestPerformingPostsByLikes = useMemo(() => getBestPerformingPostsByLikes(), [userPosts]);
+    const bestPerformingPostsByTotalEngagement = useMemo(() => getBestPerformingPostsByTotalEngagement(), [userPosts]);
     const worsePerformingPostsByLikes = useMemo(() => getWorsePerformingPostsByLikes(), [userPosts]);
     const bestPerformingPostsByTotalReads = useMemo(() => getBestPerformingPostsByTotalReads(), [userPosts]);
     const worsePerformingPostsByTotalReads = useMemo(() => getWorsePerformingPostsByTotalReads(), [userPosts]);
     const bestPerformingPostsByBookmarks = useMemo(() => getBestPerformingPostsByBookmarks(), [userPosts]);
     const biggestSupportersByPostLikes = useMemo(() => getBiggestSupportersByPostLikes(), [userFollowers]);
-    useEffect(() => {
-        console.log(bestPerformingPostsByLikes)
-        console.log(worsePerformingPostsByLikes)
-        console.log(bestPerformingPostsByTotalReads)
-        console.log(worsePerformingPostsByTotalReads)
-        console.log(biggestSupportersByPostLikes, "biggestSupportersByPostLikes")
-    }, [bestPerformingPostsByLikes, worsePerformingPostsByLikes, bestPerformingPostsByTotalReads, worsePerformingPostsByTotalReads, biggestSupportersByPostLikes])
 
+
+
+    const bestComparisonChartData = bestPerformingPostsByTotalEngagement.map(post => {
+        return {
+            title: post.title,
+            likes: post.likes?.length || 0.015,
+            reads: post.total_reads || 0.015,
+            bookmarks: post.bookmarks?.length || 0.015,
+        }
+    })
+    const bestComparisonChartConfig = {
+        likes: {
+            label: "Likes",
+            color: "#2563eb",
+        },
+        reads: {
+            label: "Reads",
+            color: "#60a5fa",
+        },
+        bookmarks: {
+            label: "Bookmarks",
+            color: "#93c3fd",
+        },
+    } satisfies ChartConfig
+
+    const totalEngagementDistributionChartData = [
+        { label: "likes", value: getTotalEngagementData.likes, fill: "#2563eb" },
+        { label: "bookmarks", value: getTotalEngagementData.bookmarks, fill: "#93c3fd" },
+        { label: "views", value: getTotalEngagementData.views, fill: "#60a5fa" },
+    ]
+    const totalEngagementDistributionChartConfig = {
+        likes: {
+            label: "Likes",
+            color: "#2563eb",
+        },
+        views: {
+            label: "Reads/Views",
+            color: "#60a5fa",
+        },
+        bookmarks: {
+            label: "Bookmarks",
+            color: "#93c3fd",
+        },
+    } satisfies ChartConfig
 
 
 
@@ -76,17 +132,30 @@ const PrivateProfileAnalyticsDashboard = () => {
         <main className='grow relative flex flex-col w-full max-w-[550px] h-full lg:max-w-[1200px] mx-auto'>
             <section>
                 <header className='flex items-center border-b-[1.5px] w-full border-muted-foreground dark:border-muted py-4'>
-                    <h1 className='text-xl font-semibold'>
-                        Posts Analytics
-                    </h1>
+                    <h3 className='text-xl font-semibold'>
+                        Personal Summary
+                    </h3>
                 </header>
-
 
                 <section className='grid grid-cols-[repeat(auto-fill,minmax(300px,1fr))] gap-5 py-6'>
                     <article className='p-4 px-6 rounded-lg border border-secondary'>
                         <span className='text-muted-foreground'>Total posts</span>
                         <h3 className='text-4xl xl:text-5xl font-semibold'>
                             {userPosts.length}
+                        </h3>
+                    </article>
+
+                    <article className='p-4 px-6 rounded-lg border border-secondary'>
+                        <span className='text-muted-foreground'>Total followers</span>
+                        <h3 className='text-4xl xl:text-5xl font-semibold'>
+                            {userFollowers.length}
+                        </h3>
+                    </article>
+
+                    <article className='p-4 px-6 rounded-lg border border-secondary'>
+                        <span className='text-muted-foreground'>Total following</span>
+                        <h3 className='text-4xl xl:text-5xl font-semibold'>
+                            {userFollows.length}
                         </h3>
                     </article>
 
@@ -112,53 +181,116 @@ const PrivateProfileAnalyticsDashboard = () => {
                     </article>
 
                 </section>
+            </section>
 
 
-                <section className='flex flex-col w-full overflow-x-scroll'>
+            <section className='my-5'>
+                <header className='flex items-center border-b-[1.5px] w-full border-muted-foreground dark:border-muted py-4'>
+                    <h3 className='text-xl font-semibold'>
+                        Posts Engagements
+                    </h3>
+                </header>
+
+                <div className='grid lg:grid-cols-[1fr,0.6fr] items-stretch md:gap-10'>
+                    <ChartContainer config={bestComparisonChartConfig} className="min-h-[150px] w-full max-w-[550px]">
+                        <BarChart accessibilityLayer data={bestComparisonChartData}>
+                            <CartesianGrid vertical={false} />
+                            <XAxis
+                                dataKey="title"
+                                // label={{ value: "Best Performing Posts", position: "insideBottom", offset: -50 }}
+                                tickLine={false}
+                                tickMargin={10}
+                                axisLine={false}
+                                tickFormatter={(value) => value.slice(0, 15)}
+                            />
+                            <ChartTooltip content={<ChartTooltipContent 
+                            // nameKey="itle"
+                            label={true}
+                            indicator='line' 
+                            labelKey='title' 
+                            />} />
+                            <Bar dataKey="likes" fill="var(--color-likes)" radius={4} />
+                            <Bar dataKey="reads" fill="var(--color-reads)" radius={4} />
+                            <Bar dataKey="bookmarks" fill="var(--color-bookmarks)" radius={4} />
+                            <ChartLegend content={<ChartLegendContent />} />
+                        </BarChart>
+                    </ChartContainer>
+
+
+
+                    <ChartContainer
+                        config={totalEngagementDistributionChartConfig}
+                        className="aspect-square max-h-[300px]"
+
+                    >
+                        <PieChart>
+                            <ChartTooltip
+                                cursor={false}
+                                content={<ChartTooltipContent hideLabel />}
+                            />
+                            <Pie
+                                data={totalEngagementDistributionChartData}
+                                nameKey="label"
+                                dataKey="value"
+                                innerRadius={60}
+                                strokeWidth={5}
+                            >
+                                <Label
+                                    content={({ viewBox }) => {
+                                        if (viewBox && "cx" in viewBox && "cy" in viewBox) {
+                                            return (
+                                                <text
+                                                    x={viewBox.cx}
+                                                    y={viewBox.cy}
+                                                    textAnchor="middle"
+                                                    dominantBaseline="middle"
+                                                >
+                                                    <tspan
+                                                        x={viewBox.cx}
+                                                        y={viewBox.cy}
+                                                        className="fill-foreground text-3xl font-bold"
+                                                    >
+                                                        {totalEngagements.toLocaleString()}
+                                                    </tspan>
+                                                    <tspan
+                                                        x={viewBox.cx}
+                                                        y={(viewBox.cy || 0) + 24}
+                                                        className="fill-muted-foreground"
+                                                    >
+                                                        Impressions
+                                                    </tspan>
+                                                </text>
+                                            )
+                                        }
+                                    }}
+                                />
+                            </Pie>
+                            <ChartLegend content={<ChartLegendContent />} />
+                        </PieChart>
+                    </ChartContainer>
+                </div>
+            </section>
+
+
+            <section>
+                <header className='flex items-center border-b-[1.5px] w-full border-muted-foreground dark:border-muted py-4'>
+                    <h3 className='text-xl font-semibold'>
+                        Best Performing Posts
+                    </h3>
+                </header>
+                <div className='flex flex-col w-full overflow-x-scroll'>
                     {/* <BestPerformingPostsByLikesTable data={bestPerformingPostsByLikes} />
                     <BestPerformingPostsByViewsTable data={bestPerformingPostsByLikes} /> */}
 
-                    <BestPerformingPostsSection 
+                    <BestPerformingPostsSection
                         bestPerformingPostsByLikes={bestPerformingPostsByLikes}
                         bestPerformingPostsByTotalReads={bestPerformingPostsByTotalReads}
                         bestPerformingPostsByBookmarks={bestPerformingPostsByBookmarks}
                     />
-                </section>
-
+                </div>
             </section>
 
-            <section>
-                <header className='flex items-center border-b-[1.5px] w-full border-muted-foreground dark:border-muted py-4'>
-                    <h1 className='text-xl font-semibold'>
-                        Personal Analytics
-                    </h1>
-                </header>
 
-
-                <section className='grid grid-cols-[repeat(auto-fill,minmax(300px,1fr))] gap-5 py-6'>
-                    <article className='p-4 px-6 rounded-lg border border-secondary'>
-                        <span className='text-muted-foreground'>Total followers</span>
-                        <h3 className='text-4xl xl:text-5xl font-semibold'>
-                            {userFollowers.length}
-                        </h3>
-                    </article>
-
-                    <article className='p-4 px-6 rounded-lg border border-secondary'>
-                        <span className='text-muted-foreground'>Total following</span>
-                        <h3 className='text-4xl xl:text-5xl font-semibold'>
-                            {userFollows.length}
-                        </h3>
-                    </article>
-
-                    <article className='p-4 px-6 rounded-lg border border-secondary'>
-                        <span className='text-muted-foreground'>Total tags followed</span>
-                        <h3 className='text-4xl xl:text-5xl font-semibold'>
-                            {userInterests.length}
-                        </h3>
-                    </article>
-
-                </section>
-            </section>
         </main>
     )
 }
