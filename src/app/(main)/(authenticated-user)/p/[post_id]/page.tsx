@@ -114,14 +114,11 @@ const PostDetailsPage = ({ params }: { params: { post_id: string } }) => {
         <main className="relative grow flex flex-col w-full px-4 lg:px-[7.5vw] max-h-[calc(100vh_-_4.5rem)] overflow-y-scroll">
             <Head>
                 <title>{post ? `${post.title} - Your Site Name` : 'Loading...'}</title>
-                {/* <meta name="description" content={post?.description || 'Loading...'} /> */}
                 <meta property="og:title" content={post?.title || 'Loading...'} />
-                {/* <meta property="og:description" content={post?.description || 'Loading...'} /> */}
                 <meta property="og:image" content={post?.cover_image || '/default-image.png'} />
-                <meta property="og:url" content={`https://yourwebsite.com/p/${post_id}`} />
+                <meta property="og:url" content={`https://chattter.vercel.app/p/${post_id}`} />
                 <meta name="twitter:card" content="summary_large_image" />
                 <meta name="twitter:title" content={post?.title || 'Loading...'} />
-                {/* <meta name="twitter:description" content={post?.description || 'Loading...'} /> */}
                 <meta name="twitter:image" content={post?.cover_image || '/default-image.png'} />
             </Head>
             {
@@ -285,7 +282,7 @@ const PostDetailsPage = ({ params }: { params: { post_id: string } }) => {
 
                             {
                                 user &&
-                                <div className={cn('sticky bottom-[2vh] flex items-center justify-center gap-6 mx-auto my-3 mt-8 py-3 px-7 bg-primary-foreground rounded-full', inView && "!relative")}>
+                                <div className={cn('sticky bottom-[2vh] flex items-center justify-center gap-6 mx-auto my-3 mt-8 py-3 px-7 bg-primary-foreground rounded-full drop-shadow-sm shadow-lg', inView && "!relative")}>
                                     <Tooltip content={user && post.likes?.includes(user?.uid) ? "Unlike post" : "Like post"} className='flex items-center gap-1'>
                                         {
                                             isLikingPost || isUnLikingPost ?

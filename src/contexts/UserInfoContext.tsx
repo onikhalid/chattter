@@ -38,6 +38,7 @@ type UserInfoContextType = {
     authenticatedUser: User | null | undefined,
     userData: TUser | null | undefined;
     loadingauthenticatedUser: boolean;
+    isUserDataLoading: boolean;
     userFollows: string[]
     userFollowers: string[]
     userBookmarks: TBookmark[]
@@ -47,6 +48,7 @@ const initialUserContext: UserInfoContextType = {
     authenticatedUser: {} as User,
     userData: {} as TUser | null | undefined,
     loadingauthenticatedUser: false,
+    isUserDataLoading: true,
     userFollows: [],
     userFollowers: [],
     userBookmarks: [],
@@ -58,6 +60,7 @@ const initialUserContext: UserInfoContextType = {
 export const UserContext = createContext<UserInfoContextType>(initialUserContext);
 
 export const UserProvider = ({ children }: { children: ReactNode }) => {
+    const [isUserDataLoading, setIsUserDataLoading] = useState(true);
     const [authenticatedUser, loadingauthenticatedUser] = useAuthState(auth);
     const [userData, setUserData] = useState<TUser | undefined | null>(null);
     const [userFollowers, setUserFollowers] = useState<string[]>([])
@@ -67,67 +70,77 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
 
 
     useEffect(() => {
-        if (authenticatedUser) {
-            const userDocRef = doc(db, `users/${authenticatedUser.uid}`);
-            const followsCollectionRef = collection(db, 'follows');
-            const bookmarksCollectionRef = collection(db, 'bookmarks');
+        try {
+            if (authenticatedUser) {
+                const userDocRef = doc(db, `users/${authenticatedUser.uid}`);
+                const followsCollectionRef = collection(db, 'follows');
+                const bookmarksCollectionRef = collection(db, 'bookmarks');
 
-            const unsubscribeUserData = onSnapshot(userDocRef, (snapshot) => {
-                const userData = snapshot.data() as TUser;
-                setUserData(userData);
-                setUserInterests(userData?.interests || []);
-            });
+                const unsubscribeUserData = onSnapshot(userDocRef, (snapshot) => {
+                    const userData = snapshot.data() as TUser;
+                    setUserData(userData);
+                    setUserInterests(userData?.interests || []);
+                });
 
-            const unsubscribeFollows = onSnapshot(
-                query(followsCollectionRef, where('follower_id', '==', authenticatedUser.uid)),
-                (snapshot) => {
-                    const followedUserIds = snapshot.docs.map((doc) => doc.data().followed_id);
-                    setUserFollows(followedUserIds);
-                },
-                (error) => {
-                    console.error("Error fetching follows:", error);
-                }
-            );
+                const unsubscribeFollows = onSnapshot(
+                    query(followsCollectionRef, where('follower_id', '==', authenticatedUser.uid)),
+                    (snapshot) => {
+                        const followedUserIds = snapshot.docs.map((doc) => doc.data().followed_id);
+                        console.log("followedUserIds", followedUserIds);
 
-            const unsubscribeFollowers = onSnapshot(
-                query(followsCollectionRef, where('followed_id', '==', authenticatedUser.uid)),
-                (snapshot) => {
-                    const followerUserIds = snapshot.docs.map((doc) => doc.data().follower_id);
-                    setUserFollowers(followerUserIds);
-                },
-                (error) => {
-                    console.error("Error fetching followers:", error);
-                }
-            );
+                        setUserFollows(followedUserIds);
+                    },
+                    (error) => {
+                        console.error("Error fetching follows:", error);
+                    }
+                );
 
-            const unsubscribeBookmarks = onSnapshot(
-                query(bookmarksCollectionRef, where('bookmarker_id', '==', authenticatedUser.uid)),
-                (snapshot) => {
-                    const userBookmarkIds = snapshot.docs.map((doc) => doc.data() as TBookmark);
-                    setUserBookmarks(userBookmarkIds);
-                },
-                (error) => {
-                    console.error("Error fetching bookmarks:", error);
-                }
-            );
+                const unsubscribeFollowers = onSnapshot(
+                    query(followsCollectionRef, where('followed_id', '==', authenticatedUser.uid)),
+                    (snapshot) => {
+                        const followerUserIds = snapshot.docs.map((doc) => doc.data().follower_id);
+                        setUserFollowers(followerUserIds);
+                    },
+                    (error) => {
+                        console.error("Error fetching followers:", error);
+                    }
+                );
 
-            return () => {
-                unsubscribeUserData();
-                unsubscribeFollows();
-                unsubscribeFollowers();
-                unsubscribeBookmarks();
-            };
-        } else {
-            setUserData(null);
-            setUserFollows([]);
-            setUserFollowers([]);
-            setUserBookmarks([]);
-            setUserInterests([]);
+                const unsubscribeBookmarks = onSnapshot(
+                    query(bookmarksCollectionRef, where('bookmarker_id', '==', authenticatedUser.uid)),
+                    (snapshot) => {
+                        const userBookmarkIds = snapshot.docs.map((doc) => doc.data() as TBookmark);
+                        setUserBookmarks(userBookmarkIds);
+                    },
+                    (error) => {
+                        console.error("Error fetching bookmarks:", error);
+                    }
+                );
+
+                return () => {
+                    unsubscribeUserData();
+                    unsubscribeFollows();
+                    unsubscribeFollowers();
+                    unsubscribeBookmarks();
+                };
+            } else {
+                setUserData(null);
+                setUserFollows([]);
+                setUserFollowers([]);
+                setUserBookmarks([]);
+                setUserInterests([]);
+            }
+        } catch (error) {
+
         }
+        finally {
+            setIsUserDataLoading(false);
+        }
+
     }, [authenticatedUser]);
 
     return (
-        <UserContext.Provider value={{ userData, authenticatedUser, userFollows, userFollowers, userBookmarks, userInterests, loadingauthenticatedUser }}>
+        <UserContext.Provider value={{ userData, authenticatedUser, userFollows, userFollowers, userBookmarks, userInterests, loadingauthenticatedUser, isUserDataLoading }}>
             {children}
         </UserContext.Provider>
     );

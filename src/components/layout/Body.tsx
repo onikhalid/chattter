@@ -2,7 +2,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { MoonIcon, SunIcon, PenIcon, Settings2, User, LogOut, Folder, SettingsIcon, SearchIcon, SaveIcon, SendIcon } from 'lucide-react';
+import { MoonIcon, SunIcon, PenIcon, Settings2, User, LogOut, Folder, SettingsIcon, SearchIcon, SaveIcon, SendIcon, UserIcon } from 'lucide-react';
 
 import AllProviders from '@/utils/providers';
 import { cn } from '@/lib/utils';
@@ -14,7 +14,6 @@ import { Avatar, Button, ChattterLogo, DropdownMenu, DropdownMenuContent, Dropdo
 import { UserContext } from '@/contexts';
 import { useBooleanStateControl } from '@/hooks';
 import SearchModal from './SearchModal';
-import { AuthLayoutHeader } from '@/app/(auth)/misc/components';
 
 
 
@@ -63,11 +62,11 @@ const Body = ({ children }: { children: React.ReactNode }) => {
     <AllProviders>
       <div className={cn(theme === 'dark' ? 'dark' : 'light', "flex flex-col h-screen items-center justify-between font-display overflow-hidden")}>
         {
-          !loading && user && !authPathNames.includes(pathName) &&
+          !loading && user && userData && !authPathNames.includes(pathName) &&
           (
             <header className="sticky top-0 flex items-center justify-between w-full px-5 py-3 md:px-10 md:py-4 border-b-[0.6px] border-muted-foreground dark:border-b-muted font-display">
               <ChattterLogo />
-              <section className='flex items-center gap-4'>
+              <section className='flex items-center gap-4 md:gap-4'>
                 <Tooltip content='Search'>
                   <SearchIcon onClick={openSearchModal} size={24} className='cursor-pointer' />
                 </Tooltip>
@@ -88,7 +87,9 @@ const Body = ({ children }: { children: React.ReactNode }) => {
                 {
                   pathName === '/new' &&
                   <Button shape='rounded' variant="secondary" className='flex items-center gap-2 rounded-lg py-1.5' type='submit' form="form">
-                    {postToEditId ? "Update" : "Submit"}
+                    <span className='max-md:hidden'>
+                      {postToEditId ? "Update" : "Submit"}
+                    </span>
                     {
                       postToEditId ?
                         <SaveIcon size={15} />
@@ -99,11 +100,11 @@ const Body = ({ children }: { children: React.ReactNode }) => {
                 }
                 {
                   pathName !== '/new' &&
-                  <LinkButton href='/new' shape='rounded' variant='default' className='flex items-center gap-2 rounded-lg border-muted py-1.5'>
+                  <LinkButton href='/new' shape='rounded' variant='default' className='flex items-center gap-2 rounded-lg border-muted max-md:!p-0 md:py-1.5 max-md:!bg-transparent'>
                     <span className='max-md:hidden'>
                       Write story
                     </span>
-                    <PenIcon size={15} />
+                    <PenIcon size={15} className='max-md:size-[18px] max-md:text-foreground' />
                   </LinkButton>
 
                 }
@@ -118,33 +119,33 @@ const Body = ({ children }: { children: React.ReactNode }) => {
                     <SheetHeader>
                     </SheetHeader>
 
-                    <div className='flex flex-col '>
-                      <Link href={`/me/profile`} className='flex items-center gap-2 text-base px-3 rounded-none w-full mb-5'>
-                        <Avatar alt={user.displayName || "user"} src={user.photoURL || userData?.avatar} fallback={getInitials(user.displayName || "F N")} />
+                    <div className='flex flex-col'>
+                      <Link href={`/me`} className='flex items-center gap-2 text-base px-3 py-4 rounded-none w-full mb-3'>
+                        <Avatar alt={user.displayName || "user"} src={user.photoURL || userData?.avatar} fallback={getInitials(user.displayName || "F N")} className='w-14 h-14' />
                         <div>
-                          <p className='text-lg font-display max-w-[20ch]'>{user.displayName}</p>
+                          <p className='text-xl font-display max-w-[20ch]'>{user.displayName}</p>
                           <p className='text-muted-foreground text-sm'>{user.email}</p>
                         </div>
                       </Link>
-                      <Link href={`/u/${userData?.username}`} className='flex items-center gap-2 text-base pl-3 py-4 rounded-none w-full'>
-                        <User size={20} />
-                        Public Profile
+
+                      <Link href='/me' className='flex items-center gap-2 text-xl pl-3 rounded-none w-full py-3.5'>
+                        <UserIcon size={25} />
+                        Profile
                       </Link>
-                      <Link href='/bookmarks' className='flex items-center gap-2 text-base pl-3 py-4 rounded-none w-full'>
-                        <Folder size={20} />
+
+                      <Link href='/bookmarks' className='flex items-center gap-2 text-xl pl-3 rounded-none w-full py-3.5'>
+                        <Folder size={25} />
                         Bookmarks
                       </Link>
-                      <Link href='/settings' className='flex items-center gap-2 text-base pl-3 py-4 rounded-none w-full'>
-                        <SettingsIcon size={20} />
+                      <Link href='/settings' className='flex items-center gap-2 text-xl pl-3 rounded-none w-full py-3.5'>
+                        <SettingsIcon size={25} />
                         Settings
                       </Link>
-
-
                     </div>
 
                     <SheetFooter className='flex flex-col gap-4 w-full'>
                       <LinkButton href='/new' variant='default' className='flex items-center gap-2 border-muted py-6'>
-                        Write story
+                        Write
                         <PenIcon size={18} />
                       </LinkButton>
                       <Button variant="destructive" onClick={logout} className='flex items-center gap-2 py-6 w-full'>
@@ -160,43 +161,35 @@ const Body = ({ children }: { children: React.ReactNode }) => {
                   <DropdownMenuTrigger className='ml-auto max-md:hidden' data-testid="menu-button">
                     <Avatar alt={user.displayName || "user"} src={user.photoURL || userData?.avatar} fallback={getInitials(user.displayName || "F N")} />
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align='end' className='flex flex-col gap-1.5 px-0'>
+                  <DropdownMenuContent align='end' className='flex flex-col gap-0.5 px-0'>
 
-                    <DropdownMenuItem className='px-3 w-64 dark:border-b-muted border-b-muted-foreground border-b rounded-none'>
-                      <Link href={`/me/profile`} className='flex items-center gap-2 text-base px-3 rounded-none w-full'>
-                        <Avatar alt={user.displayName || "user"} src={user.photoURL || userData?.avatar} fallback={getInitials(user.displayName || "F N")} />
+                    <DropdownMenuItem className='px-3 w-72 dark:border-b-muted border-b-muted-foreground border-b rounded-none'>
+                      <Link href={`/me/profile`} className='flex items-center gap-2 text-base px-3 py-4 rounded-none w-full'>
+                        <Avatar alt={user.displayName || "user"} src={user.photoURL || userData?.avatar} fallback={getInitials(user.displayName || "F N")} className='w-14 h-14' />
                         <div>
-                          <p className='text-lg font-display max-w-[20ch]'>{user.displayName}</p>
+                          <p className='text-xl font-display max-w-[20ch]'>{user.displayName}</p>
                           <p className='text-muted-foreground text-sm'>{user.email}</p>
                         </div>
                       </Link>
                     </DropdownMenuItem>
 
-
                     <DropdownMenuItem className='!rounded-none'>
-                      <Link href={`/u/${user?.uid}`} className='flex items-center gap-2 text-base pl-3 rounded-none w-full'>
-                        <User size={20} />
-                        Public Profile
-                      </Link>
-                    </DropdownMenuItem>
-
-                    <DropdownMenuItem className='!rounded-none'>
-                      <Link href='/bookmarks' className='flex items-center gap-2 text-base pl-3 rounded-none w-full'>
-                        <Folder size={20} />
+                      <Link href='/bookmarks' className='flex items-center gap-2 text-lg pl-3 rounded-none w-full py-3'>
+                        <Folder size={24} />
                         Bookmarks
                       </Link>
                     </DropdownMenuItem>
 
                     <DropdownMenuItem className='!rounded-none'>
-                      <Link href='/settings' className='flex items-center gap-2 text-base pl-3 rounded-none w-full'>
-                        <SettingsIcon size={20} />
+                      <Link href='/settings' className='flex items-center gap-2 text-lg pl-3 rounded-none w-full py-3'>
+                        <SettingsIcon size={24} />
                         Settings
                       </Link>
                     </DropdownMenuItem>
 
                     <DropdownMenuItem className=' !rounded-none'>
-                      <button onClick={logout} className='flex items-center gap-2 text-base pl-3 rounded-none w-full text-red-400' data-testid="logout-button">
-                        <LogOut size={20} className='text-red-400' />
+                      <button onClick={logout} className='flex items-center gap-2 text-lg pl-3 rounded-none w-full py-3 text-red-400' data-testid="logout-button">
+                        <LogOut size={24} className='text-red-400' />
                         Logout
                       </button>
                     </DropdownMenuItem>
