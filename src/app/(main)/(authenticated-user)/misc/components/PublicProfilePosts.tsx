@@ -98,7 +98,10 @@ const PublicProfilePosts: React.FC<Props> = ({ username }) => {
               page.posts.map((post: TPost) => (
                 <PostCard
                   key={post.post_id}
-                  post={post} />
+                  post={post}
+                  isFromProfile={true}
+                  refetch={refetch}
+                />
               ))
             }
           </div>

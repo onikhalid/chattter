@@ -2,10 +2,10 @@
 import { useSearchParams } from 'next/navigation';
 import React, { useContext } from 'react'
 
-import { Avatar, Button, LinkButton, Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui'
+import { Avatar, Badge, Button, LinkButton, Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui'
 import { cn } from '@/lib/utils';
 
-import { PublicProfileDetails, PublicProfilePosts } from '../misc/components';
+import { EditProfileModal, PublicProfileBookmarks, PublicProfileDetails, PublicProfilePosts, UserProfileDetailsArticle } from '../misc/components';
 import { UseFollowUser, UseGetUserPublicProfileDetails, UseUnFollowUser } from '../misc/api';
 import Image from 'next/image';
 import { SmallSpinner } from '@/components/icons';
@@ -13,36 +13,56 @@ import { auth } from '@/utils/firebaseConfig';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import toast from 'react-hot-toast';
 import { UserContext } from '@/contexts';
+import Link from 'next/link';
+import { useBooleanStateControl } from '@/hooks';
 
 
 const UserPublicProfilePage = () => {
-    const { isUserDataLoading, userData, userFollows, userFollowers } = useContext(UserContext)
+    const { isUserDataLoading, userData, userFollows, userFollowers, userInterests, userBookmarks } = useContext(UserContext)
+    const {
+        state: isEditProfileModalOpen,
+        setTrue: openEditProfileModal,
+        setFalse: closeEditProfileModal
+    } = useBooleanStateControl()
 
     const searchParams = useSearchParams();
     const view = searchParams.get('view') || 'posts';
     const tabsArray = [
+        {
+            label: 'Details',
+            id: 'details',
+            component: <UserProfileDetailsArticle
+                userData={userData}
+                userFollowers={userFollowers}
+                userFollows={userFollows}
+                userInterests={userInterests}
+                openEditProfileModal={openEditProfileModal}
+            />,
+            only_mobile: true
+        },
         {
             label: "Posts",
             id: 'posts',
             component: <PublicProfilePosts username={userData?.username!} />
         },
         {
-            label: "Archive",
-            id: 'archive',
-            component: <PublicProfilePosts username={userData?.username!} />
+            label: "Bookmarks",
+            id: 'bookmarks',
+            component: <PublicProfileBookmarks bookmarks={userBookmarks} />
         },
-        {
-            label: 'Archive',
-            id: 'archive',
-            component: <PublicProfileDetails />
-        },
+        // {
+        //     label: 'Archive',
+        //     id: 'arrchive',
+        //     component: <PublicProfileDetails />
+        // },
         {
             label: 'Analytics',
-            id: 'archive',
+            id: 'analytics',
             component: <PublicProfileDetails />
         },
+      
     ]
-   
+
 
 
 
@@ -59,8 +79,9 @@ const UserPublicProfilePage = () => {
                     (!isUserDataLoading && userData) ?
                         <>
                             <Tabs value={view} className='relative flex flex-col w-full max-w-[1200px] mx-auto'>
-                                <TabsList className="sticky top-0 flex w-full justify-start gap-4 rounded-10 bg-background px-0 pb-1 h-max z-[3] shadow-sm overflow-x-scroll">
-                                    <div className="w-full px1.5 md:px-6 pt-4 flex items-center justify-center border-muted-foreground/40 dark:border-muted border-b-2 max-md:justify-start">
+                                {/* <TabsList className="sticky top-0 flex w-full justify-start gap-4 rounded-10 bg-background px-0 pb-1 minn-h-max z-[3] shadow-sm overflow-x-scroll"> */}
+                                <TabsList className={"sticky top-0 flex w-full justify-start gap-4 rounded-10 bg-background px-0 pb-1 h-max z-[3] shadow-sm max-md:overflow-x-scroll"}>
+                                    <div className="w-full px-1.5 md:px-6 pt-4 flex items-center justify-center border-muted-foreground/40 dark:border-muted border-b-2 max-md:justify-start">
                                         {
                                             tabsArray.map((tab, index) => {
                                                 return (
@@ -68,7 +89,8 @@ const UserPublicProfilePage = () => {
                                                         className={cn(
                                                             'relative w-fit rounded-none !p-0 text-muted border-0 !bg-none outline-none !shadow-none transition-all sm:w-auto hover:!border-b-primary/30 bg-background',
                                                             'group/trigger !w-1/3',
-                                                            'data-[state=active]:text-muted-foreground'
+                                                            'data-[state=active]:text-muted-foreground',
+                                                            tab.only_mobile && "md:hidden"
                                                         )}
                                                         key={index}
                                                         value={`${tab.id}`}
@@ -112,56 +134,26 @@ const UserPublicProfilePage = () => {
                                 }
                             </Tabs>
 
-                            <section className='sticky top-0 flex flex-col max-h-[90vh]'>
-                                {
-                                    userData &&
-                                    <article className='flex flex-col items-center text-center py-10 my-auto'>
-                                        <div>
-                                            <Avatar
-                                                src={userData.avatar}
-                                                alt={userData.username}
-                                                fallback={userData.name!}
-                                                className='rounded-full h-28 w-28 '
-                                                fallbackClass='text-2xl'
-                                            />
-                                        </div>
-
-                                        <div className='pt-2 pb-1'>
-                                            <h2 className='text-xl font-medium m-0'>
-                                                {userData.name}
-                                            </h2>
-                                            <span className='text-muted-foreground text-sm italic'>
-                                                @{userData.username}
-                                            </span>
-                                        </div>
-
-
-
-                                        <div className='flex items-center gap-4'>
-                                            <p className='flex flex-col text-2xl font-semibold'>
-                                                {userFollowers?.length || 0}
-                                                <span className='text-sm text-muted-foreground'>
-                                                    Followers
-                                                </span>
-                                            </p>
-                                            <p className='flex flex-col text-2xl font-semibold'>
-                                                {userFollows?.length || 0}
-                                                <span className='text-sm text-muted-foreground'>
-                                                    Following
-                                                </span>
-                                            </p>
-                                        </div>
-
-                                        <p className='text-sm text-foreground py-2.5'>
-                                            {userData.bio}
-                                        </p>
-                                    </article>
-                                }
+                            <section className='sticky top-0 flex flex-col max-h-[90vh] max-md:hidden'>
+                                <UserProfileDetailsArticle
+                                    userData={userData}
+                                    userFollowers={userFollowers}
+                                    userFollows={userFollows}
+                                    userInterests={userInterests}
+                                    openEditProfileModal={openEditProfileModal}
+                                />
                             </section>
                         </>
                         :
                         null
             }
+
+            <EditProfileModal
+                isModalOpen={isEditProfileModalOpen}
+                closeModal={closeEditProfileModal}
+                userData={userData}
+                isUserDataLoading={isUserDataLoading}
+            />
 
         </main>
     )

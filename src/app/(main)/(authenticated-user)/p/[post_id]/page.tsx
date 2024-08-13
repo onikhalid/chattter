@@ -1,16 +1,17 @@
 'use client'
 
-import React, { useContext, useMemo } from 'react'
+import React, { useContext, useEffect, useMemo } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { format } from 'date-fns'
 import toast from 'react-hot-toast'
 import { useAuthState } from 'react-firebase-hooks/auth'
-import { BookmarkX, BookmarkPlus, Heart, Clock, Book, Share2, MessageSquareText } from 'lucide-react'
+import { BookmarkX, BookmarkPlus, Heart, Clock, Book, Share2, MessageSquareText, Eye, Ellipsis, PenBoxIcon, Trash, TrendingUp } from 'lucide-react'
 import { useInView } from 'react-intersection-observer';
+import { v4 as uuidv4 } from 'uuid';
 
 import { Spinner } from '@/components/icons'
-import { Avatar, Badge, Button } from '@/components/ui'
+import { Avatar, Badge, Button, ConfirmDeleteModal, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui'
 import { Tooltip } from '@/components/ui'
 import { auth, db } from '@/utils/firebaseConfig'
 import { SmallSpinner } from '@/components/icons'
@@ -23,7 +24,8 @@ import { UseGetPostDetails } from '../../new/misc/api'
 import Head from 'next/head'
 import PostShareModal from '../../misc/components/PostShareModal'
 import { TPost } from '../../misc/types'
-import { UseAddPostToBookmark, UseFollowUser, UseLikePost, UseRemovePostFromBookmark, UseUnFollowUser, UseUnlikePost } from '../../misc/api'
+import { UseAddPostToBookmark, useDeletePost, UseFollowUser, UseLikePost, UseRemovePostFromBookmark, UseUnFollowUser, UseUnlikePost } from '../../misc/api'
+import { arrayUnion, collection, doc, getDoc, increment, serverTimestamp, setDoc, updateDoc } from 'firebase/firestore'
 
 
 
@@ -39,7 +41,52 @@ const PostDetailsPage = ({ params }: { params: { post_id: string } }) => {
     const { mutate: unfollowUser, isPending: isUnfollowingUser } = UseUnFollowUser()
     const { mutate: likePost, isPending: isLikingPost } = UseLikePost({ post_id })
     const { mutate: UnlikePost, isPending: isUnLikingPost } = UseUnlikePost({ post_id })
+    const { mutate: deletePost, isPending: isDeletingComment } = useDeletePost()
+    const timetoRead = useMemo(() => Math.ceil(averageReadingTime(post?.content || '0') / 60), [post?.content])
 
+
+    useEffect(() => {
+        async function trackView(post_id: string) {
+            let reader_id: string;
+
+            if (!loading && user) {
+                reader_id = `${user?.uid}`;
+            } else {
+                reader_id = sessionStorage.getItem('readerSessionId') || uuidv4();
+                sessionStorage.setItem('readerSessionId', reader_id);
+            }
+
+            const postRef = doc(db, 'posts', post_id);
+            const readRef = doc(db, 'postReads', `${user?.uid}_${post_id}`);
+
+            try {
+                const readDoc = await getDoc(readRef);
+
+                if (!readDoc.exists()) {
+                    await setDoc(readRef, {
+                        post_id,
+                        reader_id,
+                        created_at: serverTimestamp()
+                    });
+
+                    await updateDoc(postRef, {
+                        unique_reads: increment(1),
+                        total_reads: increment(1)
+                    });
+                } else {
+                    await updateDoc(postRef, {
+                        totalReads: increment(1)
+                    });
+                }
+            } catch (error) {
+                console.error('Error tracking view:', error);
+            }
+        }
+
+        if (!isLoading && post) {
+            trackView(post_id);
+        }
+    }, [post_id, isLoading])
 
 
     const {
@@ -47,6 +94,12 @@ const PostDetailsPage = ({ params }: { params: { post_id: string } }) => {
         setTrue: openShareModal,
         setFalse: closeShareModal
     } = useBooleanStateControl()
+    const {
+        state: isConfirmDeleteModalOpen,
+        setTrue: openConfirmDeleteModal,
+        setFalse: closeConfirmDeleteModal
+    } = useBooleanStateControl()
+
 
     const saveUnsave = () => {
         if (!loading && !user) {
@@ -66,7 +119,9 @@ const PostDetailsPage = ({ params }: { params: { post_id: string } }) => {
                     post_author_name: post.author_name,
                     post_author_id: post.author_id,
                     post_author_username: post.author_username,
-                    post_author_avatar: post.author_avatar
+                    post_author_avatar: post.author_avatar,
+                    created_at: new Date(),
+
                 }
                 addBookmark(bookmarkData)
                 toast.success("Post saved")
@@ -107,7 +162,14 @@ const PostDetailsPage = ({ params }: { params: { post_id: string } }) => {
             }
         }
     }
-    const timetoRead = useMemo(() => Math.ceil(averageReadingTime(post?.content || '0') / 60), [post?.content])
+
+
+    const handleDelete = () => {
+        const data = { post_id: post?.post_id! }
+        deletePost(data)
+        closeConfirmDeleteModal()
+        toast.success("Post deleted successfully")
+    }
 
 
     return (
@@ -180,6 +242,10 @@ const PostDetailsPage = ({ params }: { params: { post_id: string } }) => {
                                     {
                                         user &&
                                         <div className='flex items-center gap-6'>
+                                            <Tooltip content='Total reads' className='flex items-center gap-1'>
+                                                <Eye className='text-foreground cursor-pointer' />
+                                                {post.total_reads || 0}
+                                            </Tooltip>
                                             <Tooltip content={user && post.likes?.includes(user?.uid) ? "Unlike post" : "Like post"} className='flex items-center gap-1'>
                                                 {
                                                     isLikingPost || isUnLikingPost ?
@@ -195,16 +261,6 @@ const PostDetailsPage = ({ params }: { params: { post_id: string } }) => {
                                                 </span>
                                             </Tooltip>
 
-                                            <Tooltip content='Share post' className='flex items-center gap-1 mr-1.5'>
-                                                <Share2 onClick={openShareModal} className='text-foreground cursor-pointer' />
-                                            </Tooltip>
-
-                                            <Tooltip content='See comments' className='flex items-center gap-1'>
-                                                <Link href={`/p/${post_id}/discuss`}>
-                                                    <MessageSquareText className='text-foreground cursor-pointer' />
-                                                </Link>
-                                            </Tooltip>
-
                                             <Tooltip content={post.bookmarks?.includes(user?.uid) ? "Remove post from archive" : "Save post"} className='flex items-center gap-1'>
                                                 {
                                                     isSavingBookmark || isRemovingBookmark ?
@@ -218,7 +274,19 @@ const PostDetailsPage = ({ params }: { params: { post_id: string } }) => {
                                                 <span className='font-medium text-lg'>
                                                     {post.bookmarks?.length || 0}
                                                 </span>
+
                                             </Tooltip>
+
+                                            <Tooltip content='See comments' className='flex items-center gap-1 mr-1'>
+                                                <Link href={`/p/${post_id}/discuss`}>
+                                                    <MessageSquareText className='text-foreground cursor-pointer' />
+                                                </Link>
+                                            </Tooltip>
+
+                                            <Tooltip content='Share post' className='flex items-center gap-1'>
+                                                <Share2 onClick={openShareModal} className='text-foreground cursor-pointer' />
+                                            </Tooltip>
+
                                         </div>
                                     }
 
@@ -322,6 +390,44 @@ const PostDetailsPage = ({ params }: { params: { post_id: string } }) => {
                                             {post.bookmarks?.length || 0}
                                         </span>
                                     </Tooltip>
+
+                                    {
+                                        (user && user.uid === post.author_id) &&
+                                        <Tooltip content="More">
+                                            <DropdownMenu>
+                                                <DropdownMenuTrigger className='ml-auto'>
+                                                    <Ellipsis />
+                                                </DropdownMenuTrigger>
+
+                                                <DropdownMenuContent align='end' className='flex flex-col p-0 w-max xl:w-48 max-md:gap-1'>
+                                                    <DropdownMenuItem className='rounded-none'>
+                                                        <button onClick={openShareModal} className='flex items-center gap-2.5 w-full py-1.5 px-1.5 text-[1.02rem] max-md:text-base'>
+                                                            <Share2 className='size-[20px]' /> Share Post
+                                                        </button>
+                                                    </DropdownMenuItem>
+
+                                                    <DropdownMenuItem className='rounded-none'>
+                                                        <Link href={`/new?edit=${post.post_id}`} className='flex items-center gap-2.5 w-full py-1.5 px-1.5 text-[1.02rem] max-md:text-base'>
+                                                            <PenBoxIcon className='size-[20px]' />Edit Post
+                                                        </Link>
+                                                    </DropdownMenuItem>
+
+                                                    <DropdownMenuItem className='rounded-none'>
+                                                        <Link href={`/p/${post.post_id}/analytics`} className='flex items-center gap-2.5 w-full pb-1.5 pt-2 px-1.5 text-[1.02rem] max-md:text-base'>
+                                                            <TrendingUp className='size-[20px]' /> View analytics
+                                                        </Link>
+                                                    </DropdownMenuItem>
+
+                                                    <DropdownMenuItem>
+                                                        <button onClick={openConfirmDeleteModal} className='flex items-center gap-2.5 w-full py-1.5 px-1.5 text-[1.02rem] max-md:text-base text-red-400'>
+                                                            <Trash className='size-[20px] text-red-400' />Delete Post
+                                                        </button>
+                                                    </DropdownMenuItem>
+                                                </DropdownMenuContent>
+                                            </DropdownMenu>
+
+                                        </Tooltip>
+                                    }
                                 </div>
                             }
                         </div>
@@ -334,11 +440,22 @@ const PostDetailsPage = ({ params }: { params: { post_id: string } }) => {
 
             {
                 !isLoading && post &&
-                <PostShareModal
-                    post={post || {} as TPost}
-                    isModalOpen={isShareModalOpen}
-                    closeModal={closeShareModal}
-                />
+                <>
+                    <PostShareModal
+                        post={post || {} as TPost}
+                        isModalOpen={isShareModalOpen}
+                        closeModal={closeShareModal}
+                    />
+                    <ConfirmDeleteModal
+                        isModalOpen={isConfirmDeleteModalOpen}
+                        closeModal={closeConfirmDeleteModal}
+                        deleteFunction={handleDelete}
+                        title="Delete Post"
+                        isDeletePending={isDeletingComment}
+                    >
+                        <p>Are you sure you want to delete this post?. Please note that this action is irreversible</p>
+                    </ConfirmDeleteModal>
+                </>
             }
             {
                 !isLoading && post &&

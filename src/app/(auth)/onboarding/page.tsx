@@ -183,7 +183,7 @@ const NewUserOnboarding: React.FC = () => {
                                     className='hidden'
                                 />
                                 {
-                                    !watch('avatar') && !userData?.avatar &&
+                                    !watch('avatar') && !selectedImage &&
                                     <div className={cn('flex items-center justify-center bg-muted aspect-video w-full cursor-pointer border-2 border-transparent',
                                         errors.avatar && 'border-red-500'
                                     )}>

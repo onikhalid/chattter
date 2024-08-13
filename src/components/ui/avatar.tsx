@@ -24,7 +24,6 @@ const AvatarComponent: React.FC<AvatarProps> = ({ src, alt, fallback, size = "me
             size === "medium" && "w-9 h-9",
             size === "large" && "w-12 h-12",
             className
-
         )}>
             {
                 src &&

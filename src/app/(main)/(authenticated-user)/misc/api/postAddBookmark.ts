@@ -2,11 +2,11 @@
 import { doc, collection, updateDoc, addDoc, getDoc, setDoc, arrayUnion } from "firebase/firestore";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { db } from "@/utils/firebaseConfig";
-import { TBookmark } from "../types";
+import { TCreateBookmark } from "../types";
 import toast from "react-hot-toast";
 import { launchNotification } from "@/utils/notifications";
 
-const AddPostToBookmark = async (bookmarkData: TBookmark) => {
+const AddPostToBookmark = async (bookmarkData: TCreateBookmark) => {
     try {
         const { bookmarker_id, post_id } = bookmarkData
         const bookmarkId = `${bookmarker_id}_${post_id}`

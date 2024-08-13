@@ -21,8 +21,10 @@ import { TPost } from '../types'
 
 interface Props {
   post: TPost
+  isFromProfile?: boolean
+  refetch?: () => void
 }
-const PostCard: React.FC<Props> = ({ post }) => {
+const PostCard: React.FC<Props> = ({ post, isFromProfile, refetch }) => {
   const [user, loading] = useAuthState(auth)
   const { userFollows } = useContext(UserContext)
   const { mutate: addBookmark, isPending: isSavingBookmark } = UseAddPostToBookmark({})
@@ -39,12 +41,12 @@ const PostCard: React.FC<Props> = ({ post }) => {
     setTrue: openConfirmDeleteModal,
     setFalse: closeConfirmDeleteModal
   } = useBooleanStateControl()
-  const { mutate: deleteComment, isPending: isDeletingComment } = useDeletePost()
+  const { mutate: deletePost, isPending: isDeletingComment } = useDeletePost()
 
 
   const handleDelete = () => {
     const data = { post_id: post.post_id }
-    deleteComment(data)
+    deletePost(data)
     closeConfirmDeleteModal()
     toast.success("Post deleted successfully")
   }
@@ -55,6 +57,7 @@ const PostCard: React.FC<Props> = ({ post }) => {
         position: "top-center",
         duration: 4000
       })
+      return
     } else if (user) {
       if (post.bookmarks?.includes(user?.uid)) {
         deleteBookmark(`${user.uid}_${post.post_id}`)
@@ -67,10 +70,14 @@ const PostCard: React.FC<Props> = ({ post }) => {
           post_author_name: post.author_name,
           post_author_id: post.author_id,
           post_author_username: post.author_username,
-          post_author_avatar: post.author_avatar
+          post_author_avatar: post.author_avatar,
+          created_at: new Date()
         }
         addBookmark(bookmarkData)
       }
+    }
+    if (isFromProfile && refetch) {
+      refetch()
     }
   }
   const followUnfollow = () => {
@@ -88,6 +95,9 @@ const PostCard: React.FC<Props> = ({ post }) => {
         followUser(data)
         toast.success(`Followed ${post.author_name}`)
       }
+    }
+    if (isFromProfile && refetch) {
+      refetch()
     }
   }
 
@@ -195,7 +205,7 @@ const PostCard: React.FC<Props> = ({ post }) => {
         </LinkButton>
 
         <div className='flex items-center gap-2 ml-auto'>
-          <Badge variant="secondary">{post.reads?.length || 0} reads</Badge>
+          <Badge variant="secondary">{post.total_reads || 0} reads</Badge>
           {
             post.tags.length &&
             <Tooltip content='See more related posts'>

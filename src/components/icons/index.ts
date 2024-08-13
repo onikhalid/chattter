@@ -2,6 +2,7 @@ export { default as FacebookIcon } from './Facebook';
 export { default as FacebookIcon2 } from './Facebook2';
 export { default as GoogleIcon } from './Google';
 export { default as HideIcon } from './Hide';
+export { default as InstagramIcon } from './Instagram';
 export { default as LinkedInIcon } from './LinkedIn';
 export { default as PenIcon } from './Pen';
 export { default as Spinner } from './Spinner'

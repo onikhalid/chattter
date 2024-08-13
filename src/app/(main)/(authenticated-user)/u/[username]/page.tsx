@@ -1,18 +1,18 @@
 'use client'
 import { useSearchParams } from 'next/navigation';
 import React, { useContext } from 'react'
+import toast from 'react-hot-toast';
+import { useAuthState } from 'react-firebase-hooks/auth';
 
-import { Avatar, Button, LinkButton, Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui'
+import { Avatar, Badge, Button, LinkButton, Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui'
 import { cn } from '@/lib/utils';
+import { SmallSpinner } from '@/components/icons';
+import { auth } from '@/utils/firebaseConfig';
+import { UserContext } from '@/contexts';
 
 import { PublicProfileDetails, PublicProfilePosts } from '../../misc/components';
 import { UseFollowUser, UseGetUserPublicProfileDetails, UseUnFollowUser } from '../../misc/api';
-import Image from 'next/image';
-import { SmallSpinner } from '@/components/icons';
-import { auth } from '@/utils/firebaseConfig';
-import { useAuthState } from 'react-firebase-hooks/auth';
-import toast from 'react-hot-toast';
-import { UserContext } from '@/contexts';
+import Link from 'next/link';
 
 
 const UserPublicProfilePage = ({ params }: { params: { username: string } }) => {
@@ -63,7 +63,7 @@ const UserPublicProfilePage = ({ params }: { params: { username: string } }) => 
 
 
     return (
-        <main className="relative grow w-full lg:grid grid-cols-[1fr,0.4fr] px-4 lg:px-[7.5vw] lg:gap-[5vw] max-h-[calc(100vh_-_4.5rem)] overflow-y-scroll">
+        <main className="relative grow w-full flex flex-col-reverse lg:grid grid-cols-[1fr,0.4fr] px-4 lg:px-[7.5vw] lg:gap-[5vw] max-h-[calc(100vh_-_4.5rem)] overflow-y-scroll">
             {
                 isLoading ?
 
@@ -127,7 +127,7 @@ const UserPublicProfilePage = ({ params }: { params: { username: string } }) => 
                             }
                         </Tabs>
 
-                        <section className='sticky top-0 flex flex-col max-h-[90vh]'>
+                        <section className='lg:sticky top-0 flex flex-col max-h-[90vh]'>
                             {
                                 !isLoading && data &&
                                 <article className='flex flex-col items-center text-center py-10 my-auto'>
@@ -178,6 +178,23 @@ const UserPublicProfilePage = ({ params }: { params: { username: string } }) => 
                                     <p className='text-sm text-foreground py-2.5'>
                                         {data?.details.bio}
                                     </p>
+
+
+                                    
+                                {
+                                    data?.details.interests && data?.details.interests.length > 0 &&
+                                    <div className='flex items-center justify-center flex-wrap gap-2'>
+                                        {
+                                            data?.details.interests.map((tag, index) => (
+                                                <Badge key={index} variant="secondary" className='text-sm font-normal'>
+                                                    <Link href={`/tags/${tag.toLowerCase()}`}>
+                                                        {tag}
+                                                    </Link>
+                                                </Badge>
+                                            ))
+                                        }
+                                    </div>
+                                }
                                 </article>
                             }
                         </section>

@@ -66,7 +66,7 @@ const Register: React.FC = () => {
         await setDoc(userDocRef, userData)
         router.push("/onboarding")
       }
-      launchNotification('success', 'Welcome to archi NG 😎')
+      launchNotification('success', 'Welcome to Chatter 😎')
 
     } catch (error: any) {
       if (error.code === 'auth/email-already-in-use') {

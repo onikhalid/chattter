@@ -16,7 +16,7 @@ const LoadingModal: React.FC<LoadingModalProps> = ({ isModalOpen, errorMsg, load
     <Dialog modal={true} open={isModalOpen} >
       <DialogContent
         aria-label={"loading modal"}
-        onPointerDownOutside={() => toast.error(errorMsg || "Please wait for action to finish", { position: 'top-center' })}
+        onPointerDownOutside={() => toast(errorMsg || "Please wait for action to finish", { position: 'top-center' })}
         className='!bg-transparent border-none shadow-none'
         showCloseButton={false}
       >

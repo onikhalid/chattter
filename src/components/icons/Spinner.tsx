@@ -29,7 +29,7 @@ export function SmallSpinner({
                 <path
                     className={pathClassName}
                     d="M13 7a6 6 0 1 1-4.146-5.706"
-                    stroke={color}
+                    stroke="currentColor"
                     strokeLinecap="round"
                     strokeLinejoin="round"
                     strokeWidth={1.5}

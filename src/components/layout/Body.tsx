@@ -10,10 +10,11 @@ import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth } from '@/utils/firebaseConfig';
 import { getInitials } from '@/utils/strings';
 
-import { Avatar, Button, ChattterLogo, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, LinkButton, Sheet, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger, Tooltip } from '../ui';
+import { Avatar, Button, ChattterLogo, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, LinkButton, Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger, Tooltip } from '../ui';
 import { UserContext } from '@/contexts';
 import { useBooleanStateControl } from '@/hooks';
 import SearchModal from './SearchModal';
+import toast from 'react-hot-toast';
 
 
 
@@ -33,7 +34,13 @@ const Body = ({ children }: { children: React.ReactNode }) => {
     setTrue: openSearchModal,
     setFalse: closeSearchModal
   } = useBooleanStateControl()
+
   useEffect(() => {
+    // if (!loading && !user) {
+    //   toast.error("Create an account to access this page")
+    //   router.push('/login')
+    // }
+
     const savedTheme = localStorage.getItem("theme");
     if (savedTheme) {
       setTheme(savedTheme);
@@ -55,6 +62,8 @@ const Body = ({ children }: { children: React.ReactNode }) => {
     auth.signOut();
     router.push('/login')
   }
+
+
 
 
 
@@ -100,7 +109,7 @@ const Body = ({ children }: { children: React.ReactNode }) => {
                 }
                 {
                   pathName !== '/new' &&
-                  <LinkButton href='/new' shape='rounded' variant='default' className='flex items-center gap-2 rounded-lg border-muted max-md:!p-0 md:py-1.5 max-md:!bg-transparent'>
+                  <LinkButton href='/new' shape='rounded' variant='default' className='flex items-center gap-2 rounded-lg border-muted max-md:border-transparent max-md:!p-0 md:py-1.5 max-md:!bg-transparent'>
                     <span className='max-md:hidden'>
                       Write story
                     </span>
@@ -115,8 +124,12 @@ const Body = ({ children }: { children: React.ReactNode }) => {
                     <Avatar alt={user.displayName || "user"} src={user.photoURL || userData?.avatar} fallback={getInitials(user.displayName || "F N")} size='large' />
                   </SheetTrigger>
 
-                  <SheetContent className='flex flex-col items-center justify-between py-[10vh]'>
-                    <SheetHeader>
+                  <SheetContent className='flex flex-col items-center justify-between pt-[5vh] pb-[10vh]'>
+                    <SheetHeader className='flex flex-row items-center justify-end w-full'>
+                     
+                      <SheetClose >
+                        <Button variant='secondary'>Close</Button>
+                      </SheetClose>
                     </SheetHeader>
 
                     <div className='flex flex-col'>
@@ -164,7 +177,7 @@ const Body = ({ children }: { children: React.ReactNode }) => {
                   <DropdownMenuContent align='end' className='flex flex-col gap-0.5 px-0'>
 
                     <DropdownMenuItem className='px-3 w-72 dark:border-b-muted border-b-muted-foreground border-b rounded-none'>
-                      <Link href={`/me/profile`} className='flex items-center gap-2 text-base px-3 py-4 rounded-none w-full'>
+                      <Link href={`/me/`} className='flex items-center gap-2 text-base px-3 py-4 rounded-none w-full'>
                         <Avatar alt={user.displayName || "user"} src={user.photoURL || userData?.avatar} fallback={getInitials(user.displayName || "F N")} className='w-14 h-14' />
                         <div>
                           <p className='text-xl font-display max-w-[20ch]'>{user.displayName}</p>
@@ -173,21 +186,28 @@ const Body = ({ children }: { children: React.ReactNode }) => {
                       </Link>
                     </DropdownMenuItem>
 
-                    <DropdownMenuItem className='!rounded-none'>
+                    <DropdownMenuItem className='!rounded-none py-0'>
+                      <Link href='/me' className='flex items-center gap-2 text-lg pl-3 rounded-none w-full py-3'>
+                        <UserIcon size={24} />
+                        Profile
+                      </Link>
+                    </DropdownMenuItem>
+
+                    <DropdownMenuItem className='!rounded-none py-0'>
                       <Link href='/bookmarks' className='flex items-center gap-2 text-lg pl-3 rounded-none w-full py-3'>
                         <Folder size={24} />
                         Bookmarks
                       </Link>
                     </DropdownMenuItem>
 
-                    <DropdownMenuItem className='!rounded-none'>
+                    <DropdownMenuItem className='!rounded-none py-0'>
                       <Link href='/settings' className='flex items-center gap-2 text-lg pl-3 rounded-none w-full py-3'>
                         <SettingsIcon size={24} />
                         Settings
                       </Link>
                     </DropdownMenuItem>
 
-                    <DropdownMenuItem className=' !rounded-none'>
+                    <DropdownMenuItem className=' !rounded-none py-0'>
                       <button onClick={logout} className='flex items-center gap-2 text-lg pl-3 rounded-none w-full py-3 text-red-400' data-testid="logout-button">
                         <LogOut size={24} className='text-red-400' />
                         Logout

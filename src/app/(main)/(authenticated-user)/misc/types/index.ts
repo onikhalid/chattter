@@ -14,7 +14,20 @@ export type TPost = {
     title_for_search: string[];
     likes: string[];
     bookmarks: string[];
-    reads: string[];
+    total_reads: number;
+    unique_reads: number;
+    views: string;
+}
+export type TCreateBookmark = {
+    bookmarker_id: string;
+    post_id: string;
+    post_title: string;
+    post_cover_image: string;
+    post_author_id: string;
+    post_author_username: string;
+    post_author_avatar: string;
+    post_author_name: string;
+    created_at: Date;
 }
 export type TBookmark = {
     bookmarker_id: string;
@@ -24,7 +37,11 @@ export type TBookmark = {
     post_author_id: string;
     post_author_username: string;
     post_author_avatar: string;
+    post_author_name: string;
+    created_at: Timestamp;
 }
+
+
 export type TFollow = {
     follower_id: string;
     followed_id: string;

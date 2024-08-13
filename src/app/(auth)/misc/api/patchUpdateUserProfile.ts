@@ -49,7 +49,7 @@ export const updateUserProfile = async (
     const batch = writeBatch(db);
 
     // Update user's posts
-    const allUsersPostsQuery = query(collection(db, "posts"), where("authorId", "==", user.uid));
+    const allUsersPostsQuery = query(collection(db, "posts"), where("author_id", "==", user.uid));
     const allUsersPostsSnap = await getDocs(allUsersPostsQuery);
     allUsersPostsSnap.docs.forEach((postDoc) => {
         const postDocRef = doc(db, `posts/${postDoc.id}`);
@@ -61,7 +61,7 @@ export const updateUserProfile = async (
     });
 
     // Update user's bookmarks
-    const allUsersPostsBookmarkssQuery = query(collection(db, "bookmarks"), where("authorId", "==", user.uid));
+    const allUsersPostsBookmarkssQuery = query(collection(db, "bookmarks"), where("post_author_id", "==", user.uid));
     const allUsersPostsBookmarksSnap = await getDocs(allUsersPostsBookmarkssQuery);
     allUsersPostsBookmarksSnap.docs.forEach((bookmarkDoc) => {
         const bookmarkDocRef = doc(db, `bookmarks/${bookmarkDoc.id}`);
@@ -72,7 +72,7 @@ export const updateUserProfile = async (
     });
 
     // Update user's folders
-    const allUsersFoldersQuery = query(collection(db, "folders"), where("userId", "==", user.uid));
+    const allUsersFoldersQuery = query(collection(db, "folders"), where("uid", "==", user.uid));
     const allUsersFoldersSnap = await getDocs(allUsersFoldersQuery);
     allUsersFoldersSnap.docs.forEach((folderDoc) => {
         const folderDocRef = doc(db, `folders/${folderDoc.id}`);
@@ -83,14 +83,14 @@ export const updateUserProfile = async (
     });
 
     // Update user's contributions
-    const allUsersContributionsQuery = query(collection(db, "contributions"), where("authorId", "==", user.uid));
+    const allUsersContributionsQuery = query(collection(db, "comments"), where("commentor_id", "==", user.uid));
     const allUsersContributionSnap = await getDocs(allUsersContributionsQuery);
     allUsersContributionSnap.docs.forEach((contributionDoc) => {
-        const contributionDocRef = doc(db, `contributions/${contributionDoc.id}`);
+        const contributionDocRef = doc(db, `comments/${contributionDoc.id}`);
         batch.update(contributionDocRef, {
-            author_name: data.name,
-            author_avatar: selectedImage ? newImageURL : profileImgURL,
-            author_username: data.username,
+            commentor_name: data.name,
+            commentor_avatar: selectedImage ? newImageURL : profileImgURL,
+            commentor_username: data.username,
         });
     });
 

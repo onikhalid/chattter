@@ -62,9 +62,10 @@ const useGetUserPostsInfiniteQuery = (username: string, sortBy: SortOption) => {
 
   useEffect(() => {
     const { orderByField, orderDirection } = getOrderFieldAndDirection(sortBy);
-    const postsCollectionRef = collection(db, "posts");
+    const postsCollectionRef = collection(db, "posts");  
     const q = query(
       postsCollectionRef,
+      where("author_username", "==", username),
       orderBy(orderByField, orderDirection),
       limit(POSTS_PER_FETCH)
     );
@@ -72,6 +73,7 @@ const useGetUserPostsInfiniteQuery = (username: string, sortBy: SortOption) => {
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const posts = snapshot.docs.map(doc => {
         return { ...doc.data() } as TPost;
+
       });
 
       const lastVisible = snapshot.docs.length > 0 ? snapshot.docs[snapshot.docs.length - 1] : null;
