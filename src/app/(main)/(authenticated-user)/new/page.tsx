@@ -17,10 +17,11 @@ import { TrashIcon, UploadIcon, } from '@/components/icons';
 import { UserContext } from '@/contexts';
 import { cn } from '@/lib/utils';
 import { presetArticleTags } from '@/constants';
+import { convertHtmlToMarkdown, convertMarkdownToHtml } from '@/utils/quillEditor';
 
 import { UseCreateNewPost, UseGetPostDetails, UseUpdateNewPost } from './misc/api';
 import { deleteImageFromDatabase, extractImageUrls, generateTitleSearchTerms, uploadCoverImage } from './misc/utils';
-
+import MarkdownEditor from '@uiw/react-md-editor';
 
 
 
@@ -63,6 +64,7 @@ const WriteNewStoryPage = () => {
         ),
     });
     type createNewPostFormDataType = z.infer<typeof CreateNewPostFormSchema>
+    const [editorMode, setEditorMode] = useState('richText');
 
     const [user, loading] = useAuthState(auth);
     const { userData } = useContext(UserContext);
@@ -95,9 +97,18 @@ const WriteNewStoryPage = () => {
     const [coverImgURL, setCoverImgURL] = useState<string | null>(postData?.cover_image || null)
     const [uploadedImages, setUploadedImages] = useState<string[]>([]);
 
-
-
-
+    const toggleEditorMode = useCallback(async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+        e.preventDefault();
+        if (editorMode === 'richText') {
+            const markdown = convertHtmlToMarkdown(watch('content'));
+            setValue('content', markdown);
+            setEditorMode('markdown');
+        } else {
+            const html = await convertMarkdownToHtml(watch('content'));
+            setValue('content', html);
+            setEditorMode('richText');
+        }
+    }, [editorMode, watch, setValue]);
 
     const handleCreateNewPost = async (data: createNewPostFormDataType) => {
         const submittedData = data;
@@ -113,6 +124,7 @@ const WriteNewStoryPage = () => {
         }
         const dataToSubmit = {
             ...data,
+            content: editorMode === 'richText' ? watch('content') : convertHtmlToMarkdown(watch('content')),    
             author_id: user?.uid || "",
             author_avatar: userData?.avatar || "",
             author_username: userData?.username || "",
@@ -341,52 +353,65 @@ const WriteNewStoryPage = () => {
                     )}
                 />
 
-
+                <Button onClick={(e) => toggleEditorMode(e)}>
+                    Switch to {editorMode === 'richText' ? 'Markdown' : 'Rich Text'} Editor
+                </Button>
                 <Controller
                     name="content"
                     control={control}
                     defaultValue=""
                     render={({ field }) => (
                         <div className={''}>
-                            <ReactQuill
-                                theme="snow"
-                                value={field?.value?.replace("<p><br></p>", "") || ''}
-                                onBlur={field.onBlur}
-                                onChange={(content, delta, source, editor) => {
-                                    const updatedContent = content.replace(/<p><br><\/p>/g, '');
-                                    field.onChange(updatedContent);
+                            {editorMode === 'richText' ?
+                                <ReactQuill
+                                    theme="snow"
+                                    value={field?.value?.replace("<p><br></p>", "") || ''}
+                                    onBlur={field.onBlur}
+                                    onChange={(content, delta, source, editor) => {
+                                        const updatedContent = content.replace(/<p><br><\/p>/g, '');
+                                        field.onChange(updatedContent);
 
-                                }}
+                                    }}
 
-                                modules={{
-                                    toolbar: {
-                                        container: [
-                                            [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+                                    modules={{
+                                        toolbar: {
+                                            container: [
+                                                [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
 
-                                            ['bold', 'italic', 'underline', 'strike'],
-                                            [{ 'list': 'ordered' }, { 'list': 'bullet' }],
-                                            [{ 'indent': '-1' }, { 'indent': '+1' }],
-                                            [{ 'align': [] }],
+                                                ['bold', 'italic', 'underline', 'strike'],
+                                                [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+                                                [{ 'indent': '-1' }, { 'indent': '+1' }],
+                                                [{ 'align': [] }],
 
-                                            ['link', 'image'],
-                                            ['clean']
-                                        ],
-                                        handlers: {
-                                            image: QuillimageSelectionHandler
-                                        }
-                                    },
-                                    clipboard: {
-                                        matchVisual: false,
-                                    },
-                                }}
+                                                ['link', 'image'],
+                                                ['clean']
+                                            ],
+                                            handlers: {
+                                                image: QuillimageSelectionHandler
+                                            }
+                                        },
+                                        clipboard: {
+                                            matchVisual: false,
+                                        },
+                                    }}
 
-                                className={`w-full py-4 px-0 mt-2 rounded-lg bg-background text-black outline-none ${errors?.content && errors?.content?.message ? "showcase-input-error" : ""}`}
-                                placeholder='Start writing...'
-                                style={{ border: "none" }}
-                                id="myQuillEditor"
+                                    className={`w-full py-4 px-0 mt-2 rounded-lg bg-background outline-none ${errors?.content && errors?.content?.message ? "showcase-input-error" : ""}`}
+                                    placeholder='Start writing...'
+                                    style={{ border: "none" }}
+                                    id="myQuillEditor"
 
 
-                            />
+                                />
+                                :
+                                <MarkdownEditor
+                                    value={field.value}
+                                    onChange={field.onChange}
+                                    className=' w-full min-h-[300px] py-4 px-0 my-2 rounded-lg bg-background text-foreground outline-none'
+                                // ... other MarkdownEditor props
+                                />
+
+                            }
+
                         </div>
                     )}
                 />
