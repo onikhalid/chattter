@@ -94,7 +94,7 @@ const useGetUserPostsInfiniteQuery = (username: string, sortBy: SortOption) => {
     });
 
     return () => unsubscribe();
-  }, [queryClient, sortBy]);
+  }, [queryClient, sortBy, users]);
 
   return useInfiniteQuery<UserProfileQueryResult, Error, InfiniteData<UserProfileQueryResult>, QueryKey, QueryDocumentSnapshot<DocumentData> | null>({
     queryKey: ['all-user-posts', { username, sortBy }],

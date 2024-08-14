@@ -1,9 +1,13 @@
 import React, { useEffect } from 'react'
-import { UseGetTopHomeSidebar } from '../api'
 import Link from 'next/link'
+
 import { Badge } from '@/components/ui'
 import { collection, getDocs } from 'firebase/firestore'
 import { db } from '@/utils/firebaseConfig'
+
+import { UseGetTopHomeSidebar } from '../api'
+
+
 
 const TopVoices = () => {
     const { data } = UseGetTopHomeSidebar()

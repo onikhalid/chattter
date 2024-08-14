@@ -93,7 +93,7 @@ const EditProfileModal: React.FC<Props> = ({ isModalOpen, closeModal, userData, 
             setValue('instagram', userData.instagram || '')
             setProfileImgURL(userData.avatar || user?.photoURL || null)
         }
-    }, [userData, isUserDataLoading, setValue])
+    }, [userData, isUserDataLoading, setValue, user?.photoURL])
 
 
 
