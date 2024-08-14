@@ -185,87 +185,86 @@ const PrivateProfileAnalyticsDashboard = () => {
                 </header>
 
                 <div className='grid lg:grid-cols-[1fr,0.6fr] items-center lg:items-stretch md:gap-10'>
-                    <div className='flex flex-col w-full'>
-                        <ChartContainer config={bestComparisonChartConfig} className="max-md:min-h-[200px] min-h-[150px] w-full max-w-[550px]">
-                            <BarChart accessibilityLayer data={bestComparisonChartData}>
-                                <CartesianGrid vertical={false} />
-                                <XAxis
-                                    dataKey="title"
-                                    tickLine={false}
-                                    tickMargin={10}
-                                    axisLine={false}
-                                    tick={{ display: 'none' }}
-                                />
-                                <ChartTooltip
-                                    content={<ChartTooltipContent
-                                        label={true}
-                                        indicator='line'
-                                        labelKey='title'
-                                        nameKey='title'
-                                    />}
-                                />
-                                <Bar dataKey="likes" fill="var(--color-likes)" radius={4} />
-                                <Bar dataKey="reads" fill="var(--color-reads)" radius={4} />
-                                <Bar dataKey="bookmarks" fill="var(--color-bookmarks)" radius={4} />
-                                <ChartLegend content={<ChartLegendContent />} />
-                            </BarChart>
-                        </ChartContainer>
-                        <p className='text-center mt-4'>Enagement Distribution for posts with the most engagement</p>
-                    </div>
+                    <ChartContainer config={bestComparisonChartConfig} className="max-md:min-h-[200px] min-h-[150px] w-full max-w-[550px]">
+                        <BarChart accessibilityLayer data={bestComparisonChartData}>
+                            <CartesianGrid vertical={false} />
+                            <XAxis
+                                dataKey="title"
+                                tickLine={false}
+                                tickMargin={10}
+                                axisLine={false}
+                                tick={{ display: 'none' }}
+                            />
+                            <ChartTooltip
+                                content={<ChartTooltipContent
+                                    label={true}
+                                    indicator='line'
+                                    labelKey='title'
+                                    nameKey='title'
+                                />}
+                            />
+                            <Bar dataKey="likes" fill="var(--color-likes)" radius={4} />
+                            <Bar dataKey="reads" fill="var(--color-reads)" radius={4} />
+                            <Bar dataKey="bookmarks" fill="var(--color-bookmarks)" radius={4} />
+                            <ChartLegend content={<ChartLegendContent />} />
+                        </BarChart>
+                    </ChartContainer>
 
-                    <div className='flex flex-col w-full'>
-                        <ChartContainer
-                            config={totalEngagementDistributionChartConfig}
-                            className="aspect-square max-h-[350px]"
 
-                        >
-                            <PieChart>
-                                <ChartTooltip
-                                    cursor={false}
-                                    content={<ChartTooltipContent hideLabel />}
-                                />
-                                <Pie
-                                    data={totalEngagementDistributionChartData}
-                                    nameKey="label"
-                                    dataKey="value"
-                                    innerRadius={60}
-                                    strokeWidth={5}
-                                >
-                                    <Label
-                                        content={({ viewBox }) => {
-                                            if (viewBox && "cx" in viewBox && "cy" in viewBox) {
-                                                return (
-                                                    <text
+                    <ChartContainer
+                        config={totalEngagementDistributionChartConfig}
+                        className="aspect-square max-h-[350px]"
+
+                    >
+                        <PieChart>
+                            <ChartTooltip
+                                cursor={false}
+                                content={<ChartTooltipContent hideLabel />}
+                            />
+                            <Pie
+                                data={totalEngagementDistributionChartData}
+                                nameKey="label"
+                                dataKey="value"
+                                innerRadius={60}
+                                strokeWidth={5}
+                            >
+                                <Label
+                                    content={({ viewBox }) => {
+                                        if (viewBox && "cx" in viewBox && "cy" in viewBox) {
+                                            return (
+                                                <text
+                                                    x={viewBox.cx}
+                                                    y={viewBox.cy}
+                                                    textAnchor="middle"
+                                                    dominantBaseline="middle"
+                                                >
+                                                    <tspan
                                                         x={viewBox.cx}
                                                         y={viewBox.cy}
-                                                        textAnchor="middle"
-                                                        dominantBaseline="middle"
+                                                        className="fill-foreground text-3xl font-bold"
                                                     >
-                                                        <tspan
-                                                            x={viewBox.cx}
-                                                            y={viewBox.cy}
-                                                            className="fill-foreground text-3xl font-bold"
-                                                        >
-                                                            {totalEngagements.toLocaleString()}
-                                                        </tspan>
-                                                        <tspan
-                                                            x={viewBox.cx}
-                                                            y={(viewBox.cy || 0) + 24}
-                                                            className="fill-muted-foreground"
-                                                        >
-                                                            Impressions
-                                                        </tspan>
-                                                    </text>
-                                                )
-                                            }
-                                        }}
-                                    />
-                                </Pie>
-                                <ChartLegend content={<ChartLegendContent />} />
-                            </PieChart>
-                        </ChartContainer>
-                        <p className='text-center mt-4'>Enagement Distribution for all posts.</p>
-                    </div>
+                                                        {totalEngagements.toLocaleString()}
+                                                    </tspan>
+                                                    <tspan
+                                                        x={viewBox.cx}
+                                                        y={(viewBox.cy || 0) + 24}
+                                                        className="fill-muted-foreground"
+                                                    >
+                                                        Impressions
+                                                    </tspan>
+                                                </text>
+                                            )
+                                        }
+                                    }}
+                                />
+                            </Pie>
+                            <ChartLegend content={<ChartLegendContent />} />
+                        </PieChart>
+                    </ChartContainer>
+                </div>
+                <div className='grid lg:grid-cols-[1fr,0.6fr] items-center lg:items-stretch md:gap-10'>
+                    <p className='text-center mt-4'>Enagement Distribution for posts with the most engagement</p>
+                    <p className='text-center mt-4'>Enagement Distribution for all posts.</p>
                 </div>
             </section>
 
