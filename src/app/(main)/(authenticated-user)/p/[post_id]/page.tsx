@@ -75,7 +75,7 @@ const PostDetailsPage = ({ params }: { params: { post_id: string } }) => {
                     });
                 } else {
                     await updateDoc(postRef, {
-                        totalReads: increment(1)
+                        total_reads: increment(1)
                     });
                 }
             } catch (error) {

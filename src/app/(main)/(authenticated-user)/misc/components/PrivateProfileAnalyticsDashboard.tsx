@@ -263,7 +263,7 @@ const PrivateProfileAnalyticsDashboard = () => {
                     </ChartContainer>
                 </div>
                 <div className='grid lg:grid-cols-[1fr,0.6fr] items-center lg:items-stretch md:gap-10'>
-                    <p className='text-center mt-4'>Enagement Distribution for posts with the most engagement</p>
+                    <p className='text-center mt-4 text-balance'>Enagement Distribution for posts with the most engagement</p>
                     <p className='text-center mt-4'>Enagement Distribution for all posts.</p>
                 </div>
             </section>
@@ -276,9 +276,6 @@ const PrivateProfileAnalyticsDashboard = () => {
                     </h3>
                 </header>
                 <div className='flex flex-col w-full overflow-x-scroll'>
-                    {/* <BestPerformingPostsByLikesTable data={bestPerformingPostsByLikes} />
-                    <BestPerformingPostsByViewsTable data={bestPerformingPostsByLikes} /> */}
-
                     <BestPerformingPostsSection
                         bestPerformingPostsByLikes={bestPerformingPostsByLikes}
                         bestPerformingPostsByTotalReads={bestPerformingPostsByTotalReads}

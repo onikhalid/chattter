@@ -21,6 +21,7 @@ import { generateTitleSearchTerms } from '@/app/(main)/(authenticated-user)/new/
 import { useUpdateUserProfile } from '@/app/(auth)/misc/api';
 import { checkIfUsernameTaken } from '@/app/(auth)/misc/utils';
 import { TUpdateUser } from '@/app/(auth)/misc/types';
+import { updateProfile } from 'firebase/auth';
 
 
 
@@ -48,7 +49,7 @@ const EditProfileModal: React.FC<Props> = ({ isModalOpen, closeModal, userData, 
         instagram: z.string().optional(),
         avatar: z.any().nullable().refine(
             file => {
-                if (!userData?.avatar &&!user?.photoURL && !file) {
+                if (!userData?.avatar && !user?.photoURL && !file) {
                     throw ZodError.create([{
                         path: ['avatar'],
                         message: 'Please select a profile image.',
@@ -109,9 +110,10 @@ const EditProfileModal: React.FC<Props> = ({ isModalOpen, closeModal, userData, 
         }
 
         try {
+
             await updateUserProfileMutation.mutateAsync({ ...data, updated_at: new Date(), name_for_search: generateTitleSearchTerms(data.name) },
                 {
-                    onSuccess(data, variables, context) {
+                    onSuccess() {
                         toast.success("Profile updated successfully", {
                             position: "top-center",
                             duration: 2000,

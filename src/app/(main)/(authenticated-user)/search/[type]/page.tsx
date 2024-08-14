@@ -1,9 +1,9 @@
 'use client'
 
-import React from 'react'
-import { useSearchParams } from 'next/navigation';
+import React, { useState } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation';
 
-import { LinkButton, Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui'
+import { Input, LinkButton, Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui'
 import { cn } from '@/lib/utils';
 
 import { SearchPeople, SearchPosts, SearchTags } from '../../misc/components';
@@ -11,6 +11,7 @@ import { SearchPeople, SearchPosts, SearchTags } from '../../misc/components';
 
 const SearchResultPage = ({ params }: { params: { type: string } }) => {
     const { type } = params
+    const router = useRouter()
     const searchParams = useSearchParams();
     const query = searchParams.get('q');
     const tabsArray = [
@@ -31,9 +32,37 @@ const SearchResultPage = ({ params }: { params: { type: string } }) => {
         },
     ]
 
-
+    const [hasErrors, setHasErrors] = useState(false)
+    const [searchText, setSearchText] = useState(query || "")
+    const handleInputChange = (newValue: string) => {
+        setSearchText(newValue)
+        if (newValue.length > 0) {
+            setHasErrors(false)
+        }
+    }
+    const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault()
+        if (searchText.length < 3) {
+            setHasErrors(true)
+            return
+        }
+        router.push(`/search/${type}?q=${searchText}`)
+    }
     return (
-        <main className="relative grow w-full lg:grid px-4 lg:px-[7.5vw] lg:gap-[5vw] max-h-[calc(100vh_-_4.5rem)] overflow-y-scroll">
+        <main className="relative grow w-full lg:grid grid-rows-[max-content,1fr] px-4 lg:px-[7.5vw] lg:gap-[0] max-h-[calc(100vh_-_4.5rem)] overflow-y-scroll">
+            <form className='w-full max-w-[1000px] mx-auto' onSubmit={(e) => handleSearch(e)}>
+                <Input
+                    className='mt-4 '
+                    placeholder='Search for posts, users, tags, etc...'
+                    value={searchText}
+                    onChange={(e) => handleInputChange(e.target.value)}
+                    type='search'
+                    hasError={hasErrors}
+                    errorMessage={searchText.length == 0 ? 'Please enter a search term' : 'Please enter at least 3 characters'}
+                />
+            </form>
+
+
             <Tabs value={type} className='relative flex flex-col w-full max-w-[1000px] mx-auto'>
                 <TabsList className="sticky top-0 flex w-full justify-start gap-4 rounded-10 bg-background px-0 pb-1 h-max z-[3] shadow-sm">
                     <div className="w-full  px-6 pt-4 md:flex items-center justify-center border-muted-foreground/40 dark:border-muted border-b-2">

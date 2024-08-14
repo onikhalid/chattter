@@ -121,7 +121,7 @@ const Body = ({ children }: { children: React.ReactNode }) => {
 
                 <Sheet>
                   <SheetTrigger className='md:hidden' data-testid="menu-button">
-                    <Avatar alt={user.displayName || "user"} src={user.photoURL || userData?.avatar} fallback={getInitials(user.displayName || "F N")} size='large' />
+                    <Avatar alt={ user.displayName || "user"} src={user.photoURL || userData?.avatar} fallback={getInitials(user.displayName || "F N")} size='large' />
                   </SheetTrigger>
 
                   <SheetContent className='flex flex-col items-center justify-between pt-[5vh] pb-[10vh]'>
