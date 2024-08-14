@@ -1,6 +1,6 @@
 'use client'
 
-import React, { Suspense, useCallback, useContext, useEffect, useState } from 'react'
+import React, { Suspense, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { Controller, useForm } from 'react-hook-form';
@@ -74,6 +74,7 @@ const WriteNewStoryPage = () => {
     const { mutate: updatePost, isPending: isUpdatingPost } = UseUpdateNewPost()
 
     const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
+    const MemoizedQuill = React.memo(ReactQuill);
 
 
     const {
@@ -124,7 +125,7 @@ const WriteNewStoryPage = () => {
         }
         const dataToSubmit = {
             ...data,
-            content: editorMode === 'richText' ? watch('content') : convertHtmlToMarkdown(watch('content')),    
+            content: editorMode === 'richText' ? watch('content') : convertHtmlToMarkdown(watch('content')),
             author_id: user?.uid || "",
             author_avatar: userData?.avatar || "",
             author_username: userData?.username || "",
@@ -184,8 +185,6 @@ const WriteNewStoryPage = () => {
 
     };
 
-
-
     const QuillimageSelectionHandler = useCallback(async () => {
         const handleImageUpload = async (file: File): Promise<string> => {
             if (!loading && !user?.uid) {
@@ -226,7 +225,25 @@ const WriteNewStoryPage = () => {
 
     }, [setValue, user?.uid, watch, loading]);
 
-
+    const quillModules = useMemo(() => ({
+        toolbar: {
+            container: [
+                [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+                ['bold', 'italic', 'underline', 'strike'],
+                [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+                [{ 'indent': '-1' }, { 'indent': '+1' }],
+                [{ 'align': [] }],
+                ['link', 'image'],
+                ['clean']
+            ],
+            handlers: {
+                image: QuillimageSelectionHandler
+            }
+        },
+        clipboard: {
+            matchVisual: false,
+        },
+    }), []);
 
     const handleCoverImageSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files![0];
@@ -353,100 +370,55 @@ const WriteNewStoryPage = () => {
                     )}
                 />
 
-                <Button onClick={(e) => toggleEditorMode(e)}>
+                {/* <Button onClick={(e) => toggleEditorMode(e)} className='text-xs mt-6 h-6'>
                     Switch to {editorMode === 'richText' ? 'Markdown' : 'Rich Text'} Editor
-                </Button>
+                </Button> */}
+
                 <Controller
                     name="content"
                     control={control}
                     defaultValue=""
                     render={({ field }) => (
                         <div className={''}>
-                            {editorMode === 'richText' ?
-                                <ReactQuill
-                                    theme="snow"
-                                    value={field?.value?.replace("<p><br></p>", "") || ''}
-                                    onBlur={field.onBlur}
-                                    onChange={(content, delta, source, editor) => {
-                                        const updatedContent = content.replace(/<p><br><\/p>/g, '');
-                                        field.onChange(updatedContent);
+                            <MemoizedQuill
+                                theme="snow"
+                                value={field?.value?.replace("<p><br></p>", "") || ''}
+                                onBlur={field.onBlur}
+                                onChange={(content, delta, source, editor) => {
+                                    const updatedContent = content.replace(/<p><br><\/p>/g, '');
+                                    field.onChange(updatedContent);
+                                }}
 
-                                    }}
+                                modules={{
+                                    toolbar: {
+                                        container: [
+                                            [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
 
-                                    modules={{
-                                        toolbar: {
-                                            container: [
-                                                [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+                                            ['bold', 'italic', 'underline', 'strike'],
+                                            [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+                                            [{ 'indent': '-1' }, { 'indent': '+1' }],
+                                            [{ 'align': [] }],
 
-                                                ['bold', 'italic', 'underline', 'strike'],
-                                                [{ 'list': 'ordered' }, { 'list': 'bullet' }],
-                                                [{ 'indent': '-1' }, { 'indent': '+1' }],
-                                                [{ 'align': [] }],
+                                            ['link', 'image'],
+                                            ['clean']
+                                        ],
+                                        handlers: {
+                                            image: QuillimageSelectionHandler
+                                        }
+                                    },
+                                    clipboard: {
+                                        matchVisual: false,
+                                    },
+                                }}
 
-                                                ['link', 'image'],
-                                                ['clean']
-                                            ],
-                                            handlers: {
-                                                image: QuillimageSelectionHandler
-                                            }
-                                        },
-                                        clipboard: {
-                                            matchVisual: false,
-                                        },
-                                    }}
-
-                                    className={`w-full py-4 px-0 mt-2 rounded-lg bg-background outline-none ${errors?.content && errors?.content?.message ? "showcase-input-error" : ""}`}
-                                    placeholder='Start writing...'
-                                    style={{ border: "none" }}
-                                    id="myQuillEditor"
-
-
-                                />
-                                :
-                                <MarkdownEditor
-                                    value={field.value}
-                                    onChange={field.onChange}
-                                    className=' w-full min-h-[300px] py-4 px-0 my-2 rounded-lg bg-background text-foreground outline-none'
-                                // ... other MarkdownEditor props
-                                />
-
-                            }
-
+                                className={`w-full py-4 px-0 mt-2 rounded-lg bg-background outline-none ${errors?.content && errors?.content?.message ? "showcase-input-error" : ""}`}
+                                placeholder='Start writing...'
+                                style={{ border: "none" }}
+                                id="myQuillEditor"
+                            />
                         </div>
                     )}
                 />
-                {/* <Controller
-                    name="content"
-                    control={control}
-                    defaultValue=""
-                    render={({ field }) => (
-                        <div className={cn('flex flex-col border-2 border-transparent rounded-lg mt-6', errors.content && 'border-red-500 my-8 ')}>
-                            <ReactQuill
-                                theme="snow"
-                                value={field.value}
-                                onBlur={field.onBlur}
-                                onChange={(content, delta, source, editor) => {
-                                    const previousContent = watch('content');
-                                    field.onChange(content);
-
-                                    const deletedImage = findDeletedImage(previousContent, content);
-
-                                    if (deletedImage) {
-                                        const deletedImageUrls = extractImageUrls(deletedImage);
-                                        setDeletedImages([...deletedImages, ...deletedImageUrls!]);
-                                    }
-                                }}
-                                modules={QuillModules}
-                                className={`w-full py-4 px-0 mt-2 rounded-lg bg-background text-black outline-none ${errors?.content && errors?.content?.message ? "showcase-input-error" : ""}`}
-                                placeholder='Start writing...'
-                                id="myQuillEditor"
-                                style={{border: "none"}}
-
-                            />
-                            {errors.content && <FormError errorMessage={errors.content?.message as string} className='mb-8 text-center mx-6' />}
-                        </div>
-                    )}
-                /> */}
             </form>
 
 

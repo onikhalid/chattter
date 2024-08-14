@@ -6,7 +6,7 @@ import { useSearchParams } from 'next/navigation';
 import { LinkButton, Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui'
 import { cn } from '@/lib/utils';
 
-import { SectionAll, SectionFollowing, SectionForYou } from '../(authenticated-user)/misc/components';
+import { SectionAll, SectionFollowing, SectionForYou, TopSidebar } from '../(authenticated-user)/misc/components';
 
 
 
@@ -89,8 +89,8 @@ const AuthenticatedUserHomePage = () => {
                 }
             </Tabs>
 
-            <section className='sticky top-0 max-h-20 bg-black text-white'>
-                <h1>Pickolene</h1>
+            <section className='sticky top-0 max-h-96 py-4 text-white max-md:hidden'>
+                <TopSidebar />
             </section>
         </main>
     )

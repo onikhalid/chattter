@@ -20,3 +20,5 @@ export { default as PrivateProfileAnalyticsDashboard } from './PrivateProfileAna
 export { default as BookmarkCard } from './BookmarkCard';
 export { default as EditProfileModal } from './EditProfileModal';
 export { default as UserProfileDetailsArticle } from './UserProfileDetailsArticle';
+
+export { default as TopSidebar } from './TopSidebar';

@@ -146,11 +146,11 @@ const Body = ({ children }: { children: React.ReactNode }) => {
                         Profile
                       </Link>
 
-                      <Link href='/bookmarks' className='flex items-center gap-2 text-xl pl-3 rounded-none w-full py-3.5'>
+                      <Link href='/me?view=bookmarks' className='flex items-center gap-2 text-xl pl-3 rounded-none w-full py-3.5'>
                         <Folder size={25} />
                         Bookmarks
                       </Link>
-                      <Link href='/settings' className='flex items-center gap-2 text-xl pl-3 rounded-none w-full py-3.5'>
+                      <Link href='/me?view=analytics' className='flex items-center gap-2 text-xl pl-3 rounded-none w-full py-3.5'>
                         <SettingsIcon size={25} />
                         Settings
                       </Link>
@@ -194,14 +194,14 @@ const Body = ({ children }: { children: React.ReactNode }) => {
                     </DropdownMenuItem>
 
                     <DropdownMenuItem className='!rounded-none py-0'>
-                      <Link href='/bookmarks' className='flex items-center gap-2 text-lg pl-3 rounded-none w-full py-3'>
+                      <Link href='/me?view=bookmarks' className='flex items-center gap-2 text-lg pl-3 rounded-none w-full py-3'>
                         <Folder size={24} />
                         Bookmarks
                       </Link>
                     </DropdownMenuItem>
 
                     <DropdownMenuItem className='!rounded-none py-0'>
-                      <Link href='/settings' className='flex items-center gap-2 text-lg pl-3 rounded-none w-full py-3'>
+                      <Link href='/me?view=analytics' className='flex items-center gap-2 text-lg pl-3 rounded-none w-full py-3'>
                         <SettingsIcon size={24} />
                         Settings
                       </Link>
