@@ -264,7 +264,7 @@ const PrivateProfileAnalyticsDashboard = () => {
                                 <ChartLegend content={<ChartLegendContent />} />
                             </PieChart>
                         </ChartContainer>
-                        <p className='text-center mt-4'>Enagement Distribution for all</p>
+                        <p className='text-center mt-4'>Enagement Distribution for all posts.</p>
                     </div>
                 </div>
             </section>

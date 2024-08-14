@@ -17,7 +17,7 @@ const PostCommentsDiscussPage = ({ params: { post_id } }: { params: { post_id: s
 
   return (
     <main className='flex flex-col overflow-y-scroll py-8 w-full'>
-      <div className='max-w-[800px] w-full mx-auto'>
+      <div className='max-w-[800px] max-md:px-6 w-full mx-auto'>
         {
           isLoading ? (
             <div className='flex flex-col gap-4 mb-16 w-full'>
@@ -37,7 +37,7 @@ const PostCommentsDiscussPage = ({ params: { post_id } }: { params: { post_id: s
                     fill objectFit="cover"
                   />
                 </div>
-                <div className='flex items-center justify-between py-5 px-1.5'>
+                <div className='flex items-center max-md:flex-wrap md:justify-between gap-4 py-5 px-1.5'>
                   <div className='flex items-center gap-4'>
                     <Link href={`/u/${post?.author_username}`} className='flex items-center gap-2'>
                       <Avatar alt={post?.author_username || ""} src={post?.author_avatar} fallback={"AUGE BORN"} size='large' />

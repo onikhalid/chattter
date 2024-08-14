@@ -67,7 +67,7 @@ const CommentsDiscussPage = ({ post_id }: { post_id: string }) => {
                         {isAddingComment ? 'Submitting...' : 'Submit Comment'}
                     </Button>
                 </form>
-        
+
                 {
                     isLoading ? (
                         <div className="divide-y mb-2">
@@ -77,9 +77,19 @@ const CommentsDiscussPage = ({ post_id }: { post_id: string }) => {
                                 ))
                             }
                         </div>
-                    ) : (
-                        <CommentList comments={comments || []} />
                     )
+                        :
+                        !isLoading && comments?.length ?
+                            (
+                                <CommentList comments={comments || []} />
+                            )
+                            :
+                            (
+                                <article className="flex flex-col items-start justify-center py-8">
+                                    <h3 className="text-foreground font-display font-medium text-2xl">No comments yet.</h3>
+                                    <p className="text-muted-foreground font-display font-medium ">Be the first to comment on this post.</p>
+                                </article>
+                            )
                 }
             </div>
         </div>
