@@ -4,6 +4,15 @@ export { Badge, badgeVariants } from './badge'
 
 export { Button } from './button';
 
+export {
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+  ChartLegend,
+  ChartLegendContent,
+  ChartStyle,
+} from './chart'
+
 export { Collapsible, CollapsibleTrigger, CollapsibleContent } from './collapsible'
 
 export {

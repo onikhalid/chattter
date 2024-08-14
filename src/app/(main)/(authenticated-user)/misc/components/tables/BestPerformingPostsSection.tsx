@@ -1,13 +1,15 @@
 import React from 'react'
+
+import { Button, Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui'
+import { cn } from '@/lib/utils'
+
 import BestPerformingPostsByLikesTable from './BestPerformingPostsByLikesTable'
 import { TPost } from '../../types'
-import { Button, LinkButton, Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui'
-import { cn } from '@/lib/utils'
 import BestPerformingPostsByBookmarksTable from './BestPerformingPostsByBookmarksTable'
+import BestPerformingPostsByViewsTable from './BestPerformingPostsByViewsTable'
 
 interface BestPerformingPostsSectionProps {
     bestPerformingPostsByLikes: TPost[],
-    // worsePerformingPostsByLikes: TPost[],
     bestPerformingPostsByTotalReads: TPost[],
     bestPerformingPostsByBookmarks: TPost[]
 }
@@ -24,7 +26,7 @@ const BestPerformingPostsSection: React.FC<BestPerformingPostsSectionProps> = ({
         {
             label: "Reads/Views",
             id: 'views',
-            component: <BestPerformingPostsByLikesTable
+            component: <BestPerformingPostsByViewsTable
                 data={bestPerformingPostsByTotalReads}
             />,
         },

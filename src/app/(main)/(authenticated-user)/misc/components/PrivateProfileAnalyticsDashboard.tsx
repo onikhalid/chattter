@@ -1,24 +1,17 @@
 'use client'
 
 import React, { useContext, useEffect, useMemo } from 'react'
-import { UserContext } from '@/contexts'
-import { Ellipsis, Eye, User, UserPlus } from 'lucide-react'
-import { TPost } from '../types'
-import { ColumnDef } from "@tanstack/react-table"
-import { DataTable, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui'
-import Link from 'next/link'
-import { BestPerformingPostsByLikesTable, BestPerformingPostsByViewsTable } from './tables'
-import BestPerformingPostsSection from './tables/BestPerformingPostsSection'
-
 import { Bar, BarChart, CartesianGrid, LabelList, XAxis } from "recharts"
-
-import { ChartConfig, ChartContainer, ChartLegend, ChartLegendContent, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
 import { Label, Pie, PieChart } from "recharts"
+
+import { UserContext } from '@/contexts'
+import BestPerformingPostsSection from './tables/BestPerformingPostsSection'
+import { ChartConfig, ChartContainer, ChartLegend, ChartLegendContent, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
+
+
 
 const PrivateProfileAnalyticsDashboard = () => {
     const { isUserDataLoading, userData, userFollows, userFollowers, userPosts, userInterests, userBookmarks } = useContext(UserContext)
-
-
 
     const getBestPerformingPostsByLikes = () => {
         const posts = userPosts;
@@ -191,89 +184,94 @@ const PrivateProfileAnalyticsDashboard = () => {
                     </h3>
                 </header>
 
-                <div className='grid lg:grid-cols-[1fr,0.6fr] items-stretch md:gap-10'>
-                    <ChartContainer config={bestComparisonChartConfig} className="min-h-[150px] w-full max-w-[550px]">
-                        <BarChart accessibilityLayer data={bestComparisonChartData}>
-                            <CartesianGrid vertical={false} />
-                            <XAxis
-                                dataKey="title"
-                                // label={{ value: "Best Performing Posts", position: "insideBottom", offset: -50 }}
-                                tickLine={false}
-                                tickMargin={10}
-                                axisLine={false}
-                                tickFormatter={(value) => value.slice(0, 15)}
-                            />
-                            <ChartTooltip content={<ChartTooltipContent 
-                            // nameKey="itle"
-                            label={true}
-                            indicator='line' 
-                            labelKey='title' 
-                            />} />
-                            <Bar dataKey="likes" fill="var(--color-likes)" radius={4} />
-                            <Bar dataKey="reads" fill="var(--color-reads)" radius={4} />
-                            <Bar dataKey="bookmarks" fill="var(--color-bookmarks)" radius={4} />
-                            <ChartLegend content={<ChartLegendContent />} />
-                        </BarChart>
-                    </ChartContainer>
+                <div className='grid lg:grid-cols-[1fr,0.6fr] items-center lg:items-stretch md:gap-10'>
+                    <div className='flex flex-col w-full'>
+                        <ChartContainer config={bestComparisonChartConfig} className="max-md:min-h-[200px] min-h-[150px] w-full max-w-[550px]">
+                            <BarChart accessibilityLayer data={bestComparisonChartData}>
+                                <CartesianGrid vertical={false} />
+                                <XAxis
+                                    dataKey="title"
+                                    tickLine={false}
+                                    tickMargin={10}
+                                    axisLine={false}
+                                    tick={{ display: 'none' }}
+                                />
+                                <ChartTooltip
+                                    content={<ChartTooltipContent
+                                        label={true}
+                                        indicator='line'
+                                        labelKey='title'
+                                        nameKey='title'
+                                    />}
+                                />
+                                <Bar dataKey="likes" fill="var(--color-likes)" radius={4} />
+                                <Bar dataKey="reads" fill="var(--color-reads)" radius={4} />
+                                <Bar dataKey="bookmarks" fill="var(--color-bookmarks)" radius={4} />
+                                <ChartLegend content={<ChartLegendContent />} />
+                            </BarChart>
+                        </ChartContainer>
+                        <p className='text-center mt-4'>Enagement Distribution for posts with the most engagement</p>
+                    </div>
 
+                    <div className='flex flex-col w-full'>
+                        <ChartContainer
+                            config={totalEngagementDistributionChartConfig}
+                            className="aspect-square max-h-[350px]"
 
-
-                    <ChartContainer
-                        config={totalEngagementDistributionChartConfig}
-                        className="aspect-square max-h-[300px]"
-
-                    >
-                        <PieChart>
-                            <ChartTooltip
-                                cursor={false}
-                                content={<ChartTooltipContent hideLabel />}
-                            />
-                            <Pie
-                                data={totalEngagementDistributionChartData}
-                                nameKey="label"
-                                dataKey="value"
-                                innerRadius={60}
-                                strokeWidth={5}
-                            >
-                                <Label
-                                    content={({ viewBox }) => {
-                                        if (viewBox && "cx" in viewBox && "cy" in viewBox) {
-                                            return (
-                                                <text
-                                                    x={viewBox.cx}
-                                                    y={viewBox.cy}
-                                                    textAnchor="middle"
-                                                    dominantBaseline="middle"
-                                                >
-                                                    <tspan
+                        >
+                            <PieChart>
+                                <ChartTooltip
+                                    cursor={false}
+                                    content={<ChartTooltipContent hideLabel />}
+                                />
+                                <Pie
+                                    data={totalEngagementDistributionChartData}
+                                    nameKey="label"
+                                    dataKey="value"
+                                    innerRadius={60}
+                                    strokeWidth={5}
+                                >
+                                    <Label
+                                        content={({ viewBox }) => {
+                                            if (viewBox && "cx" in viewBox && "cy" in viewBox) {
+                                                return (
+                                                    <text
                                                         x={viewBox.cx}
                                                         y={viewBox.cy}
-                                                        className="fill-foreground text-3xl font-bold"
+                                                        textAnchor="middle"
+                                                        dominantBaseline="middle"
                                                     >
-                                                        {totalEngagements.toLocaleString()}
-                                                    </tspan>
-                                                    <tspan
-                                                        x={viewBox.cx}
-                                                        y={(viewBox.cy || 0) + 24}
-                                                        className="fill-muted-foreground"
-                                                    >
-                                                        Impressions
-                                                    </tspan>
-                                                </text>
-                                            )
-                                        }
-                                    }}
-                                />
-                            </Pie>
-                            <ChartLegend content={<ChartLegendContent />} />
-                        </PieChart>
-                    </ChartContainer>
+                                                        <tspan
+                                                            x={viewBox.cx}
+                                                            y={viewBox.cy}
+                                                            className="fill-foreground text-3xl font-bold"
+                                                        >
+                                                            {totalEngagements.toLocaleString()}
+                                                        </tspan>
+                                                        <tspan
+                                                            x={viewBox.cx}
+                                                            y={(viewBox.cy || 0) + 24}
+                                                            className="fill-muted-foreground"
+                                                        >
+                                                            Impressions
+                                                        </tspan>
+                                                    </text>
+                                                )
+                                            }
+                                        }}
+                                    />
+                                </Pie>
+                                <ChartLegend content={<ChartLegendContent />} />
+                            </PieChart>
+                        </ChartContainer>
+                        <p className='text-center mt-4'>Enagement Distribution for all</p>
+                    </div>
                 </div>
             </section>
 
 
             <section>
-                <header className='flex items-center border-b-[1.5px] w-full border-muted-foreground dark:border-muted py-4'>
+                <header className='flex items-center border-b-[1.5px] w-full border-muted-foreground dark:border-muted py-4 mt-4'>
                     <h3 className='text-xl font-semibold'>
                         Best Performing Posts
                     </h3>
