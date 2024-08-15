@@ -11,7 +11,7 @@ const UnFollowUser = async (followerData: TFollow) => {
         const followDocRef = doc(collection(db, 'follows'), followId);
         await deleteDoc(followDocRef)
     } catch (error) {
-        console.log(error)
+        console.error(error)
     }
 };
 

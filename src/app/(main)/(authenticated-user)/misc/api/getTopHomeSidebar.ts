@@ -18,31 +18,31 @@ export const getTopHomeSidebar = async () => {
   const postQuery = query(postsCollectionRef, orderBy("likes", "desc"));
   const postSnapshot = await getDocs(postQuery);
   const topPosts = postSnapshot.docs.map((doc) => doc.data() as TPost)
-    .sort((a, b) => (b.likes.length + (b.total_reads || 0)) - (a.likes.length + (a.total_reads || 0)));
+    .sort((a, b) => ((b.likes?.length || 0) + (b.total_reads || 0)) - ((a.likes?.length || 0) + (a.total_reads || 0)));
 
   // Fetch top users based on follow count
   const followsSnapshot = await getDocs(followsCollectionRef);
   const userFollowCounts: Record<string, number> = {};
 
-  followsSnapshot.forEach((doc) => {
-    const followData = doc.data();
-    followData.followed_id.forEach((userId: string) => {
-      userFollowCounts[userId] = (userFollowCounts[userId] || 0) + 1;
-    });
-  });
+  // followsSnapshot.forEach((doc) => {
+  //   const followData = doc.data();
+  //   followData.followed_id.forEach((userId: string) => {
+  //     userFollowCounts[userId] = (userFollowCounts[userId] || 0) + 1;
+  //   });
+  // });
 
-  const topUserIds = Object.entries(userFollowCounts)
-    .sort(([, aCount], [, bCount]) => bCount - aCount)
-    .slice(0, 10)
-    .map(([userId]) => userId);
+  // const topUserIds = Object.entries(userFollowCounts)
+  //   .sort(([, aCount], [, bCount]) => bCount - aCount)
+  //   .slice(0, 10)
+  //   .map(([userId]) => userId);
 
-  const topUsers = await Promise.all(
-    topUserIds.map(async (userId) => {
-      const userDoc = await getDocs(query(usersCollectionRef, where("uid", "==", userId)));
-      return userDoc.docs[0]?.data() as TUser;
-    })
-  );
-
+  // const topUsers = await Promise.all(
+  //   topUserIds.map(async (userId) => {
+  //     const userDoc = await getDocs(query(usersCollectionRef, where("uid", "==", userId)));
+  //     return userDoc.docs[0]?.data() as TUser;
+  //   })
+  // );
+  const topUsers = [""]
   return {
     topPosts,
     topUsers,

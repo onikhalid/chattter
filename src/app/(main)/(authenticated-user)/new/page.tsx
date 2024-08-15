@@ -164,7 +164,6 @@ const WriteNewStoryPage = () => {
         else {
             createPost(dataToSubmit, {
                 onSuccess: async (data) => {
-                    console.log(data, 'Post created successfully');
                     const newDocId = data?.id as string || "";
 
                     deletedImages.filter((imageUrl) => submittedData?.content.includes(imageUrl));

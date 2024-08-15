@@ -70,7 +70,6 @@ export const uploadCoverImage = async ({ imageFile, postId }: uploadCoverImagePr
     const imageRef = ref(storage, `cover_images/${postId}`);
     const snapshot = await uploadBytes(imageRef, imageFile)
     const downloadURL = await getDownloadURL(snapshot.ref);
-    console.log(downloadURL, "image uploaded succesfully")
     await updateDoc(doc(db, `posts/${postId}`), {
         cover_image: downloadURL
     });

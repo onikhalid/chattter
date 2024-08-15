@@ -6,8 +6,6 @@ interface Props {
 }
 const PublicProfileBookmarks: React.FC<Props> = ({ bookmarks }) => {
 
-    console.log(bookmarks)
-
     return (
         <section className='grow relative flex flex-col w-full max-w-[550px] h-full lg:max-w-[1200px] mx-auto'>
             {

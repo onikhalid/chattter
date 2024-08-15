@@ -19,7 +19,7 @@ const FollowUser = async (followerData: TFollow) => {
         
 
     } catch (error) {
-        console.log(error)
+        console.error(error)
     }
 };
 

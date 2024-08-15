@@ -13,7 +13,7 @@ const createNewPost = async (postData: TCreatePost) => {
         });
         return newPostRef
     } catch (error) {
-        console.log(error)
+        console.error(error)
     }
 };
 

@@ -81,7 +81,7 @@ const Login: React.FC = () => {
 
             else {
                 launchNotification('error', 'Error Logging in 😪')
-                console.log('Error logging in:', error);
+                console.error('Error logging in:', error);
             }
         }
         finally {
@@ -94,7 +94,6 @@ const Login: React.FC = () => {
     const GoogleSignup = async () => {
         try {
             const result = await signInWithPopup(auth, googleProvider);
-            console.log(result)
             const user = result.user;
 
             const userDocRef = doc(db, 'users', user.uid);
@@ -124,7 +123,7 @@ const Login: React.FC = () => {
             } else {
 
             }
-            console.log(error);
+            console.error(error);
         }
     };
 

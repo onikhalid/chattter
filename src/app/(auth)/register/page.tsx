@@ -73,7 +73,7 @@ const Register: React.FC = () => {
         setError('email', { message: 'Email already registered' })
       } else
         launchNotification('error', 'Error signing up 😪')
-      console.log('Error signing up:', error)
+      console.error('Error signing up:', error)
     }
     finally {
       setLoading(false)
@@ -86,7 +86,6 @@ const Register: React.FC = () => {
     try {
       setLoading(true)
       const result = await signInWithPopup(auth, googleProvider);
-      console.log(result)
       const user = result.user;
 
       const userDocRef = doc(db, 'users', user.uid);
@@ -124,7 +123,7 @@ const Register: React.FC = () => {
       } else {
 
       }
-      console.log(error);
+      console.error(error);
     }
     finally {
       setLoading(false)

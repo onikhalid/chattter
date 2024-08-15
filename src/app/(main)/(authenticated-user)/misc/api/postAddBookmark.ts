@@ -17,7 +17,7 @@ const AddPostToBookmark = async (bookmarkData: TCreateBookmark) => {
         await updateDoc(postDocRef, { bookmarks: arrayUnion(bookmarker_id) })
         await setDoc(bookmarkRef, bookmarkData)
     } catch (error) {
-        console.log(error)
+        console.error(error)
     }
 };
 

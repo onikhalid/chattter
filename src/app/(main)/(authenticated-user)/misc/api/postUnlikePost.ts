@@ -13,7 +13,7 @@ const UnlikeUser = async (likerData: TLike) => {
         const postDocRef = doc(db, `posts/${post_id}`);
         await updateDoc(postDocRef, { likes: arrayRemove(liker_id) })
     } catch (error) {
-        console.log(error)
+        console.error(error)
     }
 };
 

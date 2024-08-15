@@ -21,7 +21,7 @@ const RemovePostFromBookmark = async (bookmark_id: string) => {
     })
   }
   catch (error) {
-    console.log(error)
+    console.error(error)
   }
 };
 

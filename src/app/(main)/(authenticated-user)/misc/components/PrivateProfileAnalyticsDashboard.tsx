@@ -52,7 +52,6 @@ const PrivateProfileAnalyticsDashboard = () => {
             return { liker, count };
         })
         const sortedLikes = uniqueLikesCount.sort((a, b) => b.count - a.count);
-        console.log(sortedLikes)
         return sortedLikes.slice(0, 5);
     }
 

@@ -13,7 +13,7 @@ const likePost = async (likeData: TLike) => {
         const postDocRef = doc(db, `posts/${post_id}`);
         await updateDoc(postDocRef, { likes: arrayUnion(liker_id) })
     } catch (error) {
-        console.log(error)
+        console.error(error)
     }
 };
 

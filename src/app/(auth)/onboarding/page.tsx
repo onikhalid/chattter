@@ -76,7 +76,6 @@ const NewUserOnboarding: React.FC = () => {
     const { handleSubmit, register, formState: { errors, isDirty, isValid }, control, watch, setError, setValue } = useForm<TUpdateUser>({
         resolver: zodResolver(OnboardingForm)
     });
-    console.log(errors)
 
     useEffect(() => {
         if (!loading && user) {

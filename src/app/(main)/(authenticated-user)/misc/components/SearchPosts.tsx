@@ -21,7 +21,6 @@ const SearchPosts = () => {
     const [sortBy, setSortBy] = useState<SortOption>('date_desc');
     const searchParams = useSearchParams();
     const search_text = searchParams.get('q') || '';
-    console.log(search_text)
 
     const {
         data,
