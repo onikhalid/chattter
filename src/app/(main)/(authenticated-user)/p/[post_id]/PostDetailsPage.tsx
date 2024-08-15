@@ -24,14 +24,14 @@ import PostShareModal from '../../misc/components/PostShareModal'
 import { TPost } from '../../misc/types'
 import { UseAddPostToBookmark, useDeletePost, UseFollowUser, UseLikePost, UseRemovePostFromBookmark, UseUnFollowUser, UseUnlikePost } from '../../misc/api'
 import { arrayUnion, collection, doc, getDoc, increment, serverTimestamp, setDoc, updateDoc } from 'firebase/firestore'
+import { UseGetPostDetails } from '../../new/misc/api'
 
 
 interface Props {
-    post: TPost | undefined
-    isLoading: boolean
     post_id: string
 }
-const PostDetailsPage:React.FC<Props> = ({post_id, post, isLoading}) => {
+const PostDetailsPage:React.FC<Props> = ({post_id}) => {
+    const { data: post, isLoading } = UseGetPostDetails(post_id)
     const { ref, inView } = useInView();
     const [user, loading] = useAuthState(auth)
     const { userFollows, } = useContext(UserContext)
@@ -173,7 +173,7 @@ const PostDetailsPage:React.FC<Props> = ({post_id, post, isLoading}) => {
 
 
     return (
-        <main className="relative grow flex flex-col w-full px-4 lg:px-[7.5vw] max-h-[calc(100vh_-_4.5rem)] overflow-y-scroll">
+        <>
         
             {
                 isLoading ?
@@ -455,7 +455,7 @@ const PostDetailsPage:React.FC<Props> = ({post_id, post, isLoading}) => {
 
                 </footer>
             }
-        </main>
+        </>
     )
 }
 
