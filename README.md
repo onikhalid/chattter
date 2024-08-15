@@ -34,9 +34,6 @@ Chattter is a multi-functional platform designed for authors and readers to crea
 - **Dark/Light Theme Toggle**: Users can switch between light and dark modes.
 - **SEO Optimization**: Metadata is dynamically generated for better search engine indexing.
 
-### Bonus
-- **Custom Branding**: The platform name was personalized to "Chattter" with an extra "t" for uniqueness.
-
 ## Technologies Used
 
 - **Frontend**: React, TypeScript, Next.js
@@ -54,11 +51,11 @@ Chattter is a multi-functional platform designed for authors and readers to crea
 
 1. Clone the repository from GitHub:
     ```bash
-    git clone https://github.com/yourusername/chattter.git
+    git clone https://github.com/onikhalid/altschool-semester3-capstone.git
     ```
 2. Navigate to the project directory:
     ```bash
-    cd chattter
+    cd altschool-semester3-capstone
     ```
 3. Install dependencies:
     ```bash
@@ -82,5 +79,3 @@ Chattter is a multi-functional platform designed for authors and readers to crea
     ```
 
 ---
-
-This README should cover the essential aspects of your project and provide a good overview for anyone interested in Chattter. Feel free to adjust the text to match your specific implementation details or add more sections as needed!
