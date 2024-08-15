@@ -70,7 +70,7 @@ const PostsList: React.FC = () => {
           </div>
         ))}
 
-      <div ref={ref} className='w-full'>
+      <div ref={ref} className='w-full h-3'>
         {
           isFetchingNextPage
             ?
