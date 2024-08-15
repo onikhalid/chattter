@@ -19,7 +19,7 @@ const PostShareModal: React.FC<Props> = ({ post, isModalOpen, closeModal }) => {
 
 
     const copyLink = () => {
-        navigator.clipboard.writeText(`https://altschool-semester3-cap-exam.vercel.app/p/${post.post_id}`)
+        navigator.clipboard.writeText(`https://chattter.vercel.app/p/${post.post_id}`)
         toast.success('Link copied to clipboard', {
             position: 'top-center',
             duration: 4000
@@ -27,11 +27,11 @@ const PostShareModal: React.FC<Props> = ({ post, isModalOpen, closeModal }) => {
     }
 
 
-    const shareOnFacebook = `https://www.facebook.com/sharer/sharer.php?u=https://altschool-semester3-cap-exam.vercel.app/p/${post.post_id}`
+    const shareOnFacebook = `https://www.facebook.com/sharer/sharer.php?u=https://chattter.vercel.app/p/${post.post_id}`
 
-    const shareOnTwitter = `https://twitter.com/intent/tweet?url=https://altschool-semester3-cap-exam.vercel.app/p/${post.post_id}&text=Check out this post: ${post.title}`
+    const shareOnTwitter = `https://twitter.com/intent/tweet?url=https://chattter.vercel.app/p/${post.post_id}&text=Check out this post: ${post.title}`
 
-    const shareOnLinkedIn = `https://www.linkedin.com/shareArticle?url=https://altschool-semester3-cap-exam.vercel.app/p/${post.post_id}&title=${post.title}`
+    const shareOnLinkedIn = `https://www.linkedin.com/shareArticle?url=https://chattter.vercel.app/p/${post.post_id}&title=${post.title}`
 
 
     return (
@@ -69,7 +69,7 @@ const PostShareModal: React.FC<Props> = ({ post, isModalOpen, closeModal }) => {
                         className='p-2 !border-none focus:!border-none focus-within:border-none'
                         containerClassName='grow'
                         type='text'
-                        value={`https://altschool-semester3-cap-exam.vercel.app/p/${post.post_id}`}
+                        value={`https://chattter.vercel.app/p/${post.post_id}`}
                         readOnly
                     />
                     <Button onClick={copyLink} className='px-6'>
