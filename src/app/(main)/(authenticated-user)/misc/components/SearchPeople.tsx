@@ -107,7 +107,7 @@ const SearchPeople = () => {
                     </div>
                 ))}
 
-            <div ref={ref} className='w-full h-3'>
+            <div ref={ref} className='w-full'>
                 {
                     isFetchingNextPage
                         ?
@@ -121,7 +121,8 @@ const SearchPeople = () => {
 
                         :
                         hasNextPage
-                            ? null
+                            ?
+                            <div className="h-2" />
                             :
                             <div className={cn('mt-4 py-5 w-full text-center', data?.pages.reduce((total, page) => total + page.users.length, 0) == 0 && "hidden")}>
                                 - End -

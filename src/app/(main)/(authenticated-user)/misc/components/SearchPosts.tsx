@@ -112,7 +112,7 @@ const SearchPosts = () => {
             }
 
 
-            <div ref={ref} className='w-full h-3'>
+            <div ref={ref} className='w-full'>
                 {
                     isFetchingNextPage
                         ?
@@ -126,7 +126,8 @@ const SearchPosts = () => {
 
                         :
                         hasNextPage
-                            ? null
+                            ? 
+<div className ="h-2" />
                             :
                             <div className={cn('mt-8 py-5 w-full text-center ', data?.pages.reduce((total, page) => total + page.posts.length, 0) == 0 && "hidden")}>
                                 <span className='font-sans'>&mdash;&mdash;</span>

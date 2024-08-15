@@ -109,7 +109,7 @@ const PublicProfilePosts: React.FC<Props> = ({ username }) => {
       }
 
 
-      <div ref={ref} className='w-full h-3'>
+      <div ref={ref} className='w-full'>
         {
           isFetchingNextPage
             ?

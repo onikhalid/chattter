@@ -152,7 +152,7 @@ const PostsByTagList: React.FC<{ tag_name: string }> = ({ tag_name }) => {
         }
 
 
-        <div ref={ref} className='w-full h-3'>
+        <div ref={ref} className='w-full'>
           {
             isFetchingNextPage
               ?

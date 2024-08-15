@@ -80,7 +80,7 @@ const InterestsPostsList: React.FC = () => {
           </div>
         ))}
 
-      <div ref={ref} className='w-full h-3'>
+      <div ref={ref} className='w-full'>
         {
           isFetchingNextPage
             ?
@@ -94,7 +94,8 @@ const InterestsPostsList: React.FC = () => {
 
             :
             hasNextPage
-              ? ''
+              ? 
+<div className="h-2" />
               :
               <>
                 {
