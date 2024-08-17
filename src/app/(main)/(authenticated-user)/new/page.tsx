@@ -369,9 +369,9 @@ const WriteNewStoryPage = () => {
                     )}
                 />
 
-                {/* <Button onClick={(e) => toggleEditorMode(e)} className='text-xs mt-6 h-6'>
+                <Button onClick={(e) => toggleEditorMode(e)} className='text-xs mt-6 h-5' >
                     Switch to {editorMode === 'richText' ? 'Markdown' : 'Rich Text'} Editor
-                </Button> */}
+                </Button>
 
                 <Controller
                     name="content"
@@ -379,42 +379,50 @@ const WriteNewStoryPage = () => {
                     defaultValue=""
                     render={({ field }) => (
                         <div className={''}>
-                            <MemoizedQuill
-                                theme="snow"
-                                value={field?.value?.replace("<p><br></p>", "") || ''}
-                                onBlur={field.onBlur}
-                                onChange={(content, delta, source, editor) => {
-                                    const updatedContent = content.replace(/<p><br><\/p>/g, '');
-                                    field.onChange(updatedContent);
-                                }}
+                            {
+                                editorMode === 'markdown' ?
+                                    <MarkdownEditor
+                                        value={field.value}
+                                        onChange={(content) => field.onChange(content)}
+                                        className={`w-full py-4 px-0 mt-2 rounded-lg bg-background outline-none`}
+                                        style={{ border: "none" }}
+                                    />
+                                    :
 
-                                modules={{
-                                    toolbar: {
-                                        container: [
-                                            [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+                                    <MemoizedQuill
+                                        theme="snow"
+                                        value={field?.value?.replace("<p><br></p>", "") || ''}
+                                        onBlur={field.onBlur}
+                                        onChange={(content, editor) => { field.onChange(content); }}
 
-                                            ['bold', 'italic', 'underline', 'strike'],
-                                            [{ 'list': 'ordered' }, { 'list': 'bullet' }],
-                                            [{ 'indent': '-1' }, { 'indent': '+1' }],
-                                            [{ 'align': [] }],
+                                        modules={{
+                                            toolbar: {
+                                                container: [
+                                                    [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
 
-                                            ['link', 'image'],
-                                            ['clean']
-                                        ],
-                                        handlers: {
-                                            image: QuillimageSelectionHandler
-                                        }
-                                    },
-                                    clipboard: {
-                                        matchVisual: false,
-                                    },
-                                }}
+                                                    ['bold', 'italic', 'underline', 'strike'],
+                                                    [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+                                                    [{ 'indent': '-1' }, { 'indent': '+1' }],
+                                                    [{ 'align': [] }],
 
-                                className={`w-full py-4 px-0 mt-2 rounded-lg bg-background outline-none ${errors?.content && errors?.content?.message ? "showcase-input-error" : ""}`}
-                                placeholder='Start writing...'
-                                style={{ border: "none" }}
-                                id="myQuillEditor"
-                            />
+                                                    ['link', 'image'],
+                                                    ['clean']
+                                                ],
+                                                handlers: {
+                                                    image: QuillimageSelectionHandler
+                                                }
+                                            },
+                                            clipboard: {
+                                                matchVisual: false,
+                                            },
+                                        }}
+
+                                        className={`w-full py-4 px-0 mt-2 rounded-lg bg-background outline-none`}
+                                        placeholder='Start writing...'
+                                        style={{ border: "none" }}
+                                        id="myQuillEditor"
+                                    />
+                            }
                         </div>
                     )}
                 />
