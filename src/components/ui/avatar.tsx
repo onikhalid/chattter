@@ -4,8 +4,8 @@ import {
     AvatarFallback,
     AvatarImage,
 } from "./avatarPrimitives"
-import { cn } from "@/utils/classNames";
-import { getInitials } from "@/utils/strings";
+import { cn } from "../../utils/classNames";
+import { getInitials } from "../../utils/strings";
 
 
 interface AvatarProps {

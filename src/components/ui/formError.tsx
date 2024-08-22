@@ -1,4 +1,5 @@
-import { cn } from '@/utils/classNames';
+import { cn } from "../../lib/utils";
+
 
 interface FormErrorProps {
   errorMessage?: string;

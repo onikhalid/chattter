@@ -1,10 +1,4 @@
-import { Avatar, Button, Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Input, LinkButton } from '@/components/ui'
-import Image from 'next/image'
-import Link from 'next/link'
-import { FacebookIcon, FacebookIcon2, LinkedInIcon, TwitterIcon } from '@/components/icons'
-import toast from 'react-hot-toast'
-import { format } from 'date-fns'
-// import {  } from 'lucide-react'
+import {  Dialog, DialogContent, DialogHeader, DialogTitle, Input } from '../ui'
 import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 
