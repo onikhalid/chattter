@@ -21,13 +21,16 @@ const TopVoices = () => {
             userDocsSnapshot.forEach((doc) => {
                 const interests = doc.data().interests;
 
-                interests.forEach((interest: string) => {
-                    if (interestCount[interest]) {
-                        interestCount[interest]++;
-                    } else {
-                        interestCount[interest] = 1;
-                    }
-                });
+                if (interests) {
+
+                    interests?.forEach((interest: string) => {
+                        if (interestCount[interest]) {
+                            interestCount[interest]++;
+                        } else {
+                            interestCount[interest] = 1;
+                        }
+                    });
+                }
             });
 
             const sortedInterests = Object.entries(interestCount)
@@ -63,7 +66,7 @@ const TopVoices = () => {
             <h3 className='text-lg mt-10 mb-2'>Top Posts</h3>
             <div className='flex flex-col gap-4 divide-y divide-muted-foreground '>
                 {
-                    data?.topPosts.slice(0,8)?.map((post, index) => {
+                    data?.topPosts.slice(0, 8)?.map((post, index) => {
                         return (
                             <div key={index}>
                                 <Link href={`/p/${post.post_id}`}>
