@@ -9,6 +9,7 @@ import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import 'react-quill/dist/quill.snow.css';
 import { z, ZodError } from "zod";
+import {SaveIcon, SendIcon } from 'lucide-react'
 
 import { Button, FormError, Input, LoadingModal, TagInput, Textarea } from '@/components/ui'
 import { auth, storage } from '@/utils/firebaseConfig';
@@ -113,7 +114,7 @@ const WriteNewStoryPage = () => {
 
     const handleCreateNewPost = async (data: createNewPostFormDataType) => {
         const submittedData = data;
-        const currentContent = watch('content');
+        const currentContent = editorMode === 'richText' ? watch('content') : convertHtmlToMarkdown(watch('content'));
         const currentImages = extractImageUrls(currentContent);
 
         const deletedImages = uploadedImages.filter(
@@ -269,7 +270,7 @@ const WriteNewStoryPage = () => {
 
     return (
         <main className="relative grow flex items-start justify-center w-full px-4 lg:px-[7.5vw] lg:gap-[5vw] max-h-[calc(100vh_-_4.5rem)] pt-8 overflow-scroll">
-            <form action="" onSubmit={handleSubmit(handleCreateNewPost)} className=' w-full max-w-[1000px]' id='form'>
+            <form onSubmit={handleSubmit(handleCreateNewPost)} className=' w-full max-w-[1000px]' id='form'>
 
                 <Textarea
                     className='!border-none font-display text-4xl xl:text-5xl mb-4 font-bold focus:border-none focus-visible:border-none text-center'
@@ -426,6 +427,17 @@ const WriteNewStoryPage = () => {
                         </div>
                     )}
                 />
+                <Button shape='rounded' variant="secondary" className='flex items-center gap-2 rounded-lg py-1.5' type='submit' form="form">
+                    <span className=''>
+                      {postToEditId ? "Update" : "Submit"}
+                    </span>
+                    {
+                      postToEditId ?
+                        <SaveIcon size={15} />
+                        :
+                        <SendIcon size={15} />
+                    }
+                  </Button>
             </form>
 
 
