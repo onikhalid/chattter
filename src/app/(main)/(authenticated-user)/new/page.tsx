@@ -114,7 +114,7 @@ const WriteNewStoryPage = () => {
 
     const handleCreateNewPost = async (data: createNewPostFormDataType) => {
         const submittedData = data;
-        const currentContent = editorMode === 'richText' ? watch('content') : convertHtmlToMarkdown(watch('content'));
+        const currentContent = editorMode === 'richText' ? watch('content') : await convertHtmlToMarkdown(watch('content'));
         const currentImages = extractImageUrls(currentContent);
 
         const deletedImages = uploadedImages.filter(
