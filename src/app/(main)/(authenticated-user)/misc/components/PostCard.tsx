@@ -182,9 +182,9 @@ const PostCard: React.FC<Props> = ({ post, isFromProfile, refetch }) => {
         <section className='flex max-md:flex-col-reverse items-stretch justify-between gap-8'>
           <div>
             <h2 className='text-2xl font-medium h-[2lh]  max-w-[90%] text-balance [display:-webkit-box] [-webkit-box-orient:vertical] overflow-hidden [overflow-wrap:anywhere] [-webkit-line-clamp:2]'>{post.title}</h2>
-            <p className='text-muted-foreground max-w-[45ch] [display:-webkit-box] [-webkit-box-orient:vertical] overflow-hidden [overflow-wrap:anywhere] [-webkit-line-clamp:3]'>
-              {cleanUpPostQuillEditorContent(post.content || "")}
-            </p>
+            <p className='text-muted-foreground max-w-[45ch] [display:-webkit-box] [-webkit-box-orient:vertical] overflow-hidden [overflow-wrap:anywhere] [-webkit-line-clamp:3]'
+              dangerouslySetInnerHTML={{ __html: cleanUpPostQuillEditorContent(post.content) }}
+            />
           </div>
 
           <div className='relative w-full md:max-w-[250px] h-[150px] aspect-[16/9] '>
