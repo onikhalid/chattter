@@ -101,7 +101,7 @@ const WriteNewStoryPage = () => {
     const toggleEditorMode = useCallback(async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         e.preventDefault();
         if (editorMode === 'richText') {
-            const markdown = convertHtmlToMarkdown(watch('content'));
+            const markdown = await convertHtmlToMarkdown(watch('content'));
             setValue('content', markdown);
             setEditorMode('markdown');
         } else {
@@ -125,7 +125,7 @@ const WriteNewStoryPage = () => {
         }
         const dataToSubmit = {
             ...data,
-            content: editorMode === 'richText' ? watch('content') : convertHtmlToMarkdown(watch('content')),
+            content: editorMode === 'richText' ? watch('content') : await convertHtmlToMarkdown(watch('content')),
             author_id: user?.uid || "",
             author_avatar: userData?.avatar || "",
             author_username: userData?.username || "",

@@ -42,7 +42,7 @@ turndownService.addRule('quillHeader', {
   }
 });
 
-export function convertHtmlToMarkdown(html: string): string {
+export async function convertHtmlToMarkdown(html: string): Promise<string> {
   // Remove any empty paragraphs that Quill might have added
   const cleanHtml = html.replace(/<p><br><\/p>/g, '');
   return turndownService.turndown(cleanHtml);

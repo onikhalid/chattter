@@ -171,7 +171,7 @@ const Body = ({ children }: { children: React.ReactNode }) => {
 
 
                 <DropdownMenu>
-                  <DropdownMenuTrigger className='ml-auto max-md:hidden' data-testid="menu-button">
+                  <DropdownMenuTrigger className='ml-auto max-md:hidden' data-testid="menu-button-desktop">
                     <Avatar alt={user.displayName || "user"} src={user.photoURL || userData?.avatar} fallback={getInitials(user.displayName || "F N")} />
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align='end' className='flex flex-col gap-0.5 px-0'>

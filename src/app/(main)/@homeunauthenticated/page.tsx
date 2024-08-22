@@ -44,7 +44,7 @@ const UnAuthenticatedUserHomePage = () => {
                     <LinkButton href='/login' data-testid="login-button-link">
                         Login
                     </LinkButton>
-                    <LinkButton href="/register" data-testid="signup-button">
+                    <LinkButton href="/register">
                         Get Started
                     </LinkButton>
 
@@ -66,7 +66,7 @@ const UnAuthenticatedUserHomePage = () => {
                     A traditional bookworm&apos;s heaven.
                 </h1>
                 <span className="text-base">A multi-functional platform for authors and readers to create and access content.</span>
-                <LinkButton className="max-w-max px-10 md:px-12 py-5 md:py-6 text-base mt-8 md:mt-12" href="/register">
+                <LinkButton className="max-w-max px-10 md:px-12 py-5 md:py-6 text-base mt-8 md:mt-12" href="/register" data-testid="signup-button">
                     Get Started
                 </LinkButton>
             </div>
