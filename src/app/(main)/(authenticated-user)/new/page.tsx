@@ -269,7 +269,7 @@ const WriteNewStoryPage = () => {
 
     return (
         <main className="relative grow flex items-start justify-center w-full px-4 lg:px-[7.5vw] lg:gap-[5vw] max-h-[calc(100vh_-_4.5rem)] pt-8 overflow-scroll">
-            <form action="" onSubmit={handleSubmit(handleCreateNewPost)} className=' w-full max-w-[1000px]' id='form'>
+            <form onSubmit={handleSubmit(handleCreateNewPost)} className=' w-full max-w-[1000px]' id='form'>
 
                 <Textarea
                     className='!border-none font-display text-4xl xl:text-5xl mb-4 font-bold focus:border-none focus-visible:border-none text-center'
