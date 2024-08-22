@@ -31,7 +31,6 @@ jobs:
         echo "NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=${{ secrets.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID }}" >> $GITHUB_ENV
         echo "NEXT_PUBLIC_FIREBASE_APP_ID=${{ secrets.NEXT_PUBLIC_FIREBASE_APP_ID }}" >> $GITHUB_ENV
         
-
     - name: Run Vitest unit tests
       run: npm run test
 
