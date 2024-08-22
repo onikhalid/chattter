@@ -1,6 +1,8 @@
 
 # Chattter
 
+![Tests](https://github.com/[onikhalid]/[altschool-semester3-capstone]/workflows/Run%20Tests/badge.svg)
+
 Chattter is a multi-functional platform designed for authors and readers to create, access, and engage with text-based content. In an age dominated by visual media, Chattter aims to be a haven for traditional bookworms and text enthusiasts, challenging established platforms like Hashnode and Medium. With a focus on personalized content discovery, social interaction, and detailed analytics, Chattter aspires to revolutionize the blogging experience.
 
 ## Features
