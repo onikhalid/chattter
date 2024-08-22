@@ -379,13 +379,13 @@ const WriteNewStoryPage = () => {
                     control={control}
                     defaultValue=""
                     render={({ field }) => (
-                        <div className={''}>
+                        <div className={' pb-8'}>
                             {
                                 editorMode === 'markdown' ?
                                     <MarkdownEditor
                                         value={field.value}
                                         onChange={(content) => field.onChange(content)}
-                                        className={`w-full py-4 px-0 mt-2 rounded-lg bg-background outline-none`}
+                                        className={`w-full py-4 px-0 mt-2 rounded-lg bg-background outline-none min-h-[400px]`}
                                         style={{ border: "none" }}
                                     />
                                     :
@@ -427,7 +427,7 @@ const WriteNewStoryPage = () => {
                         </div>
                     )}
                 />
-                <Button shape='rounded' variant="secondary" className='flex items-center gap-2 rounded-lg py-1.5' type='submit' form="form">
+                <Button shape='rounded' variant="default" className='flex items-center gap-2 rounded-lg py-1.5 w-full mt-8' type='submit' form="form">
                     <span className=''>
                         {postToEditId ? "Update" : "Submit"}
                     </span>
