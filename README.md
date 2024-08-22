@@ -77,7 +77,7 @@ Chattter is a multi-functional platform designed for authors and readers to crea
     ```
 - To run E2E tests:
     ```bash
-    npm run cy:run
+    npm run cypress:run
     ```
 
 ---
