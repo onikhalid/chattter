@@ -7,7 +7,7 @@ import { Toaster } from "react-hot-toast";
 
 export const metadata: Metadata = {
   title: "Chattter",
-  description: "A heaven for traditionla book lovers",
+  description: "A heaven for traditional book lovers",
 };
 
 const DynamicBody = dynamic(() => import('@/components/layout/Body'), {
