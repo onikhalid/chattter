@@ -51,7 +51,7 @@ const TopVoices = () => {
                     topInterests?.map((interestdetail, index) => {
                         const { interest, count } = interestdetail
                         return (
-                            <Link key={index} href={`/tags/${interest}`}>
+                            <Link key={index} href={`/tags/${interest.toLowerCase()}`}>
                                 <Badge variant='secondary' className='text-[0.78rem] font-normal'>
                                     {interest}
                                     <span className='pl-5'> {count}</span>
