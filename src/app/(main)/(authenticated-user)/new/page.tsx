@@ -9,7 +9,7 @@ import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import 'react-quill/dist/quill.snow.css';
 import { z, ZodError } from "zod";
-import {SaveIcon, SendIcon } from 'lucide-react'
+import { SaveIcon, SendIcon } from 'lucide-react'
 
 import { Button, FormError, Input, LoadingModal, TagInput, Textarea } from '@/components/ui'
 import { auth, storage } from '@/utils/firebaseConfig';
@@ -116,7 +116,7 @@ const WriteNewStoryPage = () => {
         const submittedData = data;
         const currentContent = editorMode === 'richText' ? watch('content') : await convertHtmlToMarkdown(watch('content'));
         const currentImages = extractImageUrls(currentContent);
-
+        console.log(currentContent, watch('content'))
         const deletedImages = uploadedImages.filter(
             (url) => !currentImages.includes(url)
         );
@@ -429,15 +429,15 @@ const WriteNewStoryPage = () => {
                 />
                 <Button shape='rounded' variant="secondary" className='flex items-center gap-2 rounded-lg py-1.5' type='submit' form="form">
                     <span className=''>
-                      {postToEditId ? "Update" : "Submit"}
+                        {postToEditId ? "Update" : "Submit"}
                     </span>
                     {
-                      postToEditId ?
-                        <SaveIcon size={15} />
-                        :
-                        <SendIcon size={15} />
+                        postToEditId ?
+                            <SaveIcon size={15} />
+                            :
+                            <SendIcon size={15} />
                     }
-                  </Button>
+                </Button>
             </form>
 
 
