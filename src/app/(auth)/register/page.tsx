@@ -56,7 +56,7 @@ const Register: React.FC = () => {
           name: user.displayName === null ? `Writer_${user.uid.substring(0, 5)}` : user.displayName,
           name_for_search: generateTitleSearchTerms(user.displayName === null ? `Writer_${user.uid.substring(0, 5)}` : user.displayName),
           avatar: user.photoURL === null ? unknownUserPhotoURL : user.photoURL,
-          email: user.email,  
+          email: user.email,
           followers: [],
           followings: [],
           bookmarks: [],
@@ -96,9 +96,9 @@ const Register: React.FC = () => {
           uid: user.uid,
           name: user.displayName,
           username: user?.uid,
-          name_for_search: generateTitleSearchTerms(user.displayName|| ""),
+          name_for_search: generateTitleSearchTerms(user.displayName || ""),
           avatar: user.photoURL,
-          email: user.email,  
+          email: user.email,
           followers: [],
           followings: [],
           bookmarks: [],
@@ -155,8 +155,8 @@ const Register: React.FC = () => {
             hasError={!!errors.email}
             errorMessage={errors.email?.message}
             data-testid="email-input"
-            
-            />
+
+          />
 
 
           <Input

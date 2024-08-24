@@ -14,7 +14,7 @@ describe('Login Flow for Users', () => {
 
     cy.get('[data-testid="register-button"]')
       .should('be.visible')
-      .and('contain.text', 'Register');
+      .and('contain.text', 'Sign up');
   });
   it('should display inputs for email and password and a Google and Facebook register button', () => {
     cy.get('[data-testid="google-signup-button"]')
