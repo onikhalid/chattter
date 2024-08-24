@@ -9,7 +9,7 @@ import { getDoc, doc } from 'firebase/firestore';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import toast from 'react-hot-toast';
 
-import { Button, FormError, Input, LoadingModal, TagInput, Textarea } from '@/components/ui';
+import { Button, FormError, Input, Label, LoadingModal, TagInput, Textarea } from '@/components/ui';
 import { SmallSpinner, TrashIcon, UploadIcon } from '@/components/icons';
 import { auth, db, } from '@/utils/firebaseConfig';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -95,6 +95,7 @@ const NewUserOnboarding: React.FC = () => {
                     setValue('linkedin', userData.linkedin || '')
                     setValue('instagram', userData.instagram || '')
                     setProfileImgURL(userData.avatar || null)
+                    console.log(userData)
                 }
             }
             getUserData()
@@ -182,7 +183,7 @@ const NewUserOnboarding: React.FC = () => {
                                     className='hidden'
                                 />
                                 {
-                                    !watch('avatar') && !selectedImage &&
+                                    !watch('avatar') && !selectedImage && !profileImgURL &&
                                     <div className={cn('flex items-center justify-center bg-muted aspect-video w-full cursor-pointer border-2 border-transparent',
                                         errors.avatar && 'border-red-500'
                                     )}>
@@ -235,6 +236,7 @@ const NewUserOnboarding: React.FC = () => {
                     <Input
                         type="text"
                         placeholder="Name"
+                        label='Name'
                         className='3.875rem'
                         {...register('name')}
                         hasError={!!errors.name}
@@ -242,6 +244,7 @@ const NewUserOnboarding: React.FC = () => {
                     />
                     <Input
                         type="text"
+                        label='Username'
                         placeholder="Choose username"
                         {...register('username')}
                         className='3.875rem'
@@ -251,6 +254,7 @@ const NewUserOnboarding: React.FC = () => {
 
 
                     <Textarea
+                        label="Bio"
                         placeholder="Tell us about yourself"
                         {...register('bio')}
                         hasError={!!errors.bio}
@@ -265,43 +269,51 @@ const NewUserOnboarding: React.FC = () => {
                         name="interests"
                         control={control}
                         render={({ field }) => (
-                            <TagInput
-                                presetTags={presetArticleTags}
-                                selectedTags={field.value || []}
-                                onTagsChange={field.onChange}
-                                className='mt-0 mb-1'
-                                hasError={!!errors.interests}
-                                errorMessage={errors.interests?.message}
-                                triggerclassName="!py-6"
-                                selectedClassName="gap-3"
-                            />
+                            <div>
+                                <Label className='text-sm text-muted-foreground'>Interests</Label>
+                                <TagInput
+                                    presetTags={presetArticleTags}
+                                    selectedTags={field.value || []}
+                                    onTagsChange={field.onChange}
+                                    name='interests'
+                                    className='mt-0 mb-1'
+                                    hasError={!!errors.interests}
+                                    errorMessage={errors.interests?.message}
+                                    triggerclassName="!py-6"
+                                    selectedClassName="gap-3"
+                                />
+                            </div>
                         )}
                     />
 
                     <section>
-                        <h5 className='mt-3 mb-1.5'>
-                            Socials {" "}
+                        <h5 className='mt-5 mb-1.5'>
+                            Socials Links {" "}
                             <span className='text-muted-foreground'>(optional)</span>
                         </h5>
                         <div className='flex flex-col gap-5'>
                             <Input
                                 type="text"
-                                placeholder="Twitter"
+                                label='Twitter'
+                                placeholder="https://x.com/chattter"
                                 {...register('twitter')}
                             />
                             <Input
                                 type="text"
-                                placeholder="Facebook"
+                                label="Facebook"
+                                placeholder="https://fb.com/chattter"
                                 {...register('facebook')}
                             />
                             <Input
                                 type="text"
-                                placeholder="Linkedin"
+                                label="Linkedin"
+                                placeholder="https://linkedin.com/in/chattter"
                                 {...register('linkedin')}
                             />
                             <Input
                                 type="text"
-                                placeholder="Instagram"
+                                label="Instagram"
+                                placeholder="https://instagram.com/chattter"
                                 {...register('instagram')}
                             />
                         </div>

@@ -15,6 +15,7 @@ import { useBooleanStateControl } from '@/hooks';
 
 import { TComment } from '../types';
 import { useDeleteComment } from '../api';
+import { useQueryClient } from '@tanstack/react-query';
 
 
 
@@ -43,6 +44,7 @@ export const CommentCard = ({ comment }: CommentProps) => {
     }
 
 
+    const queryClient = useQueryClient()
     const handleReply = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         if (replyComment) {
@@ -58,6 +60,9 @@ export const CommentCard = ({ comment }: CommentProps) => {
             };
             addDoc(collection(db, 'comments'), reply);
             setReplyComment("")
+            queryClient.invalidateQueries({
+                queryKey: ['comments', comment.post_id]
+            })
         }
     };
     const [showReplies, setShowReplies] = useState(false);
@@ -131,6 +136,7 @@ export const CommentCard = ({ comment }: CommentProps) => {
                                             placeholder="Write your comment..."
                                             className="w-full p-2 border rounded"
                                             rows={6}
+                                            name='reply-comment'
                                         />
                                         <Button type="submit" variant="ghost" className="mt-2 w-full max-w-max ml-auto">
                                             Reply Comment

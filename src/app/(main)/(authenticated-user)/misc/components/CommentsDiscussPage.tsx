@@ -62,6 +62,7 @@ const CommentsDiscussPage = ({ post_id }: { post_id: string }) => {
                         placeholder="Write your comment..."
                         className="w-full p-2 border rounded"
                         rows={6}
+                        name='comment'
                     />
                     <Button type="submit" className="mt-2 w-full max-w-max ml-auto" disabled={isAddingComment}>
                         {isAddingComment ? 'Submitting...' : 'Submit Comment'}

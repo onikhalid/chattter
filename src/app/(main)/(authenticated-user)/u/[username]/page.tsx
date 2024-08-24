@@ -20,7 +20,6 @@ const UserPublicProfilePage = ({ params }: { params: { username: string } }) => 
     const { userFollows } = useContext(UserContext)
     const { data, isLoading, refetch } = UseGetUserPublicProfileDetails(username)
     const [user, loading] = useAuthState(auth)
-    // console.log(username, data)
 
     const searchParams = useSearchParams();
     const view = searchParams.get('view') || 'posts';
@@ -127,9 +126,9 @@ const UserPublicProfilePage = ({ params }: { params: { username: string } }) => 
                             }
                         </Tabs>
 
-                        <section className='lg:sticky top-0 flex flex-col max-h-[90vh]'>
+                        <section className='sticky top-0 flex flex-col max-h-[90vh]'>
                             {
-                                !isLoading && data &&
+                                (!isLoading && data) &&
                                 <article className='flex flex-col items-center text-center py-10 my-auto'>
                                     <div>
                                         <Avatar
@@ -168,33 +167,36 @@ const UserPublicProfilePage = ({ params }: { params: { username: string } }) => 
                                     </div>
 
 
-                                    <Button className='w-full max-w-[200px] mt-4' onClick={followUnfollow}
+                                    <Button className={cn('w-full max-w-[200px] mt-4', { "hidden": user?.uid === data.details.uid })} onClick={followUnfollow}
                                         variant={userFollows?.includes(data.details.uid) ? 'outline' : 'default'}
                                         disabled={isFollowingUser || isUnfollowingUser || user?.uid === data.details.uid}
                                     >
                                         {userFollows?.includes(data.details.uid) ? 'Unfollow' : 'Follow'}
                                     </Button>
+                                    <LinkButton href="/me" className={cn("w-full max-w-[200px] mt-4", { "hidden": user?.uid !== data.details.uid } )}>
+                                        View more details
+                                    </LinkButton>
 
                                     <p className='text-sm text-foreground py-2.5'>
                                         {data?.details.bio}
                                     </p>
 
 
-                                    
-                                {
-                                    data?.details.interests && data?.details.interests.length > 0 &&
-                                    <div className='flex items-center justify-center flex-wrap gap-2'>
-                                        {
-                                            data?.details.interests.map((tag, index) => (
-                                                <Badge key={index} variant="secondary" className='text-sm font-normal'>
-                                                    <Link href={`/tags/${tag.toLowerCase()}`}>
-                                                        {tag}
-                                                    </Link>
-                                                </Badge>
-                                            ))
-                                        }
-                                    </div>
-                                }
+
+                                    {
+                                        data?.details.interests && data?.details.interests.length > 0 &&
+                                        <div className='flex items-center justify-center flex-wrap gap-2'>
+                                            {
+                                                data?.details.interests.map((tag, index) => (
+                                                    <Badge key={index} variant="secondary" className='text-sm font-normal'>
+                                                        <Link href={`/tags/${tag.toLowerCase()}`}>
+                                                            {tag}
+                                                        </Link>
+                                                    </Badge>
+                                                ))
+                                            }
+                                        </div>
+                                    }
                                 </article>
                             }
                         </section>

@@ -76,6 +76,9 @@ export {
 export { default as ChattterLogo } from './logo'
 export { default as FormError } from './formError'
 export { Input } from './input'
+
+export { Label } from './label'
+
 export { LinkButton } from './linkButton'
 
 export { default as LoadingModal } from './loadingModal'

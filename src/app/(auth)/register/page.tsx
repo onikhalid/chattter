@@ -147,6 +147,7 @@ const Register: React.FC = () => {
         <form onSubmit={handleSubmit(handleRegister)} className='flex flex-col gap-6 mt-12 md:mt-16 mb-6'>
           <Input
             type="email"
+            name="Email"
             placeholder="Email Address"
             value={watch('email')}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => setValue('email', e.target.value.toLowerCase())}

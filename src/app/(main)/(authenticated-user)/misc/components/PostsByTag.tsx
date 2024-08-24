@@ -92,7 +92,7 @@ const PostsByTagList: React.FC<{ tag_name: string }> = ({ tag_name }) => {
   return (
     <>
       <section className='relative flex flex-col w-full max-w-[550px] lg:max-w-[1200px] mx-auto'>
-        <div className={cn('flex items-center border-b-[1.5px] w-full border-muted-foreground dark:border-muted py-4',
+        <div className={cn('sticky top-0 bg-background z-[2] flex items-center border-b-[1.5px] w-full border-muted-foreground dark:border-muted py-4',
           data?.pages.reduce((total, page) => total + page.posts.length, 0) == 0 && "hidden")}
         >
           <Select onValueChange={handleSortChange} defaultValue={sortBy}>
@@ -175,7 +175,7 @@ const PostsByTagList: React.FC<{ tag_name: string }> = ({ tag_name }) => {
         </div>
       </section>
 
-      <section className='sticky top-0 max-h-96 pt-4 lg:pt-8 max-lg:w-full max-lg:max-w-[550px] max-lg:mx-auto bg-background'>
+      <section className='md:sticky top-0 max-h-96 pt-4 lg:pt-8 max-lg:w-full max-lg:max-w-[550px] max-lg:mx-auto bg-background'>
         <article className='flex flex-col size-full p-4 xl:p-8 border-[0.3px] border-muted-foreground/60 dark:border-muted-foreground/20 rounded-xl mt-'>
           <h2 className='flex items-center gap-1 flex-wrap text-3xl font-display font-medium'>{tag_name} <Badge variant="secondary">tag</Badge></h2>
 

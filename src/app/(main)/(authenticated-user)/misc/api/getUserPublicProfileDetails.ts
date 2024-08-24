@@ -10,12 +10,11 @@ export const getUserPublicProfileDetails = async (username: string) => {
   const usersCollectionRef = collection(db, "users");
   let q = query(
     usersCollectionRef,
-    where("username", "==", username),
+    where("username", "==", decodeURIComponent(username)),
   );
   const snapshot = await getDocs(q);
-
   const userDetails = snapshot.docs[0]?.data() as TUser | undefined;
-  if (userDetails) {
+  if (!!userDetails) {
     // const postsCollectionRef = collection(db, "posts");
     // const postQuery = query(postsCollectionRef, where("author_id", "==", userDetails.uid));
     // const postsSnapshot = await getDocs(postQuery);
@@ -24,18 +23,17 @@ export const getUserPublicProfileDetails = async (username: string) => {
     const bookmarksCollectionRef = collection(db, "bookmarks");
     const bookmarkQuery = query(bookmarksCollectionRef, where("bookmarker_id", "==", userDetails.uid));
     const bookmarksSnapshot = await getDocs(bookmarkQuery);
-    const bookmarks = bookmarksSnapshot.docs.map(doc => doc.data()) as TBookmark[];
+    const bookmarks = bookmarksSnapshot.docs.map(doc => doc.data()) || [] as TBookmark[];
 
     const followersCollectionRef = collection(db, "follows");
     const followersQuery = query(followersCollectionRef, where("followed_id", "==", userDetails.uid));
     const followersSnapshot = await getDocs(followersQuery);
-    const followers = followersSnapshot.docs.map(doc => doc.data().follower_id) as string[];
+    const followers = followersSnapshot.docs.map(doc => doc.data().follower_id) || [] as string[];
 
     const followingCollectionRef = collection(db, "follows");
     const followingQuery = query(followingCollectionRef, where("follower_id", "==", userDetails.uid));
     const followingSnapshot = await getDocs(followingQuery);
-    const following = followingSnapshot.docs.map(doc => doc.data().followed_id) as string[];
-
+    const following = followingSnapshot.docs.map(doc => doc.data().followed_id) || [] as string[];
     const data = { details: userDetails, bookmarks, followers, following };
     return data;
   }

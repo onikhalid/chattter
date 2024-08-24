@@ -42,6 +42,7 @@ export async function generateMetadata(
             description: `${cleanUpPostQuillEditorContent(post?.content || "").substring(0, 50)}...` || 'Read this interesting post on our blog',
             images: [post?.cover_image || '/default-image.png'],
         },
+        
     }
 }
 

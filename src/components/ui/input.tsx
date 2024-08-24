@@ -5,6 +5,7 @@ import * as React from "react"
 import { cn } from "../../lib/utils"
 import { HideIcon, ViewIcon } from "../icons"
 import FormError from "./formError"
+import { Label } from "./label"
 
 export interface InputProps
   extends React.InputHTMLAttributes<HTMLInputElement> {
@@ -14,16 +15,25 @@ export interface InputProps
   leftIcon?: React.ReactNode
   rightIcon?: React.ReactNode
   containerClassName?: string
+  label?: string
+  name: string
 }
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ className, containerClassName, type, hasError, leftIcon, rightIcon, errorMessageClass, ...props }, ref) => {
+  ({ className, containerClassName, type, hasError, leftIcon, rightIcon, errorMessageClass, name, label, ...props }, ref) => {
     const [show, setShow] = React.useState(false)
     const inputType = show ? "text" : "password"
 
 
     return (
       <div className={containerClassName}>
+        {
+          label && (
+            <Label className="text-sm text-muted-foreground" htmlFor={name}>
+              {label}
+            </Label>
+          )
+        }
         <div className="relative">
           {
             leftIcon && (
@@ -35,7 +45,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           <input
             type={type == "password" ? inputType : type}
             data-testid={type == "password" ? "password-input" : type}
-
+            id={name}
             className={cn(
               "flex h-12 w-full rounded-lg border border-input bg-background px-4 py-3 text-sm ring-offset-background file:border-0",
               "file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:border-2",

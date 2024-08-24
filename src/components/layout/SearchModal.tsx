@@ -49,6 +49,7 @@ const SearchModal: React.FC<Props> = ({ isModalOpen, closeModal }) => {
                     </h1>
                     <Input
                         ref={inputRef}
+                        name="search-input"
                         className='w-full mt-4'
                         placeholder='Search for posts, users, tags, etc...'
                         value={searchText}
