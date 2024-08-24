@@ -40,13 +40,6 @@ const AuthLayoutHeader = ({ isAuthenticated = true }: Props) => {
                     </DropdownMenuContent>
                 </DropdownMenu>
             }
-
-            {
-                !isAuthenticated &&
-                <div>
-
-                </div>
-            }
         </header>
     )
 }

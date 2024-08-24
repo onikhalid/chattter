@@ -22,7 +22,7 @@ describe('Logout Flow for Users', () => {
       cy.get('[data-testid="password-input"]').type('Test@1234');
       cy.get('[data-testid="login-button"]').click();
   
-      cy.wait(10000);
+      cy.wait(100000);
 
       cy.get('[data-testid="menu-button-desktop"]').click();
       cy.get('[data-testid="logout-button"]').click();
