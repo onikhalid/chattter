@@ -154,7 +154,9 @@ const Register: React.FC = () => {
             className='3.875rem'
             hasError={!!errors.email}
             errorMessage={errors.email?.message}
-          />
+            data-testid="email-input"
+            
+            />
 
 
           <Input
@@ -164,6 +166,7 @@ const Register: React.FC = () => {
             {...register('password')}
             hasError={!!errors.password}
             errorMessage={errors.password?.message}
+            data-testid="password-input"
           />
 
           <p className='text-center text-sm max-w-[45ch] my-2 mx-auto'>
@@ -171,7 +174,7 @@ const Register: React.FC = () => {
           </p>
 
 
-          <Button type="submit" className='w-full space-x-2 bg-[#5574FB]' size="cta">
+          <Button type="submit" className='w-full space-x-2 bg-[#5574FB]' size="cta" data-testid="register-button">
             Sign up
             {
               loading && <SmallSpinner />
@@ -184,12 +187,12 @@ const Register: React.FC = () => {
         </p>
 
         <div className='flex flex-col lg:grid grid-cols-2 gap-3'>
-          <Button variant='outline' className='flex items-center gap-2 text-body font-light' size='cta' onClick={GoogleSignup}>
+          <Button variant='outline' className='flex items-center gap-2 text-body font-light' size='cta' onClick={GoogleSignup} data-testid="google-signup-button">
             <GoogleIcon />
             Google
           </Button>
 
-          <Button variant='outline' className='flex items-center gap-2 text-body font-light' size='cta'>
+          <Button variant='outline' className='flex items-center gap-2 text-body font-light' size='cta' data-testid="facebook-signup-button">
             <FacebookIcon />
             Facebook
           </Button>
