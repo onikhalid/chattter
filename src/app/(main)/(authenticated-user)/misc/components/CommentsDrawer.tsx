@@ -85,6 +85,7 @@ function CommentsDrawer({ searchParams: { post_id } }: { searchParams: { post_id
                                 placeholder="Write your comment..."
                                 className="w-full p-2 border rounded"
                                 rows={6}
+                                name="new-comment"
                             />
                             <Button type="submit" className="mt-2 w-full max-w-max ml-auto" disabled={isAddingComment}>
                                 {isAddingComment ? 'Submitting...' : 'Submit Comment'}
