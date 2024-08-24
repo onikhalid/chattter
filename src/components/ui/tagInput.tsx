@@ -82,6 +82,7 @@ export default function TagInput({ presetTags = [], selectedTags, onTagsChange, 
                 <PopoverContent className="w-full p-0 !bg-background text-foreground" style={{ width }}>
                     <div className="p-2">
                         <Input
+                            name='tag-search'
                             className="w-full px-3 py-1.5 !border-input rounded text-sm !focus:border-primary"
                             placeholder="Search tags..."
                             value={searchText}

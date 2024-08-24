@@ -7,9 +7,11 @@ import { Input, LinkButton, Tabs, TabsContent, TabsList, TabsTrigger } from '@/c
 import { cn } from '@/lib/utils';
 
 import { SearchPeople, SearchPosts, SearchTags } from '../../misc/components';
+import { SearchIcon } from '@/components/icons';
 
 
 const SearchResultPage = ({ params }: { params: { type: string } }) => {
+
     const { type } = params
     const router = useRouter()
     const searchParams = useSearchParams();
@@ -48,10 +50,15 @@ const SearchResultPage = ({ params }: { params: { type: string } }) => {
         }
         router.push(`/search/${type}?q=${searchText}`)
     }
+
+    if (type !== 'posts' && type !== 'tags' && type !== 'people') {
+        router.push('/search')
+    }
     return (
         <main className="relative grow w-full lg:grid grid-rows-[max-content,1fr] px-4 lg:px-[7.5vw] lg:gap-[0] max-h-[calc(100vh_-_4.5rem)] overflow-y-scroll">
-            <form className='w-full max-w-[1000px] mx-auto' onSubmit={(e) => handleSearch(e)}>
+            <form className='relative w-full max-w-[1000px] mx-auto' onSubmit={(e) => handleSearch(e)}>
                 <Input
+                    name='search-input'
                     className='mt-4 '
                     placeholder='Search for posts, users, tags, etc...'
                     value={searchText}
@@ -60,6 +67,9 @@ const SearchResultPage = ({ params }: { params: { type: string } }) => {
                     hasError={hasErrors}
                     errorMessage={searchText.length == 0 ? 'Please enter a search term' : 'Please enter at least 3 characters'}
                 />
+                <button>
+                    <SearchIcon className='absolute top-1/2 right-4 transform -translate-y-1/2 text-muted' />
+                </button>
             </form>
 
 

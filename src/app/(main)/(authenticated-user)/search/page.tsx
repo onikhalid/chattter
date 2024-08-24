@@ -41,6 +41,7 @@ const SearchPage = () => {
                     Search
                 </h1>
                 <Input
+                    name="search-input"
                     ref={inputRef}
                     className='w-full mt-4'
                     placeholder='Search for posts, users, tags, etc...'

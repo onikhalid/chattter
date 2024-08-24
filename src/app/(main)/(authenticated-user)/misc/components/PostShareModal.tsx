@@ -71,6 +71,7 @@ const PostShareModal: React.FC<Props> = ({ post, isModalOpen, closeModal }) => {
                         type='text'
                         value={`https://chattter.vercel.app/p/${post.post_id}`}
                         readOnly
+                        name='post-link'
                     />
                     <Button onClick={copyLink} className='px-6'>
                         Copy
