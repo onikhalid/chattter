@@ -7,7 +7,7 @@ import { Input, LinkButton, Tabs, TabsContent, TabsList, TabsTrigger } from '@/c
 import { cn } from '@/lib/utils';
 
 import { SearchPeople, SearchPosts, SearchTags } from '../../misc/components';
-import { SearchIcon } from '@/components/icons';
+import { SearchIcon } from 'lucide-react';
 
 
 const SearchResultPage = ({ params }: { params: { type: string } }) => {
@@ -68,7 +68,7 @@ const SearchResultPage = ({ params }: { params: { type: string } }) => {
                     errorMessage={searchText.length == 0 ? 'Please enter a search term' : 'Please enter at least 3 characters'}
                 />
                 <button>
-                    <SearchIcon className='absolute top-1/2 right-4 transform -translate-y-1/2 text-muted' />
+                    <SearchIcon className='absolute top-[45%] right-4 transform -translate-y-1/2 text-muted-foreground' />
                 </button>
             </form>
 
