@@ -22,7 +22,7 @@ import { cn } from '@/lib/utils'
 
 import PostShareModal from '../../misc/components/PostShareModal'
 import { TPost } from '../../misc/types'
-import { UseAddPostToBookmark, useDeletePost, UseFollowUser, UseLikePost, UseRemovePostFromBookmark, UseUnFollowUser, UseUnlikePost } from '../../misc/api'
+import { UseAddPostToBookmark, useCreateNotification, useDeletePost, UseFollowUser, UseLikePost, UseRemovePostFromBookmark, UseUnFollowUser, UseUnlikePost } from '../../misc/api'
 import { arrayUnion, collection, doc, getDoc, increment, serverTimestamp, setDoc, updateDoc } from 'firebase/firestore'
 import { UseGetPostDetails } from '../../new/misc/api'
 
@@ -30,11 +30,11 @@ import { UseGetPostDetails } from '../../new/misc/api'
 interface Props {
     post_id: string
 }
-const PostDetailsPage:React.FC<Props> = ({post_id}) => {
+const PostDetailsPage: React.FC<Props> = ({ post_id }) => {
     const { data: post, isLoading } = UseGetPostDetails(post_id)
     const { ref, inView } = useInView();
     const [user, loading] = useAuthState(auth)
-    const { userFollows, } = useContext(UserContext)
+    const { userFollows, userData } = useContext(UserContext)
     const { mutate: addBookmark, isPending: isSavingBookmark } = UseAddPostToBookmark({ post_id })
     const { mutate: deleteBookmark, isPending: isRemovingBookmark } = UseRemovePostFromBookmark({ post_id })
     const { mutate: followUser, isPending: isFollowingUser } = UseFollowUser()
@@ -42,6 +42,8 @@ const PostDetailsPage:React.FC<Props> = ({post_id}) => {
     const { mutate: likePost, isPending: isLikingPost } = UseLikePost({ post_id })
     const { mutate: UnlikePost, isPending: isUnLikingPost } = UseUnlikePost({ post_id })
     const { mutate: deletePost, isPending: isDeletingComment } = useDeletePost()
+    const { mutate: sendNotification } = useCreateNotification()
+
     const timetoRead = useMemo(() => Math.ceil(averageReadingTime(post?.content || '0') / 60), [post?.content])
 
 
@@ -123,7 +125,34 @@ const PostDetailsPage:React.FC<Props> = ({post_id}) => {
                     created_at: new Date(),
 
                 }
-                addBookmark(bookmarkData)
+                addBookmark(bookmarkData, {
+                    onSuccess() {
+                        sendNotification({
+                            receiver_id: post.author_id,
+                            sender_id: user.uid,
+                            notification_type: "POST_SAVED",
+                            sender_details: {
+                                user_id: user.uid,
+                                user_name: user.displayName || 'Chattter App',
+                                user_avatar: user.photoURL || userData?.avatar || '',
+                                user_username: userData?.username || user.uid || 'chattter'
+                            },
+                            receiver_details: {
+                                user_id: post.author_id,
+                                user_name: post.author_name || 'Chattter App',
+                                user_avatar: post.author_avatar || '',
+                                user_username: post.author_username || 'chattter'
+                            },
+                            notification_details: {
+                                post_id: post.post_id,
+                                post_cover_photo: post.cover_image || '',
+                                post_author_avatar: post.author_avatar || '',
+                                post_author_name: post.author_name || 'Chattter App',
+                                post_author_username: post.author_username || 'chattter',
+                            }
+                        })
+                    },
+                })
                 toast.success("Post saved")
             }
         }
@@ -141,13 +170,35 @@ const PostDetailsPage:React.FC<Props> = ({post_id}) => {
                 unfollowUser(data)
                 toast.success(`Unfollowed ${post.author_name}`)
             } else {
-                followUser(data)
+                followUser(data, {
+                    onSuccess() {
+                        sendNotification({
+                            receiver_id: post.author_id,
+                            sender_id: user.uid,
+                            notification_type: "NEW_FOLLOWER",
+                            sender_details: {
+                                user_id: user.uid,
+                                user_name: user.displayName || 'Chattter App',
+                                user_avatar: user.photoURL || userData?.avatar || '',
+                                user_username: userData?.username || user.uid || 'chattter'
+                            },
+                            receiver_details: {
+                                user_id: post.author_id,
+                                user_name: post.author_name || 'Chattter App',
+                                user_avatar: post.author_avatar || '',
+                                user_username: post.author_username || 'chattter'
+                            },
+                            notification_details: {}
+                        })
+                    },
+                })
                 toast.success(`Followed ${post.author_name}`)
             }
         }
     }
 
     const likeUnlike = () => {
+
         if (!loading && !user) {
             toast.error("Login to like posts")
         } else if (user && post) {
@@ -158,7 +209,35 @@ const PostDetailsPage:React.FC<Props> = ({post_id}) => {
             if (post.likes?.includes(user?.uid)) {
                 UnlikePost(data)
             } else {
-                likePost(data)
+                likePost(data, {
+                    onSuccess() {
+                        sendNotification({
+                            receiver_id: post.author_id,
+                            sender_id: user.uid,
+                            notification_type: "POST_LIKED",
+                            sender_details: {
+                                user_id: user.uid,
+                                user_name: user.displayName || 'Chattter App',
+                                user_avatar: user.photoURL || userData?.avatar || '',
+                                user_username: userData?.username || user.uid || 'chattter'
+                            },
+                            receiver_details: {
+                                user_id: post.author_id,
+                                user_name: post.author_name || 'Chattter App',
+                                user_avatar: post.author_avatar || '',
+                                user_username: post.author_username || 'chattter'
+                            },
+
+                            notification_details: {
+                                post_id: post.post_id,
+                                post_cover_photo: post.cover_image || '',
+                                post_author_avatar: post.author_avatar || '',
+                                post_author_name: post.author_name || 'Chattter App',
+                                post_author_username: post.author_username || 'chattter',
+                            }
+                        })
+                    },
+                })
             }
         }
     }
@@ -174,7 +253,7 @@ const PostDetailsPage:React.FC<Props> = ({post_id}) => {
 
     return (
         <>
-        
+
             {
                 isLoading ?
                     <div className='flex items-center justify-center size-full'>
@@ -213,7 +292,7 @@ const PostDetailsPage:React.FC<Props> = ({post_id}) => {
 
                                     <div className='flex max-md:flex-col items-center gap-x-5 gap-y-2.5 mt-4'>
                                         <Link href={`/u/${post.author_username}`} className='flex items-center gap-2'>
-                                            <Avatar alt={post.author_username} src={post.author_avatar} fallback={post.author_name || "AUGE BORN"} size='large' />
+                                            <Avatar alt={post.author_username} src={post.author_avatar} fallback={post.author_name || "Chattter App"} size='large' />
                                             <h6 className='text-[1.125rem]'>{post.author_name}</h6>
                                         </Link>
 
@@ -298,7 +377,7 @@ const PostDetailsPage:React.FC<Props> = ({post_id}) => {
                                 <div className='flex max-md:flex-col md:items-center md:justify-between gap-2.5 w-full py-4 sm:py-6 border-b border-muted-foreground'>
                                     <div className='flex items-center gap-3'>
                                         <Link href={`/u/${post.author_username}`} className='flex items-center gap-2'>
-                                            <Avatar alt={post.author_username} src={post.author_avatar} fallback={post.author_name || "AUGE BORN"} size='large' />
+                                            <Avatar alt={post.author_username} src={post.author_avatar} fallback={post.author_name || "Chattter App"} size='large' />
                                             <h6 className='text-[1.125rem]'>{post.author_name}</h6>
                                         </Link>
                                         <Badge variant="secondary">Author</Badge>

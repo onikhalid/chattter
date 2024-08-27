@@ -13,18 +13,17 @@ export interface TextareaProps
   maxLength?: number
   currentLength?: number
   label?: string
-  name: string
 
 }
 
 const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
-  ({ name, label, className, hasError, errorMessage, errorMessageClass, showCharacterCount, currentLength, maxLength, ...props }, ref) => {
+  ({  label, className, hasError, errorMessage, errorMessageClass, showCharacterCount, currentLength, maxLength, ...props }, ref) => {
 
     return (
       <div className={cn("flex flex-col gap-y-3")}>
         {
           label && (
-            <Label className="text-sm text-muted-foreground" htmlFor={name}>
+            <Label className="text-sm text-muted-foreground" htmlFor={label}>
               {label}
             </Label>
           )
@@ -37,6 +36,7 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
           ref={ref}
           maxLength={maxLength}
           {...props}
+          id={label || ""}
         />
         {
           showCharacterCount && !!currentLength && !!maxLength && (

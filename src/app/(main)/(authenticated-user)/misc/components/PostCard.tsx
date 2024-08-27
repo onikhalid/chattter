@@ -14,7 +14,7 @@ import { UserContext } from '@/contexts'
 import { launchNotification } from '@/utils/notifications'
 import { useBooleanStateControl } from '@/hooks'
 
-import { UseAddPostToBookmark, useDeletePost, UseFollowUser, UseRemovePostFromBookmark, UseUnFollowUser } from '../api'
+import { UseAddPostToBookmark, useCreateNotification, useDeletePost, UseFollowUser, UseRemovePostFromBookmark, UseUnFollowUser } from '../api'
 import PostShareModal from './PostShareModal'
 import { TPost } from '../types'
 
@@ -26,11 +26,13 @@ interface Props {
 }
 const PostCard: React.FC<Props> = ({ post, isFromProfile, refetch }) => {
   const [user, loading] = useAuthState(auth)
-  const { userFollows } = useContext(UserContext)
+  const { userFollows, userData } = useContext(UserContext)
   const { mutate: addBookmark, isPending: isSavingBookmark } = UseAddPostToBookmark({})
   const { mutate: deleteBookmark, isPending: isRemovingBookmark } = UseRemovePostFromBookmark({})
   const { mutate: followUser, isPending: isFollowingUser } = UseFollowUser()
   const { mutate: unfollowUser, isPending: isUnfollowingUser } = UseUnFollowUser()
+  const { mutate: sendNotification } = useCreateNotification()
+
   const {
     state: isShareModalOpen,
     setTrue: openShareModal,
@@ -73,7 +75,35 @@ const PostCard: React.FC<Props> = ({ post, isFromProfile, refetch }) => {
           post_author_avatar: post.author_avatar,
           created_at: new Date()
         }
-        addBookmark(bookmarkData)
+        addBookmark(bookmarkData, {
+          onSuccess() {
+            sendNotification({
+              receiver_id: post.author_id,
+              sender_id: user.uid,
+              notification_type: "POST_SAVED",
+              sender_details: {
+                user_id: user.uid,
+                user_name: user.displayName || 'Chattter App',
+                user_avatar: user.photoURL || userData?.avatar || '',
+                user_username: userData?.username || user.uid || 'chattter'
+              },
+              receiver_details: {
+                user_id: post.author_id,
+                user_name: post.author_name || 'Chattter App',
+                user_avatar: post.author_avatar || '',
+                user_username: post.author_username || 'chattter'
+              },
+              notification_details: {
+                post_id: post.post_id,
+                post_cover_photo: post.cover_image,
+                post_title: post.title,
+                post_author_avatar: post.author_avatar,
+                post_author_name: post.author_name,
+                post_author_username: post.author_username
+              }
+            })
+          },
+        })
       }
     }
     if (isFromProfile && refetch) {
@@ -92,7 +122,28 @@ const PostCard: React.FC<Props> = ({ post, isFromProfile, refetch }) => {
         unfollowUser(data)
         toast.success(`Unfollowed ${post.author_name}`)
       } else {
-        followUser(data)
+        followUser(data, {
+          onSuccess() {
+            sendNotification({
+              receiver_id: post.author_id,
+              sender_id: user.uid,
+              notification_type: "NEW_FOLLOWER",
+              sender_details: {
+                user_id: user.uid,
+                user_name: user.displayName || 'Chattter App',
+                user_avatar: user.photoURL || userData?.avatar || '',
+                user_username: userData?.username || user.uid || 'chattter'
+              },
+              receiver_details: {
+                user_id: post.author_id,
+                user_name: post.author_name || 'Chattter App',
+                user_avatar: post.author_avatar || '',
+                user_username: post.author_username || 'chattter'
+              },
+              notification_details: {}
+            })
+          },
+        })
         toast.success(`Followed ${post.author_name}`)
       }
     }

@@ -1,6 +1,6 @@
 'use client'
 
-import React, { Suspense, useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { Controller, useForm } from 'react-hook-form';
@@ -9,20 +9,24 @@ import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import 'react-quill/dist/quill.snow.css';
 import { z, ZodError } from "zod";
+import { v4 } from 'uuid';
 import { SaveIcon, SendIcon } from 'lucide-react'
+import { collection, doc, writeBatch } from 'firebase/firestore';
 
-import { Button, FormError, Input, LoadingModal, TagInput, Textarea } from '@/components/ui'
-import { auth, storage } from '@/utils/firebaseConfig';
+import { Button, FormError, LoadingModal, TagInput, Textarea } from '@/components/ui'
+import { auth, db, storage } from '@/utils/firebaseConfig';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { TrashIcon, UploadIcon, } from '@/components/icons';
 import { UserContext } from '@/contexts';
 import { cn } from '@/lib/utils';
 import { presetArticleTags } from '@/constants';
 import { convertHtmlToMarkdown, convertMarkdownToHtml } from '@/utils/quillEditor';
+import MarkdownEditor from '@uiw/react-md-editor';
 
 import { UseCreateNewPost, UseGetPostDetails, UseUpdateNewPost } from './misc/api';
 import { deleteImageFromDatabase, extractImageUrls, generateTitleSearchTerms, uploadCoverImage } from './misc/utils';
-import MarkdownEditor from '@uiw/react-md-editor';
+import { useCreateNotification } from '../misc/api';
+import { TNotification } from '../misc/types/notification';
 
 
 
@@ -65,18 +69,17 @@ const WriteNewStoryPage = () => {
         ),
     });
     type createNewPostFormDataType = z.infer<typeof CreateNewPostFormSchema>
-    const [editorMode, setEditorMode] = useState('richText');
 
     const [user, loading] = useAuthState(auth);
-    const { userData } = useContext(UserContext);
+    const { userData, userFollowers } = useContext(UserContext);
 
     const { data: postData, isLoading: isFetchingPostData } = UseGetPostDetails(postToEditId)
     const { mutate: createPost, isPending: isCreatingPost } = UseCreateNewPost()
     const { mutate: updatePost, isPending: isUpdatingPost } = UseUpdateNewPost()
 
+    const [editorMode, setEditorMode] = useState('richText');
     const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
     const MemoizedQuill = React.memo(ReactQuill);
-
 
     const {
         register, control, handleSubmit, setValue, watch, setError, clearErrors, formState: { isValid, errors }, reset
@@ -91,13 +94,13 @@ const WriteNewStoryPage = () => {
             setValue('tags', postData.tags)
             setValue('content', postData.content)
             setCoverImgURL(postData.cover_image)
-
         }
     }, [isFetchingPostData, postData, setValue])
 
     const [selectedCoverImageFile, setSelectedCoverImageFile] = useState<File | null>(watch('cover_image') ?? null);
     const [coverImgURL, setCoverImgURL] = useState<string | null>(postData?.cover_image || null)
     const [uploadedImages, setUploadedImages] = useState<string[]>([]);
+    const [isSendingNotification, setIsSendingNotification] = useState(false);
 
     const toggleEditorMode = useCallback(async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         e.preventDefault();
@@ -175,7 +178,47 @@ const WriteNewStoryPage = () => {
                     reset();
                     setSelectedCoverImageFile(null)
                     setCoverImgURL(null)
-                    router.push(`/?v=all`)
+                    setIsSendingNotification(true)
+                    const batch = writeBatch(db);
+                    const notificationRef = collection(db, 'notifications');
+
+                    userFollowers.forEach((followerId) => {
+                        const id = v4()
+                        const notificationData: TNotification = {
+                            receiver_id: followerId,
+                            sender_id: user?.uid || "",
+                            notification_type: "NEW_POST",
+                            notification_id: id,
+                            read_status: false,
+                            sender_details: {
+                                user_id: user?.uid || "",
+                                user_name: userData?.name || "",
+                                user_avatar: userData?.avatar || "",
+                                user_username: userData?.username || ""
+                            },
+                            receiver_details: {
+                                user_id: followerId,
+                                user_name: "",
+                                user_avatar: "",
+                                user_username: ""
+                            },
+                            notification_details: {
+                                post_id: newDocId,
+                                post_cover_photo: dataToSubmit.cover_image,
+                                post_title: dataToSubmit.title,
+                                post_author_avatar: userData?.avatar || "",
+                                post_author_name: userData?.name || "",
+                                post_author_username: userData?.username || ""
+                            },
+                            created_at: new Date()
+                        }
+
+                        const newNotificationRef = doc(notificationRef, id);
+                        batch.set(newNotificationRef, notificationData);
+                    });
+
+                    await batch.commit();
+                    router.push(`/p/${newDocId}`)
                 },
                 onError: (error) => {
                     console.error('Error creating post:', error);
@@ -225,25 +268,8 @@ const WriteNewStoryPage = () => {
 
     }, [setValue, user?.uid, watch, loading]);
 
-    const quillModules = useMemo(() => ({
-        toolbar: {
-            container: [
-                [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
-                ['bold', 'italic', 'underline', 'strike'],
-                [{ 'list': 'ordered' }, { 'list': 'bullet' }],
-                [{ 'indent': '-1' }, { 'indent': '+1' }],
-                [{ 'align': [] }],
-                ['link', 'image'],
-                ['clean']
-            ],
-            handlers: {
-                image: QuillimageSelectionHandler
-            }
-        },
-        clipboard: {
-            matchVisual: false,
-        },
-    }), []);
+
+
 
     const handleCoverImageSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files![0];
@@ -280,8 +306,6 @@ const WriteNewStoryPage = () => {
                     errorMessage={errors.title?.message}
                     errorMessageClass='mb-8 text-center rounded-lg'
                 />
-
-
 
                 <Controller
                     name="cover_image"
@@ -389,13 +413,11 @@ const WriteNewStoryPage = () => {
                                         style={{ border: "none" }}
                                     />
                                     :
-
                                     <MemoizedQuill
                                         theme="snow"
                                         value={field?.value?.replace("<p><br></p>", "") || ''}
                                         onBlur={field.onBlur}
                                         onChange={(content, editor) => { field.onChange(content); }}
-
                                         modules={{
                                             toolbar: {
                                                 container: [
@@ -442,7 +464,7 @@ const WriteNewStoryPage = () => {
 
 
             <LoadingModal
-                isModalOpen={isCreatingPost || isUpdatingPost}
+                isModalOpen={isCreatingPost || isUpdatingPost || isSendingNotification}
                 errorMsg={'Please wait for the post to finish uploading'}
             />
         </main>

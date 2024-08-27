@@ -73,7 +73,7 @@ const NewUserOnboarding: React.FC = () => {
             }
         ),
     });
-    const { handleSubmit, register, formState: { errors, isDirty, isValid }, control, watch, setError, setValue } = useForm<TUpdateUser>({
+    const { handleSubmit, register, formState: { errors, isDirty, isValid }, control, watch, setError, setValue, getValues } = useForm<TUpdateUser>({
         resolver: zodResolver(OnboardingForm)
     });
 
@@ -95,7 +95,6 @@ const NewUserOnboarding: React.FC = () => {
                     setValue('linkedin', userData.linkedin || '')
                     setValue('instagram', userData.instagram || '')
                     setProfileImgURL(userData.avatar || null)
-                    console.log(userData)
                 }
             }
             getUserData()
@@ -145,7 +144,6 @@ const NewUserOnboarding: React.FC = () => {
         const newImgURL = URL.createObjectURL(file)
         setProfileImgURL(newImgURL)
     };
-
 
 
 

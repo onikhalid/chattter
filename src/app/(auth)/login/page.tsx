@@ -15,6 +15,7 @@ import { auth, db } from '@/utils/firebaseConfig';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { launchNotification } from '@/utils/notifications';
 import { AuthLayoutHeader } from '../misc/components';
+import { generateTitleSearchTerms } from '@/app/(main)/(authenticated-user)/new/misc/utils';
 
 
 
@@ -93,39 +94,52 @@ const Login: React.FC = () => {
     const googleProvider = new GoogleAuthProvider();
     const GoogleSignup = async () => {
         try {
-            const result = await signInWithPopup(auth, googleProvider);
-            const user = result.user;
-
-            const userDocRef = doc(db, 'users', user.uid);
-            const userDocSnap = await getDoc(userDocRef);
-
-            if (!userDocSnap.exists()) {
-                const userData = {
-                    uid: user.uid,
-                    name: user.displayName,
-                    avatar: user.photoURL
-                }
-                await setDoc(userDocRef, userData)
-                router.push("/onboarding");
+          setLoading(true)
+          const result = await signInWithPopup(auth, googleProvider);
+          const user = result.user;
+    
+          const userDocRef = doc(db, 'users', user.uid);
+          const userDocSnap = await getDoc(userDocRef);
+    
+          if (!userDocSnap.exists()) {
+            const userData = {
+              uid: user.uid,
+              name: user.displayName,
+              username: user?.uid,
+              name_for_search: generateTitleSearchTerms(user.displayName || ""),
+              avatar: user.photoURL,
+              email: user.email,
+              followers: [],
+              followings: [],
+              bookmarks: [],
+              created_at: new Date(),
+              updated_at: new Date(),
             }
-            else if (userDocSnap.exists()) {
-                const data = userDocSnap.data()
-                if (data.hasOwnProperty('username')) {
-                    router.push('/')
-                    // router.back()
-                } else {
-                    router.push('/onboarding')
-                }
-            }
-        } catch (error: any) {
-            if (error.code || error.message === "auth/popup-blocked") {
-                launchNotification('error', 'Signup Popup blocked')
+            await setDoc(userDocRef, userData)
+            router.push("/onboarding");
+          }
+          else if (userDocSnap.exists()) {
+            const data = userDocSnap.data()
+            if (data.hasOwnProperty('username')) {
+              router.push('/')
+              // router.back()
             } else {
-
+              router.push('/onboarding')
             }
-            console.error(error);
+          }
+        } catch (error: any) {
+          if (error.code || error.message === "auth/popup-blocked") {
+            launchNotification('error', 'Signup Popup blocked')
+          } else {
+    
+          }
+          console.error(error);
         }
-    };
+        finally {
+          setLoading(false)
+        }
+      };
+    
 
 
 

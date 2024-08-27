@@ -16,11 +16,10 @@ export interface InputProps
   rightIcon?: React.ReactNode
   containerClassName?: string
   label?: string
-  name: string
 }
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ className, containerClassName, type, hasError, leftIcon, rightIcon, errorMessageClass, name, label, ...props }, ref) => {
+  ({ className, containerClassName, type, hasError, leftIcon, rightIcon, errorMessageClass, label, ...props }, ref) => {
     const [show, setShow] = React.useState(false)
     const inputType = show ? "text" : "password"
 
@@ -29,7 +28,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
       <div className={containerClassName}>
         {
           label && (
-            <Label className="text-sm text-muted-foreground" htmlFor={name}>
+            <Label className="text-sm text-muted-foreground" htmlFor={label}>
               {label}
             </Label>
           )
@@ -45,7 +44,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           <input
             type={type == "password" ? inputType : type}
             data-testid={type == "password" ? "password-input" : type}
-            id={name}
+            id={label}
             className={cn(
               "flex h-12 w-full rounded-lg border border-input bg-background px-4 py-3 text-sm ring-offset-background file:border-0",
               "file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:border-2",

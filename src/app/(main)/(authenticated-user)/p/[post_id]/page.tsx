@@ -20,7 +20,7 @@ export async function generateMetadata(
     const post = await fetchPostToEdit(post_id)
 
     return {
-        title: `${post?.title} - Your Site Name`,
+        title: `${post?.title} - by ${post?.author_name}` || 'Chattter',
         description: `${cleanUpPostQuillEditorContent(post?.content || "").substring(0, 50)}...` || 'Read this interesting post on our blog',
         openGraph: {
             title: post?.title,
