@@ -11,15 +11,16 @@ import { auth } from '@/utils/firebaseConfig';
 import { UserContext } from '@/contexts';
 
 import { PublicProfileDetails, PublicProfilePosts } from '../../misc/components';
-import { UseFollowUser, UseGetUserPublicProfileDetails, UseUnFollowUser } from '../../misc/api';
+import { useCreateNotification, UseFollowUser, UseGetUserPublicProfileDetails, UseUnFollowUser } from '../../misc/api';
 import Link from 'next/link';
 
 
 const UserPublicProfilePage = ({ params }: { params: { username: string } }) => {
     const { username } = params
-    const { userFollows } = useContext(UserContext)
+    const { userFollows, userData:currentUser } = useContext(UserContext)
     const { data, isLoading, refetch } = UseGetUserPublicProfileDetails(username)
     const [user, loading] = useAuthState(auth)
+    const { mutate: sendNotification } = useCreateNotification()
 
     const searchParams = useSearchParams();
     const view = searchParams.get('view') || 'posts';
@@ -49,7 +50,28 @@ const UserPublicProfilePage = ({ params }: { params: { username: string } }) => 
                 unfollowUser(dataToSubmit)
                 toast.success(`Unfollowed ${data.details.name}`)
             } else {
-                followUser(dataToSubmit)
+                followUser(dataToSubmit, {
+                    onSuccess() {
+                        sendNotification({
+                            receiver_id: data.details.uid,
+                            sender_id: user.uid,
+                            notification_type: "NEW_FOLLOWER",
+                            sender_details: {
+                                user_id: user.uid,
+                                user_name: user.displayName || 'Chattter App',
+                                user_avatar: user.photoURL || currentUser?.avatar || '',
+                                user_username: currentUser?.username || user.uid || 'chattter'
+                            },
+                            receiver_details: {
+                                user_id: data.details.uid,
+                                user_name: data.details.name || 'Chattter App',
+                                user_avatar: data.details.avatar || '',
+                                user_username: data.details.username || 'chattter',
+                            },
+                            notification_details: {}
+                        })
+                    },
+                })
                 toast.success(`Followed ${data.details.name}`)
             }
             refetch()
@@ -173,7 +195,7 @@ const UserPublicProfilePage = ({ params }: { params: { username: string } }) => 
                                     >
                                         {userFollows?.includes(data.details.uid) ? 'Unfollow' : 'Follow'}
                                     </Button>
-                                    <LinkButton href="/me" className={cn("w-full max-w-[200px] mt-4", { "hidden": user?.uid !== data.details.uid } )}>
+                                    <LinkButton href="/me" className={cn("w-full max-w-[200px] mt-4", { "hidden": user?.uid !== data.details.uid })}>
                                         View more details
                                     </LinkButton>
 

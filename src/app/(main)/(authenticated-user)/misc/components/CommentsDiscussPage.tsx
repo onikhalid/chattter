@@ -1,14 +1,14 @@
 import React from 'react'
-import { useRouter } from "next/navigation"
-import { ChevronLeft } from "lucide-react"
+import { v4 } from 'uuid'
 
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui"
 import { UserContext } from "@/contexts"
 
 import CommentList from "./CommentsList"
-import { useAddNewComment, useGetComments } from "../api"
+import { useAddNewComment, useCreateNotification, useGetComments } from "../api"
 import { CommentCardSkeleton } from './CommentsCardSkeleton'
+import { UseGetPostDetails } from '../../new/misc/api'
 
 
 
@@ -17,6 +17,8 @@ const CommentsDiscussPage = ({ post_id }: { post_id: string }) => {
     const [newComment, setNewComment] = React.useState<string>("");
     const { data: comments, isLoading } = useGetComments(post_id);
     const { mutate: addComment, isPending: isAddingComment } = useAddNewComment();
+    const { mutate: sendNotification } = useCreateNotification()
+    const { data } = UseGetPostDetails(post_id)
 
     function handleCommentChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
         setNewComment(e.target.value);
@@ -40,6 +42,30 @@ const CommentsDiscussPage = ({ post_id }: { post_id: string }) => {
             addComment(commentData, {
                 onSuccess: () => {
                     setNewComment("");
+                    sendNotification({
+                        receiver_id: data?.author_id || "",
+                        sender_id: userData?.uid || "",
+                        notification_type: "POST_COMMENT",
+                        sender_details: {
+                            user_id: userData?.uid || "",
+                            user_name: userData?.name || "Chattter App",
+                            user_avatar: userData?.avatar || "",
+                            user_username: userData?.username || "chattter",
+                        },
+                        receiver_details: {
+                            user_id: post_id,
+                            user_name: "",
+                            user_avatar: "",
+                            user_username: "",
+                        },
+                        notification_details: {
+                            post_id,
+                            post_cover_photo: data?.cover_image || "",
+                            post_title: data?.title || "",
+                            comment_id: v4(),
+                            comment_content: newComment,
+                        },
+                    });
                 },
                 onError: (error: any) => {
                     console.error("Error adding comment: ", error);

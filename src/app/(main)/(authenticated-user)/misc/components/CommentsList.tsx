@@ -29,12 +29,10 @@ export default CommentList;
 export const organizeComments = (comments: TComment[]): TComment[] => {
     const commentMap = new Map<string, TComment>();
 
-    // First pass: Add all comments to the map
     comments.forEach(comment => {
         commentMap.set(comment.comment_id, { ...comment, replies: [] });
     });
 
-    // Second pass: Organize into a tree
     comments.forEach(comment => {
         if (comment.parent_comment_id) {
             const parentComment = commentMap.get(comment.parent_comment_id);
@@ -44,7 +42,6 @@ export const organizeComments = (comments: TComment[]): TComment[] => {
         }
     });
 
-    // Filter to only top-level comments
     return Array.from(commentMap.values()).filter(comment => !comment.parent_comment_id);
 };
 

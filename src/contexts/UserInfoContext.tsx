@@ -1,15 +1,15 @@
 "use client"
 
 import { ReactNode } from 'react';
-import { useState, useEffect, useLayoutEffect } from "react";
+import { useState, useEffect } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { collection, doc, DocumentData, getDocs, onSnapshot, query, Timestamp, where } from "firebase/firestore";
-
+import { collection, doc, onSnapshot, orderBy, query, Timestamp, where } from "firebase/firestore";
 import { createContext } from 'react';
-import { auth, db } from '@/utils/firebaseConfig';
 import { User } from 'firebase/auth';
-import toast from 'react-hot-toast';
+
+import { auth, db } from '@/utils/firebaseConfig';
 import { TBookmark, TPost } from '@/app/(main)/(authenticated-user)/misc/types';
+import { TNotification } from '@/app/(main)/(authenticated-user)/misc/types/notification';
 
 
 export interface TUser {
@@ -40,10 +40,13 @@ type UserInfoContextType = {
     loadingauthenticatedUser: boolean;
     isUserDataLoading: boolean;
     userFollows: string[]
+    userFollowsProfiles: TUser[]
     userFollowers: string[]
+    userFollowersProfils: TUser[]
     userBookmarks: TBookmark[]
     userPosts: TPost[]
     userInterests: string[]
+    userNotifications: TNotification[]
 };
 const initialUserContext: UserInfoContextType = {
     authenticatedUser: {} as User,
@@ -51,10 +54,13 @@ const initialUserContext: UserInfoContextType = {
     loadingauthenticatedUser: false,
     isUserDataLoading: true,
     userFollows: [],
+    userFollowsProfiles: [],
     userFollowers: [],
+    userFollowersProfils: [],
     userBookmarks: [],
     userPosts: [],
     userInterests: [],
+    userNotifications: []
 };
 
 
@@ -66,10 +72,13 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     const [authenticatedUser, loadingauthenticatedUser] = useAuthState(auth);
     const [userData, setUserData] = useState<TUser | undefined | null>(null);
     const [userFollowers, setUserFollowers] = useState<string[]>([])
+    const [userFollowersProfils, setUserFollowersProfils] = useState<TUser[]>([])
     const [userFollows, setUserFollows] = useState<string[]>([])
+    const [userFollowsProfiles, setUserFollowsProfiles] = useState<TUser[]>([])
     const [userBookmarks, setUserBookmarks] = useState<TBookmark[]>([])
     const [userPosts, setUserPosts] = useState<TPost[]>([])
     const [userInterests, setUserInterests] = useState<string[]>([])
+    const [userNotifications, setUserNotifications] = useState<TNotification[]>([]);
 
 
     useEffect(() => {
@@ -92,6 +101,8 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
                     query(followsCollectionRef, where('follower_id', '==', authenticatedUser.uid)),
                     (snapshot) => {
                         const followedUserIds = snapshot.docs.map((doc) => doc.data().followed_id);
+                        const followedUsers = snapshot.docs.map((doc) => doc.data());
+                        setUserFollowsProfiles(followedUsers as TUser[]);
                         setUserFollows(followedUserIds);
                     },
                     (error) => {
@@ -132,12 +143,24 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
                     }
                 );
 
+                const unsubscribeNotifications = onSnapshot(
+                    query(collection(db, 'notifications'), where('receiver_id', '==', authenticatedUser.uid), orderBy('created_at', 'desc')),
+                    (snapshot) => {
+                        const notifications = snapshot.docs.map((doc) => doc.data() as TNotification);
+                        setUserNotifications(notifications);
+                    },
+                    (error) => {
+                        console.error("Error fetching notifications:", error);
+                    }
+                );
+
                 return () => {
                     unsubscribeUserData();
                     unsubscribeFollows();
                     unsubscribeFollowers();
                     unsubscribeBookmarks();
                     unsubscribePosts();
+                    unsubscribeNotifications();
                 };
             } else {
                 setUserData(null);
@@ -146,6 +169,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
                 setUserBookmarks([]);
                 setUserInterests([]);
                 setUserPosts([]);
+                setUserNotifications([]);
             }
         } catch (error) {
 
@@ -157,7 +181,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     }, [authenticatedUser]);
 
     return (
-        <UserContext.Provider value={{ userData, authenticatedUser, userFollows, userFollowers, userPosts, userBookmarks, userInterests, loadingauthenticatedUser, isUserDataLoading }}>
+        <UserContext.Provider value={{ userData, authenticatedUser, userFollows, userFollowers, userFollowersProfils, userFollowsProfiles,  userPosts, userBookmarks, userInterests, userNotifications, loadingauthenticatedUser, isUserDataLoading }}>
             {children}
         </UserContext.Provider>
     );

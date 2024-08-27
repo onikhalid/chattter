@@ -14,8 +14,9 @@ import { cn } from '@/utils/classNames';
 import { useBooleanStateControl } from '@/hooks';
 
 import { TComment } from '../types';
-import { useDeleteComment } from '../api';
+import { useCreateNotification, useDeleteComment } from '../api';
 import { useQueryClient } from '@tanstack/react-query';
+import { v4 } from 'uuid';
 
 
 
@@ -34,7 +35,7 @@ export const CommentCard = ({ comment }: CommentProps) => {
         setFalse: closeConfirmDeleteModal
     } = useBooleanStateControl()
     const { mutate: deleteComment, isPending: isDeletingComment } = useDeleteComment()
-
+    const { mutate: sendNotification } = useCreateNotification()
 
     const handleDelete = () => {
         const data = { comment_id: comment.comment_id, post_id: comment.post_id }
@@ -62,6 +63,29 @@ export const CommentCard = ({ comment }: CommentProps) => {
             setReplyComment("")
             queryClient.invalidateQueries({
                 queryKey: ['comments', comment.post_id]
+            })
+            sendNotification({
+                receiver_id: comment.commentor_id,
+                sender_id: user?.uid || '',
+                receiver_details: {
+                    user_id: comment.commentor_id,
+                    user_name: comment.commentor_name,
+                    user_avatar: comment.commentor_avatar,
+                    user_username: comment.commentor_username,
+                },
+                sender_details: {
+                    user_id: user?.uid || '',
+                    user_name: userData?.name || 'Chattter App',
+                    user_avatar: userData?.avatar || user?.photoURL || '',
+                    user_username: userData?.username || 'chattter'
+                },
+                notification_type: "COMMENT_REPLIED",
+                notification_details: {
+                    post_id: comment.post_id,
+                    comment_id: comment.comment_id,
+                    comment_content: comment.content,
+
+                },
             })
         }
     };

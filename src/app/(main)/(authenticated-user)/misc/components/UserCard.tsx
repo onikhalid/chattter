@@ -5,37 +5,59 @@ import Link from 'next/link'
 import React, { useContext } from 'react'
 import { useAuthState } from 'react-firebase-hooks/auth'
 import toast from 'react-hot-toast'
-import { UseFollowUser, UseUnFollowUser } from '../api'
+import { useCreateNotification, UseFollowUser, UseUnFollowUser } from '../api'
 import { SmallSpinner } from '@/components/icons'
 
 interface Props {
     user: TUser
 }
 const UserCard = ({ user }: Props) => {
-    const { userFollows } = useContext(UserContext)
-    const [currentUser, loading] = useAuthState(auth)
-    const { username, name, avatar, interests } = user
+    const { userFollows, userData: authenticatedUserData } = useContext(UserContext)
+    const [authenticatedUser, loading] = useAuthState(auth)
+    const { username, name, avatar, interests, uid } = user
     const { mutate: followUser, isPending: isFollowingUser } = UseFollowUser()
     const { mutate: unfollowUser, isPending: isUnfollowingUser } = UseUnFollowUser()
+    const { mutate: sendNotification } = useCreateNotification()
 
     const followUnfollow = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-      
+
         e.stopPropagation()
         e.preventDefault()
 
 
-        if (!loading && !currentUser) {
+        if (!loading && !authenticatedUser) {
             toast.error("Login to follow users")
-        } else if (currentUser) {
+        } else if (authenticatedUser) {
             const data = {
-                follower_id: currentUser?.uid || '',
+                follower_id: authenticatedUser?.uid || '',
                 followed_id: user.uid
             }
             if (userFollows?.includes(user.uid)) {
                 unfollowUser(data)
                 toast.success(`Unfollowed ${user.name}`)
             } else {
-                followUser(data)
+                followUser(data, {
+                    onSuccess() {
+                        sendNotification({
+                            receiver_id: uid,
+                            sender_id: user.uid,
+                            notification_type: "NEW_FOLLOWER",
+                            sender_details: {
+                                user_id: user.uid,
+                                user_name: authenticatedUserData?.name || 'Chattter App',
+                                user_avatar: authenticatedUserData?.avatar || authenticatedUser?.photoURL || '',
+                                user_username: authenticatedUserData?.username || authenticatedUser.uid || 'chattter'
+                            },
+                            receiver_details: {
+                                user_id: uid,
+                                user_name: name || 'Chattter App',
+                                user_avatar: avatar || '',
+                                user_username: username || 'chattter',
+                            },
+                            notification_details: {}
+                        })
+                    },
+                })
                 toast.success(`Followed ${user.name}`)
             }
         }

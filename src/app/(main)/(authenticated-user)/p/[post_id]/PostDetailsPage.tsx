@@ -149,6 +149,8 @@ const PostDetailsPage: React.FC<Props> = ({ post_id }) => {
                                 post_author_avatar: post.author_avatar || '',
                                 post_author_name: post.author_name || 'Chattter App',
                                 post_author_username: post.author_username || 'chattter',
+                                post_title: post.title || 'Untitled Post',
+
                             }
                         })
                     },
@@ -186,9 +188,10 @@ const PostDetailsPage: React.FC<Props> = ({ post_id }) => {
                                 user_id: post.author_id,
                                 user_name: post.author_name || 'Chattter App',
                                 user_avatar: post.author_avatar || '',
-                                user_username: post.author_username || 'chattter'
+                                user_username: post.author_username || 'chattter',
                             },
-                            notification_details: {}
+                            notification_details: {
+                            }
                         })
                     },
                 })
@@ -234,6 +237,7 @@ const PostDetailsPage: React.FC<Props> = ({ post_id }) => {
                                 post_author_avatar: post.author_avatar || '',
                                 post_author_name: post.author_name || 'Chattter App',
                                 post_author_username: post.author_username || 'chattter',
+                                post_title: post.title || 'Untitled Post',
                             }
                         })
                     },

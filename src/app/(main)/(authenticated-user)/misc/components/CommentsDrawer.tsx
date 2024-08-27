@@ -14,8 +14,10 @@ import { Textarea } from "@/components/ui"
 import { UserContext } from "@/contexts"
 
 import CommentList from "./CommentsList"
-import { useAddNewComment, useGetComments } from "../api"
+import { useAddNewComment, useCreateNotification, useGetComments } from "../api"
 import { CommentCardSkeleton } from "./CommentsCardSkeleton"
+import { v4 } from "uuid"
+import { UseGetPostDetails } from "../../new/misc/api"
 
 
 
@@ -25,7 +27,11 @@ function CommentsDrawer({ searchParams: { post_id } }: { searchParams: { post_id
     const [newComment, setNewComment] = React.useState<string>("");
     const { data: comments, isLoading } = useGetComments(post_id);
     const { mutate: addComment, isPending: isAddingComment } = useAddNewComment();
+    const { mutate: sendNotification } = useCreateNotification()
 
+console.log("Comment added successfully");    const { data } = UseGetPostDetails(post_id)
+
+    console.log("Comment added successfully");
     function handleCommentChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
         setNewComment(e.target.value);
     }
@@ -48,6 +54,31 @@ function CommentsDrawer({ searchParams: { post_id } }: { searchParams: { post_id
             addComment(commentData, {
                 onSuccess: () => {
                     setNewComment("");
+                    sendNotification({
+                        receiver_id: post_id,
+                        sender_id: userData?.uid || "",
+                        notification_type: "POST_COMMENT",
+                        sender_details: {
+                            user_id: userData?.uid || "",
+                            user_name: userData?.name || "Chattter App",
+                            user_avatar: userData?.avatar || "",
+                            user_username: userData?.username || "chattter",
+                        },
+                        receiver_details: {
+                            user_id: post_id,
+                            user_name: "",
+                            user_avatar: "",
+                            user_username: "",
+                        },
+                        notification_details: {
+                            post_id,
+                            post_cover_photo: data?.cover_image || "",
+                            post_title: data?.title || "",
+                            comment_id: v4(),
+                            comment_content: newComment,
+                        },
+                    });
+                    console.log("Comment added successfully");
                 },
                 onError: (error: any) => {
                     console.error("Error adding comment: ", error);

@@ -14,6 +14,23 @@ const nextConfig = {
       },
     ],
   },
+  webpack(config) {
+    config.module.rules.push({
+      test: /\.(wav|mp3)$/i,
+      use: [
+        {
+          loader: 'file-loader',
+          options: {
+            name: '[path][name].[ext]',
+            publicPath: '/_next/static/media/',
+            outputPath: 'static/media/',
+          },
+        },
+      ],
+    });
+
+    return config;
+  },
 };
 
 export default nextConfig;

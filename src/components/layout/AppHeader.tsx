@@ -8,6 +8,7 @@ import { UserContext } from '@/contexts';
 import { getInitials } from '@/utils/strings';
 import { User } from 'firebase/auth';
 import { useSearchParams, usePathname } from 'next/navigation';
+import NotificationsDrawer from './NotificationsDrawer';
 
 
 interface Props {
@@ -18,11 +19,11 @@ interface Props {
 }
 
 const AppHeader: React.FC<Props> = ({ theme, toggleTheme, user, logout }) => {
-    const { userData } = useContext(UserContext)
+    const { userData, userNotifications } = useContext(UserContext)
     const params = useSearchParams();
     const pathName = usePathname();
     const postToEditId = params.get('edit');
-
+    console.log(userNotifications)
 
     const {
         state: isSearchModalOpen,
@@ -67,7 +68,7 @@ const AppHeader: React.FC<Props> = ({ theme, toggleTheme, user, logout }) => {
                 }
                 {
                     pathName !== '/new' &&
-                    <LinkButton href='/new' shape='rounded' variant='default' className='flex items-center gap-2 rounded-lg border-muted max-md:border-transparent max-md:!p-0 md:py-1.5 max-md:!bg-transparent'>
+                    <LinkButton href='/new' shape='rounded' variant='default' className='max-md:hidden flex items-center gap-2 rounded-lg border-muted max-md:border-transparent max-md:!p-0 md:py-1.5 max-md:!bg-transparent'>
                         <span className='max-md:hidden'>
                             Write story
                         </span>
@@ -75,6 +76,9 @@ const AppHeader: React.FC<Props> = ({ theme, toggleTheme, user, logout }) => {
                     </LinkButton>
 
                 }
+
+
+                <NotificationsDrawer />
 
 
                 <Sheet>
@@ -111,6 +115,11 @@ const AppHeader: React.FC<Props> = ({ theme, toggleTheme, user, logout }) => {
                             <Link href='/me?view=analytics' className='flex items-center gap-2 text-xl pl-3 rounded-none w-full py-3.5'>
                                 <SettingsIcon size={25} />
                                 Settings
+                            </Link>
+
+                            <Link href='/search' className='flex items-center gap-2 text-xl pl-3 rounded-none w-full py-3.5'>
+                                <SearchIcon size={25} />
+                                Search
                             </Link>
                         </div>
 

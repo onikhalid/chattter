@@ -14,6 +14,11 @@ export interface NotificationDetails {
     post_author_name?: string;
     post_author_username?: string;
     comment_id?: string;
+    comment_content?: string;
+    commentor_avatar?: string;
+    commentor_name?: string;
+    commentor_username?: string;
+    
 }
 export interface UserDetails {
     user_id: string;
@@ -41,4 +46,6 @@ export interface CreateNotificationInput {
     sender_details: UserDetails;
     receiver_details: UserDetails;
     notification_details: NotificationDetails;
+    created_at?: Date;
+    notification_id?: string;
 }
