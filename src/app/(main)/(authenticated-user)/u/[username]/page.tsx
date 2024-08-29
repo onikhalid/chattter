@@ -1,5 +1,5 @@
 'use client'
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import React, { useContext } from 'react'
 import toast from 'react-hot-toast';
 import { useAuthState } from 'react-firebase-hooks/auth';
@@ -11,16 +11,19 @@ import { auth } from '@/utils/firebaseConfig';
 import { UserContext } from '@/contexts';
 
 import { PublicProfileDetails, PublicProfilePosts } from '../../misc/components';
-import { useCreateNotification, UseFollowUser, UseGetUserPublicProfileDetails, UseUnFollowUser } from '../../misc/api';
+import { useCreateNotification, UseFollowUser, UseGetUserPublicProfileDetails, useStartChat, UseUnFollowUser } from '../../misc/api';
 import Link from 'next/link';
+import { Mail } from 'lucide-react';
 
 
 const UserPublicProfilePage = ({ params }: { params: { username: string } }) => {
     const { username } = params
-    const { userFollows, userData:currentUser } = useContext(UserContext)
-    const { data, isLoading, refetch } = UseGetUserPublicProfileDetails(username)
+    const router = useRouter()
     const [user, loading] = useAuthState(auth)
+    const { userFollows, userData: currentUser } = useContext(UserContext)
+    const { data, isLoading, refetch } = UseGetUserPublicProfileDetails(username)
     const { mutate: sendNotification } = useCreateNotification()
+    const { mutate: startChat, isPending: isStartingChat } = useStartChat()
 
     const searchParams = useSearchParams();
     const view = searchParams.get('view') || 'posts';
@@ -76,6 +79,30 @@ const UserPublicProfilePage = ({ params }: { params: { username: string } }) => 
             }
             refetch()
         }
+    }
+
+    const handleStartChat = () => {
+        if (!loading && !user) {
+            toast.error("Login to chat with other users")
+            return
+        }
+
+        startChat({
+            sender_details: {
+                name: currentUser?.name || user?.displayName || 'Chattter App',
+                avatar: currentUser?.avatar || user?.photoURL || '',
+                id: currentUser?.uid || user?.uid || ''
+            },
+            receiver_details: {
+                name: data?.details.name || 'AUGE BORN',
+                avatar: data?.details.avatar || '',
+                id: data?.details.uid || ''
+            }
+        }, {
+            onSuccess(data) {
+                router.push(`/chats?chat=${data}`)
+            },
+        })
     }
 
 
@@ -195,6 +222,17 @@ const UserPublicProfilePage = ({ params }: { params: { username: string } }) => 
                                     >
                                         {userFollows?.includes(data.details.uid) ? 'Unfollow' : 'Follow'}
                                     </Button>
+                                    
+                                    <Button className={cn('w-full max-w-[200px] mt-4 font-normal', { "hidden": user?.uid === data.details.uid })} onClick={handleStartChat}
+                                        variant={'secondary'}
+                                        disabled={isFollowingUser || isUnfollowingUser || user?.uid === data.details.uid}
+                                    >
+                                        <span className='flex items-center justify-center w-full truncate'>
+                                            <Mail className='w-5 h-5 inline-block mr-2' />
+                                            Chat
+                                        </span>
+                                    </Button>
+
                                     <LinkButton href="/me" className={cn("w-full max-w-[200px] mt-4", { "hidden": user?.uid !== data.details.uid })}>
                                         View more details
                                     </LinkButton>

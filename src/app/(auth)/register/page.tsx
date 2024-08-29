@@ -134,7 +134,7 @@ const Register: React.FC = () => {
 
 
   return (
-    <div className='bg-primary-foreground min-h-screen font-display w-full'>
+    <div className='bg-primary-foreground min-h-screen font-display w-full overflow-y-scroll pb-5'>
       <AuthLayoutHeader />
 
 

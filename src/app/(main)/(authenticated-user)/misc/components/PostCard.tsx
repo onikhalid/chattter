@@ -157,11 +157,16 @@ const PostCard: React.FC<Props> = ({ post, isFromProfile, refetch }) => {
 
   const router = useRouter()
   const handleStartChat = () => {
+    if (!loading && !user) {
+      toast.error("Login to chat with other users")
+      return
+    }
+
     startChat({
       sender_details: {
-        name: userData?.name|| user?.displayName || 'Chattter App',
-        avatar: userData?.avatar ||  user?.photoURL  || '',
-        id: userData?.uid ||user?.uid || ''
+        name: userData?.name || user?.displayName || 'Chattter App',
+        avatar: userData?.avatar || user?.photoURL || '',
+        id: userData?.uid || user?.uid || ''
       },
       receiver_details: {
         name: post.author_name || 'AUGE BORN',
@@ -205,11 +210,7 @@ const PostCard: React.FC<Props> = ({ post, isFromProfile, refetch }) => {
               </button>
             </DropdownMenuItem>
 
-            <DropdownMenuItem className='rounded-none'>
-              <button onClick={openShareModal} className='flex items-center gap-2.5 w-full py-1.5 px-1.5 text-[1.02rem] max-md:text-base'>
-                <Share2 className='size-[20px]' /> Share Post
-              </button>
-            </DropdownMenuItem>
+
             {
               user?.uid === post.author_id &&
               <>

@@ -45,6 +45,7 @@ const Chat: React.FC<Props> = ({ chat_id, current_user_id, receiver_id }) => {
                 sender_id: current_user_id,
                 receiver_id: receiver_id,
                 text: newMessage,
+                timeStamp: Timestamp.fromDate(new Date()),
             };
 
             queryClient.setQueryData(['messages-in-chat', chat_id], (old: TMessage[] | undefined) => {
@@ -97,20 +98,22 @@ const Chat: React.FC<Props> = ({ chat_id, current_user_id, receiver_id }) => {
     return (
         <div className="grid grid-rows-[1fr,max-content] h-full max-h-full border rounded-none bg-background">
             <div className="p-4 size-full overflow-y-scroll">
-                {messages?.map((message) => (
-                    <div
-                        key={message.message_id}
-                        className={`flex flex-col mb-2 p-2 rounded-lg max-w-xs break-words ${message.sender_id === current_user_id
-                            ? 'bg-primary text-white ml-auto text-sm'
-                            : 'bg-secondary text-white'
-                            }`}
-                    >
-                        {message.text}
-                        <small className={cn('ml-auto text-xs text-muted-foreground italic', message.sender_id === current_user_id && "text-background")}>
-                            {format(new Date(message.timestamp.toDate()), 'hh:mm a')}
-                        </small>
-                    </div>
-                ))}
+                {
+                    messages?.map((message) => (
+                        <div
+                            key={message.message_id}
+                            className={`flex flex-col mb-2 p-2 rounded-lg max-w-xs break-words ${message.sender_id === current_user_id
+                                ? 'bg-primary text-primary-foreground ml-auto text-sm pl-3'
+                                : 'bg-secondary text-secondary-foreground'
+                                }`}
+                        >
+                            {message.text}
+                            <p className={cn('ml-auto !text-xs text-muted-foreground italic pt-2', message.sender_id === current_user_id && "text-background ")}>
+                                {format(new Date(!!message.timestamp ? message.timestamp.toDate() : new Date()), 'hh:mm a')}
+                            </p>
+                        </div>
+                    ))
+                }
                 <div ref={messagesEndRef} />
             </div>
             <form onSubmit={handleSubmit} className="flex border-t border-muted w-full">

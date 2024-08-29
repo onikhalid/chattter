@@ -7,6 +7,7 @@ import { Avatar, LinkButton, Tabs, TabsContent, TabsList, TabsTrigger } from '@/
 import { cn } from '@/utils/classNames'
 import { Chat } from '../misc/components'
 import Link from 'next/link'
+import { MessageCircle } from 'lucide-react'
 
 const ChatsPage = () => {
     const router = useRouter()
@@ -122,7 +123,11 @@ const ChatsPage = () => {
 
                                     </div>
                                     :
-                                    <div>
+                                    <div className='flex flex-col'>
+                                        <MessageCircle size={40} />
+                                        <h3 className='text-2xl xl:text-5xl font-medium text-balance' >
+                                            Select a user to chat with .
+                                        </h3>
 
                                     </div>
                             }
