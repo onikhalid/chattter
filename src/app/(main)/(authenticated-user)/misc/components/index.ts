@@ -11,6 +11,7 @@ export { default as CommentsDrawer } from './CommentsDrawer';
 export { default as CommentsDiscussPage } from './CommentsDiscussPage';
 
 export { default as UserCard } from './UserCard';
+export { default as Chat } from './Chat';
 
 export { default as PublicProfilePosts } from './PublicProfilePosts';
 export { default as PublicProfileDetails } from './PublicProfileDetails';

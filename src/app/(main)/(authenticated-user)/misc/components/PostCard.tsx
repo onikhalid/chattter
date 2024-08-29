@@ -2,8 +2,9 @@ import React, { useContext } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { format } from 'date-fns'
-import { ArrowRight, BookmarkX, BookmarkPlus, Ellipsis, Trash, PenBoxIcon, Eye, UserPlus, Share, UserMinus, Share2 } from 'lucide-react'
+import { ArrowRight, BookmarkX, BookmarkPlus, Ellipsis, Trash, PenBoxIcon, Eye, UserPlus, Share, UserMinus, Share2, MessageCircle } from 'lucide-react'
 import toast from 'react-hot-toast'
+import { useRouter } from 'next/navigation'
 
 import { cleanUpPostQuillEditorContent } from '@/utils/quillEditor'
 import { Avatar, Badge, ConfirmDeleteModal, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, LinkButton, Tooltip } from '@/components/ui'
@@ -14,7 +15,7 @@ import { UserContext } from '@/contexts'
 import { launchNotification } from '@/utils/notifications'
 import { useBooleanStateControl } from '@/hooks'
 
-import { UseAddPostToBookmark, useCreateNotification, useDeletePost, UseFollowUser, UseRemovePostFromBookmark, UseUnFollowUser } from '../api'
+import { UseAddPostToBookmark, useCreateNotification, useDeletePost, UseFollowUser, UseRemovePostFromBookmark, useStartChat, UseUnFollowUser } from '../api'
 import PostShareModal from './PostShareModal'
 import { TPost } from '../types'
 
@@ -32,6 +33,9 @@ const PostCard: React.FC<Props> = ({ post, isFromProfile, refetch }) => {
   const { mutate: followUser, isPending: isFollowingUser } = UseFollowUser()
   const { mutate: unfollowUser, isPending: isUnfollowingUser } = UseUnFollowUser()
   const { mutate: sendNotification } = useCreateNotification()
+  const { mutate: startChat, isPending: isStartingChat } = useStartChat()
+  const { mutate: deletePost, isPending: isDeletingComment } = useDeletePost()
+
 
   const {
     state: isShareModalOpen,
@@ -43,7 +47,6 @@ const PostCard: React.FC<Props> = ({ post, isFromProfile, refetch }) => {
     setTrue: openConfirmDeleteModal,
     setFalse: closeConfirmDeleteModal
   } = useBooleanStateControl()
-  const { mutate: deletePost, isPending: isDeletingComment } = useDeletePost()
 
 
   const handleDelete = () => {
@@ -152,6 +155,25 @@ const PostCard: React.FC<Props> = ({ post, isFromProfile, refetch }) => {
     }
   }
 
+  const router = useRouter()
+  const handleStartChat = () => {
+    startChat({
+      sender_details: {
+        name: userData?.name|| user?.displayName || 'Chattter App',
+        avatar: userData?.avatar ||  user?.photoURL  || '',
+        id: userData?.uid ||user?.uid || ''
+      },
+      receiver_details: {
+        name: post.author_name || 'AUGE BORN',
+        avatar: post.author_avatar || '',
+        id: post.author_id || ''
+      }
+    }, {
+      onSuccess(data) {
+        router.push(`/chats?chat=${data}`)
+      },
+    })
+  }
 
 
 
@@ -175,6 +197,12 @@ const PostCard: React.FC<Props> = ({ post, isFromProfile, refetch }) => {
               <Link href={`/p/${post.post_id}`} className='flex items-center gap-2.5 w-full pb-1.5 pt-2 px-1.5 text-[1.02rem] max-md:text-base'>
                 <Eye className='size-[20px]' /> Read Post
               </Link>
+            </DropdownMenuItem>
+
+            <DropdownMenuItem className='rounded-none'>
+              <button onClick={openShareModal} className='flex items-center gap-2.5 w-full py-1.5 px-1.5 text-[1.02rem] max-md:text-base'>
+                <Share2 className='size-[20px]' /> Share Post
+              </button>
             </DropdownMenuItem>
 
             <DropdownMenuItem className='rounded-none'>
@@ -219,6 +247,15 @@ const PostCard: React.FC<Props> = ({ post, isFromProfile, refetch }) => {
                         isFollowingUser ? "Following" : "Follow"
                     }
                     {" "} Author
+                  </button>
+                </DropdownMenuItem>
+
+                <DropdownMenuItem className='rounded-none'>
+                  <button onClick={handleStartChat} className='flex items-center gap-2.5 w-full py-1.5 px-1.5 text-[1.02rem] max-md:text-base'>
+                    <MessageCircle className='size-[20px]' /> Chat with Author
+                    {
+                      isStartingChat && <SmallSpinner className='text-primary' />
+                    }
                   </button>
                 </DropdownMenuItem>
               </>

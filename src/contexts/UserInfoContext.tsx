@@ -174,10 +174,8 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
         } catch (error) {
 
         }
-        finally {
-            setIsUserDataLoading(false);
-        }
-
+  
+        setIsUserDataLoading(false);
     }, [authenticatedUser]);
 
     return (

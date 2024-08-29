@@ -4,7 +4,8 @@ export type NotificationType =
     | "POST_LIKED"
     | "POST_SAVED"
     | "POST_COMMENT"
-    | "COMMENT_REPLIED";
+    | "COMMENT_REPLIED"
+    | "CHAT_SENT"
 
 export interface NotificationDetails {
     post_id?: string;
@@ -18,7 +19,8 @@ export interface NotificationDetails {
     commentor_avatar?: string;
     commentor_name?: string;
     commentor_username?: string;
-    
+    chat_id?: string;
+
 }
 export interface UserDetails {
     user_id: string;

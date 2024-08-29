@@ -1,5 +1,5 @@
 import React from 'react'
-import { ArrowUpRightFromSquare, Bookmark, Circle, Heart, MessageCircle, MessagesSquare, Trash2, TrashIcon, UserPlus } from 'lucide-react'
+import { ArrowUpRightFromSquare, Bookmark, Circle, Heart, MessageCircle, MessagesSquare, Send, Trash2, TrashIcon, UserPlus } from 'lucide-react'
 import { TNotification } from '@/app/(main)/(authenticated-user)/misc/types/notification'
 import { Avatar } from '../ui'
 import Link from 'next/link'
@@ -7,7 +7,7 @@ import { setDoc, doc, collection, deleteDoc } from 'firebase/firestore'
 import { db } from '@/utils/firebaseConfig'
 import { cn } from '@/utils/classNames'
 
-const NotificationCard = ({ notification }: { notification: TNotification }) => {
+const NotificationCard = ({ notification, closeDrawer }: { notification: TNotification, closeDrawer: () => void }) => {
     const { sender_details, notification_type, notification_details } = notification;
     const senderName = sender_details.user_name;
     const senderAvatar = sender_details.user_avatar;
@@ -26,6 +26,8 @@ const NotificationCard = ({ notification }: { notification: TNotification }) => 
                 return <Heart size={30} strokeWidth={1.5} />
             case 'POST_SAVED':
                 return <Bookmark size={30} strokeWidth={1.5} />
+            case 'CHAT_SENT':
+                return <Send size={30} strokeWidth={1.5} />
             default:
                 return <Circle size={30} strokeWidth={1.5} />
         }
@@ -52,7 +54,7 @@ const NotificationCard = ({ notification }: { notification: TNotification }) => 
                         <p className='underline'>
                             <Link href={`/p/${notification_details.post_id}`} className='flex items-center gap-1.5'>
                                 {notification_details.post_title}
-                                <ArrowUpRightFromSquare size={13}/>
+                                <ArrowUpRightFromSquare size={13} />
                             </Link>
                         </p>
                     </div>
@@ -63,7 +65,7 @@ const NotificationCard = ({ notification }: { notification: TNotification }) => 
                         <Link href={`/u/${sender_details.user_username}`} className=''>
                             <Avatar src={senderAvatar} alt={senderName} size='small' fallback={senderName} className='h-5 w-5' />
                             {senderName}
-                        </Link> replied to your post:
+                        </Link> replied to your comment:
                         <Link href={`/p/${notification_details.post_id}`}>
                             <>{notification_details.post_title}</>
                         </Link>
@@ -109,6 +111,21 @@ const NotificationCard = ({ notification }: { notification: TNotification }) => 
                         <p className='underline'>
                             <Link href={`/p/${notification_details.post_id}`} className='flex items-center gap-1.5'>
                                 {notification_details.post_title}
+                                <ArrowUpRightFromSquare size={13} />
+                            </Link>
+                        </p>
+                    </div>
+                );
+            case 'CHAT_SENT':
+                return (
+                    <div>
+                        <Link href={`/u/${sender_details.user_username}`} className='font-display font-semibold'>
+                            {senderName}
+                        </Link>
+                        {" "}sent you a message {" "}
+                        <p className='underline'>
+                            <Link href={`/chats?chat=${notification_details.chat_id}`} className='flex items-center gap-1.5' onClick={closeDrawer}>
+                                Chat
                                 <ArrowUpRightFromSquare size={13} />
                             </Link>
                         </p>

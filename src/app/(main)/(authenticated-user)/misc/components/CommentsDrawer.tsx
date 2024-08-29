@@ -29,9 +29,9 @@ function CommentsDrawer({ searchParams: { post_id } }: { searchParams: { post_id
     const { mutate: addComment, isPending: isAddingComment } = useAddNewComment();
     const { mutate: sendNotification } = useCreateNotification()
 
-console.log("Comment added successfully");    const { data } = UseGetPostDetails(post_id)
+    const { data } = UseGetPostDetails(post_id)
 
-    console.log("Comment added successfully");
+
     function handleCommentChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
         setNewComment(e.target.value);
     }
@@ -78,7 +78,6 @@ console.log("Comment added successfully");    const { data } = UseGetPostDetails
                             comment_content: newComment,
                         },
                     });
-                    console.log("Comment added successfully");
                 },
                 onError: (error: any) => {
                     console.error("Error adding comment: ", error);
