@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState, useCallback, useMemo } from 'react';
 import { Bell } from 'lucide-react';
-import { Sheet, SheetTrigger, SheetContent, SheetHeader, SheetClose, Button, SheetFooter } from '../ui';
+import { Sheet, SheetTrigger, SheetContent, SheetHeader, SheetClose, Button, SheetFooter, SheetTitle } from '../ui';
 import { UserContext } from '@/contexts';
 import notificationSound from '@/assets/notification.wav';
 import NotificationCard from './NotificationCard';
@@ -37,7 +37,7 @@ const NotificationsDrawer = () => {
 
     return (
         <Sheet open={isDrawerOpen} >
-            <SheetTrigger className='relative' data-testid="menu-button" onClick={openDrawer}>
+            <SheetTrigger className='relative' data-testid="notifications-button" onClick={openDrawer}>
                 <Bell size={24} />
                 {
                 hasUnreadNotifications && (
@@ -48,9 +48,10 @@ const NotificationsDrawer = () => {
 
             </SheetTrigger>
             <SheetContent className='flex flex-col pt-[2.5vh] max-h-screen overflow-y-scroll' onPointerDownOutside={closeDrawer}>
+                <SheetTitle className='sr-only'>Notifications Center</SheetTitle>
                 <SheetHeader className='flex flex-row items-center justify-end w-full'>
-                    <SheetClose>
-                        <Button variant='secondary'>Close</Button>
+                    <SheetClose asChild>
+                        <Button variant='secondary' onClick={closeDrawer}>Close</Button>
                     </SheetClose>
                 </SheetHeader>
                 <section className='w-full'>

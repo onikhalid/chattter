@@ -1,26 +1,28 @@
 import React, { useState, useEffect, useRef, ChangeEvent, FormEvent, useContext } from 'react';
+import { doc,  Timestamp, updateDoc } from 'firebase/firestore';
+import { Send } from 'lucide-react';
+import { format } from 'date-fns';
 
 import { Button, Input } from '@/components/ui';
 import { useQueryClient } from '@tanstack/react-query';
 import { UserContext } from '@/contexts';
+import { cn } from '@/utils/classNames';
+import { db } from '@/utils/firebaseConfig';
 
-import { Send } from 'lucide-react';
 
 import { useCreateNotification, useMessagesInChat } from '../api';
 import { useSendMessage } from '../api';
 import { TMessage } from '../types/chats';
-import { format } from 'date-fns';
-import { serverTimestamp, Timestamp } from 'firebase/firestore';
-import { cn } from '@/utils/classNames';
 
 
 interface Props {
     chat_id: string;
     current_user_id: string;
     receiver_id: string;
+    unread_count: number
 }
 
-const Chat: React.FC<Props> = ({ chat_id, current_user_id, receiver_id }) => {
+const Chat: React.FC<Props> = ({ chat_id, current_user_id, receiver_id, unread_count }) => {
     const { data: messages, isLoading } = useMessagesInChat(chat_id);
     const [newMessage, setNewMessage] = useState<string>('');
     const messagesEndRef = useRef<HTMLDivElement | null>(null);
@@ -32,6 +34,25 @@ const Chat: React.FC<Props> = ({ chat_id, current_user_id, receiver_id }) => {
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [messages]);
+
+    useEffect(() => {
+        const resetUnreadMessageCount = async () => {
+            if(unread_count == 0) {
+                return;
+            }
+            try {
+                const chatDocRef = doc(db, 'user_chats', `${current_user_id}_${chat_id}`);
+                await updateDoc(chatDocRef, {
+                    unread_count: 0,
+                });
+                console.log('Unread message count reset to zero');
+            } catch (error) {
+                console.error('Error resetting unread message count:', error);
+            }
+        };
+
+        resetUnreadMessageCount();
+    }, [chat_id, unread_count]);
 
     const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
         setNewMessage(e.target.value);

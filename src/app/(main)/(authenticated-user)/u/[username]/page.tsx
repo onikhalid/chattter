@@ -1,8 +1,10 @@
 'use client'
-import { useRouter, useSearchParams } from 'next/navigation';
 import React, { useContext } from 'react'
-import toast from 'react-hot-toast';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuthState } from 'react-firebase-hooks/auth';
+import toast from 'react-hot-toast';
+import { Mail } from 'lucide-react';
+import Link from 'next/link';
 
 import { Avatar, Badge, Button, LinkButton, Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui'
 import { cn } from '@/lib/utils';
@@ -12,8 +14,6 @@ import { UserContext } from '@/contexts';
 
 import { PublicProfileDetails, PublicProfilePosts } from '../../misc/components';
 import { useCreateNotification, UseFollowUser, UseGetUserPublicProfileDetails, useStartChat, UseUnFollowUser } from '../../misc/api';
-import Link from 'next/link';
-import { Mail } from 'lucide-react';
 
 
 const UserPublicProfilePage = ({ params }: { params: { username: string } }) => {
@@ -222,7 +222,7 @@ const UserPublicProfilePage = ({ params }: { params: { username: string } }) => 
                                     >
                                         {userFollows?.includes(data.details.uid) ? 'Unfollow' : 'Follow'}
                                     </Button>
-                                    
+
                                     <Button className={cn('w-full max-w-[200px] mt-4 font-normal', { "hidden": user?.uid === data.details.uid })} onClick={handleStartChat}
                                         variant={'secondary'}
                                         disabled={isFollowingUser || isUnfollowingUser || user?.uid === data.details.uid}

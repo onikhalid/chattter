@@ -1,6 +1,6 @@
 import React from 'react'
 import { setDoc, doc, collection, deleteDoc } from 'firebase/firestore'
-import { ArrowUpRightFromSquare, Bookmark, Circle, Heart, MessageCircle, MessagesSquare, Send, Trash2, TrashIcon, UserPlus } from 'lucide-react'
+import { ArrowUpRightFromSquare, Bookmark, Circle, FileIcon, Heart, MessageCircle, MessagesSquare, Send, Trash2, TrashIcon, UserPlus } from 'lucide-react'
 
 import { TNotification } from '@/app/(main)/(authenticated-user)/misc/types/notification'
 import Link from 'next/link'
@@ -22,7 +22,7 @@ const NotificationCard = ({ notification, closeDrawer }: { notification: TNotifi
             case 'NEW_FOLLOWER':
                 return <UserPlus size={30} strokeWidth={1.5} />
             case 'NEW_POST':
-                return <Bookmark size={30} strokeWidth={1.5} />
+                return <FileIcon size={30} strokeWidth={1.5} />
             case 'COMMENT_REPLIED':
                 return <MessagesSquare size={30} strokeWidth={1.5} />
             case 'POST_COMMENT':
@@ -57,7 +57,7 @@ const NotificationCard = ({ notification, closeDrawer }: { notification: TNotifi
                         </Link>
                         {" "}created a new post!: {" "}
                         <p className='underline'>
-                            <Link href={`/p/${notification_details.post_id}`} className='flex items-center gap-1.5'>
+                            <Link href={`/p/${notification_details.post_id}`} className='flex items-center gap-1.5' onClick={closeDrawer}> 
                                 {notification_details.post_title}
                                 <ArrowUpRightFromSquare size={13} />
                             </Link>

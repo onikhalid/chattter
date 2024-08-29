@@ -37,7 +37,8 @@ const ChatsPage = () => {
         ),
         id: chat.chat_id,
         content: <div>Chat with: {chat.chat_id}</div>,
-        receiver_id: chat.receiver_id
+        receiver_id: chat.receiver_id,
+        unread_count: chat.unread_count
     })) || []
 
     if (isLoading) {
@@ -105,7 +106,12 @@ const ChatsPage = () => {
                     shouldShowTabsContent ?
                         tabsArray.map((tab) => (
                             <TabsContent key={tab.id} value={tab.id} className='!max-h-full !m-0 overflow-hidden !p-0'>
-                                <Chat chat_id={tab.id} current_user_id={authenticatedUser?.uid || ""} receiver_id={tab.receiver_id} />
+                                <Chat
+                                    chat_id={tab.id}
+                                    current_user_id={authenticatedUser?.uid || ""}
+                                    receiver_id={tab.receiver_id}
+                                    unread_count={tab.unread_count}
+                                />
                             </TabsContent>
                         ))
 
