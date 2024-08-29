@@ -1,3 +1,5 @@
+import { Timestamp } from "firebase/firestore";
+
 export interface TUserChatSession {
     chat_id: string;
     user_id: string;
@@ -16,6 +18,6 @@ export interface TMessage {
     receiver_id: string;
     text: string;
     image_url?: string;
-    timestamp: any; 
+    timestamp: Timestamp; 
     is_read: boolean;
 }

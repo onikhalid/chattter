@@ -18,16 +18,21 @@ type QueryKey = ['users-by-search', { search_text: string, sortBy: SortOption }]
 
 const getUsers = async ({ pageParam = null, queryKey }: QueryFunctionContext<QueryKey, QueryDocumentSnapshot<DocumentData> | null>): Promise<UsersQueryResult> => {
     const [, { search_text, sortBy }] = queryKey;
+    if (!search_text.trim()) {
+        return { users: [], lastVisible: null };
+    }
+
+
     const usersCollectionRef = collection(db, "users");
     const { orderByField, orderDirection } = getOrderFieldAndDirection(sortBy);
-
-    const searchWords = search_text.toLowerCase().split(/\s+/).filter(word => word.length > 0);
+    const searchWords = search_text.toLowerCase().split(/\s+/).filter(word => word.length > 0) || "";
+    // Return empty result if search_text is empty
 
     const conditions = [
         where('name_for_search', 'array-contains-any', [
             search_text.toLowerCase(),
             search_text.toLowerCase().replace(/[^a-zA-Z0-9]/g, ''),
-            ...searchWords
+            ...searchWords,
         ]),
         where('name', '==', search_text),
         where('username', '==', search_text)
@@ -59,16 +64,18 @@ const getUsers = async ({ pageParam = null, queryKey }: QueryFunctionContext<Que
 const useUsersBySearchInfiniteQuery = (search_text: string, sortBy: SortOption) => {
     const queryClient = useQueryClient();
     useEffect(() => {
+        if (!search_text.trim()) return;
+
         const { orderByField, orderDirection } = getOrderFieldAndDirection(sortBy);
         const usersCollectionRef = collection(db, "users");
 
-        const searchWords = search_text.toLowerCase().split(/\s+/).filter(word => word.length > 0);
+        const searchWords = search_text.toLowerCase().split(/\s+/).filter(word => word.length > 0) || "";
 
         const conditions = [
             where('name_for_search', 'array-contains-any', [
                 search_text.toLowerCase(),
                 search_text.toLowerCase().replace(/[^a-zA-Z0-9]/g, ''),
-                ...searchWords
+                ...searchWords,
             ]),
             where('name', '==', search_text),
             where('username', '==', search_text)
@@ -106,7 +113,8 @@ const useUsersBySearchInfiniteQuery = (search_text: string, sortBy: SortOption) 
         queryKey: ['users-by-search', { search_text, sortBy }],
         queryFn: getUsers,
         getNextPageParam: (lastPage) => lastPage.lastVisible,
-        initialPageParam: null
+        initialPageParam: null,
+        enabled: search_text.trim() !== ""
     });
 };
 

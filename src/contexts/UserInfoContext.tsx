@@ -125,6 +125,8 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
                     query(followsCollectionRef, where('followed_id', '==', authenticatedUser.uid)),
                     (snapshot) => {
                         const followerUserIds = snapshot.docs.map((doc) => doc.data().follower_id);
+                        setUserFollowersProfils(snapshot.docs.map((doc) => doc.data()) as TUser[]);
+
                         setUserFollowers(followerUserIds);
                     },
                     (error) => {

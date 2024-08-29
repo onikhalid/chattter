@@ -1,5 +1,5 @@
 import React, { useContext } from 'react'
-import { MoonIcon, SunIcon, PenIcon, Settings2, LogOut, Folder, SettingsIcon, SearchIcon, SaveIcon, SendIcon, UserIcon } from 'lucide-react';
+import { MoonIcon, SunIcon, PenIcon, Settings2, LogOut, Folder, SettingsIcon, SearchIcon, SaveIcon, SendIcon, UserIcon, MessageCircle } from 'lucide-react';
 import { Avatar, Button, ChattterLogo, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, LinkButton, Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger, Tooltip } from '../ui';
 import Link from 'next/link';
 import SearchModal from './SearchModal';
@@ -23,7 +23,6 @@ const AppHeader: React.FC<Props> = ({ theme, toggleTheme, user, logout }) => {
     const params = useSearchParams();
     const pathName = usePathname();
     const postToEditId = params.get('edit');
-    console.log(userNotifications)
 
     const {
         state: isSearchModalOpen,
@@ -108,6 +107,11 @@ const AppHeader: React.FC<Props> = ({ theme, toggleTheme, user, logout }) => {
                                 Profile
                             </Link>
 
+                            <Link href='/chats' className='flex items-center gap-2 text-xl pl-3 rounded-none w-full py-3.5'>
+                                <MessageCircle size={25} />
+                                Chats
+                            </Link>
+
                             <Link href='/me?view=bookmarks' className='flex items-center gap-2 text-xl pl-3 rounded-none w-full py-3.5'>
                                 <Folder size={25} />
                                 Bookmarks
@@ -161,6 +165,13 @@ const AppHeader: React.FC<Props> = ({ theme, toggleTheme, user, logout }) => {
                         </DropdownMenuItem>
 
                         <DropdownMenuItem className='!rounded-none py-0'>
+                            <Link href='/chats' className='flex items-center gap-2 text-lg pl-3 rounded-none w-full py-3'>
+                                <MessageCircle size={24} />
+                                Chats
+                            </Link>
+                        </DropdownMenuItem>
+
+                        <DropdownMenuItem className='!rounded-none py-0'>
                             <Link href='/me?view=bookmarks' className='flex items-center gap-2 text-lg pl-3 rounded-none w-full py-3'>
                                 <Folder size={24} />
                                 Bookmarks
@@ -193,7 +204,6 @@ const AppHeader: React.FC<Props> = ({ theme, toggleTheme, user, logout }) => {
                 isModalOpen={isSearchModalOpen}
                 closeModal={closeSearchModal}
             />
-
         </header>
     )
 }

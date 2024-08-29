@@ -36,19 +36,18 @@ const NotificationsDrawer = () => {
 
 
     return (
-        <Sheet open={isDrawerOpen}>
+        <Sheet open={isDrawerOpen} >
             <SheetTrigger className='relative' data-testid="menu-button" onClick={openDrawer}>
                 <Bell size={24} />
-                {hasUnreadNotifications && (
+                {
+                hasUnreadNotifications && (
                     <span className="absolute top-0 right-0 flex items-center justify-center min-w-2 px-1 h-4 text-xs bg-red-500 text-white rounded-full">
                         {unreadNotificationCount}
                     </span>
                 )}
-                {/* {hasUnreadNotifications && (
-                    <span className="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full"></span>
-                )} */}
+
             </SheetTrigger>
-            <SheetContent className='flex flex-col pt-[2.5vh] max-h-screen overflow-y-scroll'>
+            <SheetContent className='flex flex-col pt-[2.5vh] max-h-screen overflow-y-scroll' onPointerDownOutside={closeDrawer}>
                 <SheetHeader className='flex flex-row items-center justify-end w-full'>
                     <SheetClose>
                         <Button variant='secondary'>Close</Button>

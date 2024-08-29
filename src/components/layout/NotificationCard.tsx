@@ -1,11 +1,16 @@
 import React from 'react'
-import { ArrowUpRightFromSquare, Bookmark, Circle, Heart, MessageCircle, MessagesSquare, Send, Trash2, TrashIcon, UserPlus } from 'lucide-react'
-import { TNotification } from '@/app/(main)/(authenticated-user)/misc/types/notification'
-import { Avatar } from '../ui'
-import Link from 'next/link'
 import { setDoc, doc, collection, deleteDoc } from 'firebase/firestore'
+import { ArrowUpRightFromSquare, Bookmark, Circle, Heart, MessageCircle, MessagesSquare, Send, Trash2, TrashIcon, UserPlus } from 'lucide-react'
+
+import { TNotification } from '@/app/(main)/(authenticated-user)/misc/types/notification'
+import Link from 'next/link'
 import { db } from '@/utils/firebaseConfig'
 import { cn } from '@/utils/classNames'
+
+import { Avatar } from '../ui'
+
+
+
 
 const NotificationCard = ({ notification, closeDrawer }: { notification: TNotification, closeDrawer: () => void }) => {
     const { sender_details, notification_type, notification_details } = notification;
@@ -141,7 +146,6 @@ const NotificationCard = ({ notification, closeDrawer }: { notification: TNotifi
         const notificationCollectionRef = collection(db, 'notifications')
         const notificationDocRef = doc(notificationCollectionRef, notification.notification_id)
         await deleteDoc(notificationDocRef)
-        console.log('Delete notification')
     }
 
 
@@ -150,7 +154,6 @@ const NotificationCard = ({ notification, closeDrawer }: { notification: TNotifi
         const notificationCollectionRef = collection(db, 'notifications')
         const notificationDocRef = doc(notificationCollectionRef, notification.notification_id)
         await setDoc(notificationDocRef, { read_status: true }, { merge: true })
-        console.log('Marked as read')
     }
 
     return (

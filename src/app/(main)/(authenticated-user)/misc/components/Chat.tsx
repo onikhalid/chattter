@@ -9,6 +9,9 @@ import { Send } from 'lucide-react';
 import { useCreateNotification, useMessagesInChat } from '../api';
 import { useSendMessage } from '../api';
 import { TMessage } from '../types/chats';
+import { format } from 'date-fns';
+import { serverTimestamp, Timestamp } from 'firebase/firestore';
+import { cn } from '@/utils/classNames';
 
 
 interface Props {
@@ -48,14 +51,14 @@ const Chat: React.FC<Props> = ({ chat_id, current_user_id, receiver_id }) => {
                 const optimisticMessage: TMessage = {
                     ...newMessageObj,
                     message_id: Date.now().toString(),
-                    timestamp: new Date(),
+                    timestamp: Timestamp.fromDate(new Date()),
                     is_read: false,
                 };
                 return [...(old || []), optimisticMessage];
             });
 
             sendMessage(newMessageObj, {
-                onSuccess(data, variables, context) {
+                onSuccess() {
                     sendNotification({
                         receiver_id: receiver_id,
                         receiver_details: {
@@ -97,12 +100,15 @@ const Chat: React.FC<Props> = ({ chat_id, current_user_id, receiver_id }) => {
                 {messages?.map((message) => (
                     <div
                         key={message.message_id}
-                        className={`mb-2 p-2 rounded-lg max-w-xs break-words ${message.sender_id === current_user_id
-                            ? 'bg-primary text-white ml-auto'
+                        className={`flex flex-col mb-2 p-2 rounded-lg max-w-xs break-words ${message.sender_id === current_user_id
+                            ? 'bg-primary text-white ml-auto text-sm'
                             : 'bg-secondary text-white'
                             }`}
                     >
                         {message.text}
+                        <small className={cn('ml-auto text-xs text-muted-foreground italic', message.sender_id === current_user_id && "text-background")}>
+                            {format(new Date(message.timestamp.toDate()), 'hh:mm a')}
+                        </small>
                     </div>
                 ))}
                 <div ref={messagesEndRef} />

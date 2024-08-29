@@ -13,6 +13,7 @@ import PostCardSkeleton from './PostCardSkeleton';
 import { useUsersBySearchInfiniteQuery } from '../api';
 import { UsersQueryResult } from '../api/getUserBySearch';
 import UserCard from './UserCard';
+import { File, User } from 'lucide-react';
 
 type SortOption = 'date_desc' | 'date_asc' | 'name_asc' | 'name_desc' | 'likes_desc' | 'likes_asc';
 
@@ -77,16 +78,27 @@ const SearchPeople = () => {
 
 
             {
-                data?.pages.reduce((total, page) => total + page.users.length, 0) == 0 && !isLoading && (
+                search_text.trim() !== "" && data?.pages.reduce((total, page) => total + page.users.length, 0) == 0 && !isLoading && (
                     <div className='flex flex-col items-center justify-center w-full my-auto'>
                         <article className='bg-background p-6 lg:p-10 rounded-3xl max-md:rounded-b-none mx-auto w-full max-w-[525px]'>
                             <h3 className='text-5xl font-medium'>No user found.</h3>
                             <p className='my-5'>
-                                We couldn&apos;t find any post with this tag &quot;{search_text}&quot; on Chattter, try again later or be the first to create a post with this tag.
+                                We couldn&apos;t find any user with this name or username &quot;{search_text}&quot; on Chattter, try again later or change your search text.
                             </p>
-                            <LinkButton href={`/new?tag=${search_text}`} className='mt-4'>
-                                Create a new post
-                            </LinkButton>
+                        </article>
+                    </div>
+                )
+            }
+
+            {
+                search_text.trim() == "" && !isLoading && (
+                    <div className='flex flex-col items-center justify-center w-full my-auto'>
+                        <article className='bg-background p-6 lg:p-10 rounded-3xl max-md:rounded-b-none mx-auto w-full max-w-[525px]'>
+                            <User />
+                            <h3 className='text-5xl font-medium'>Search users on Chatter.</h3>
+                            <p className='my-5'>
+                                Search for a name or username of a user on Chattter.
+                            </p>
                         </article>
                     </div>
                 )
@@ -107,7 +119,7 @@ const SearchPeople = () => {
                     </div>
                 ))}
 
-            <div ref={ref} className='w-full'>
+            <div ref={ref} className={cn('w-full', search_text.trim() == "" && "hidden")}>
                 {
                     isFetchingNextPage
                         ?

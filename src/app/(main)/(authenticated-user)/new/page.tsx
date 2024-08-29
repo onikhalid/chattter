@@ -449,7 +449,7 @@ const WriteNewStoryPage = () => {
                         </div>
                     )}
                 />
-                <Button shape='rounded' variant="default" className='flex items-center gap-2 rounded-lg py-1.5 w-full mt-8' type='submit' form="form">
+                <Button shape='rounded' variant="default" className='flex items-center gap-2 rounded-lg py-1.5 w-full my-8' type='submit' form="form">
                     <span className=''>
                         {postToEditId ? "Update" : "Submit"}
                     </span>

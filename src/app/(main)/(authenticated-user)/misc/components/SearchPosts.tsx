@@ -14,6 +14,7 @@ import { QueryResult } from '../api/getPostsAll';
 import { useAddInterest, usePostsByTagInfiniteQuery, useRemoveInterest } from '../api';
 import { usePostsBySearchInfiniteQuery } from '../api';
 import { useSearchParams } from 'next/navigation';
+import { File, User } from 'lucide-react';
 
 type SortOption = 'date_desc' | 'date_asc' | 'alpha_asc' | 'alpha_desc' | 'likes_desc' | 'likes_asc';
 
@@ -80,7 +81,7 @@ const SearchPosts = () => {
 
 
             {
-                data?.pages.reduce((total, page) => total + page.posts.length, 0) == 0 && !isLoading && (
+                search_text.trim() !== "" && data?.pages.reduce((total, page) => total + page.posts.length, 0) == 0 && !isLoading && (
                     <div className='grow flex flex-col items-center justify-center size-full my-auto'>
                         <article className='bg-background p-6 lg:p-10 rounded-3xl max-md:rounded-b-none mx-auto w-full max-w-[525px]'>
                             <h3 className='text-5xl font-medium'>No posts found.</h3>
@@ -98,6 +99,20 @@ const SearchPosts = () => {
 
 
             {
+                search_text.trim() === "" && !isLoading && (
+                    <div className='flex flex-col items-center justify-center w-full my-auto'>
+                        <article className='bg-background p-6 lg:p-10 rounded-3xl max-md:rounded-b-none mx-auto w-full max-w-[525px]'>
+                            <File />
+                            <h3 className='text-5xl font-medium'>Search posts on Chatter.</h3>
+                            <p className='my-5'>
+                                Search for a post title, content or a part of the content you remember or are looking for, tags, name or username of a post author etc.
+                            </p>
+                        </article>
+                    </div>
+                )
+            }
+
+            {
                 data?.pages.map((page: QueryResult, i: number) => (
                     <div key={i} className='flex flex-col divide-y-[1.5px] w-full divide-muted-foreground dark:divide-muted'>
                         {
@@ -112,7 +127,7 @@ const SearchPosts = () => {
             }
 
 
-            <div ref={ref} className='w-full'>
+            <div ref={ref} className={cn('w-full', search_text.trim() === "" && "hidden")}>
                 {
                     isFetchingNextPage
                         ?
@@ -126,8 +141,8 @@ const SearchPosts = () => {
 
                         :
                         hasNextPage
-                            ? 
-<div className ="h-2" />
+                            ?
+                            <div className="h-2" />
                             :
                             <div className={cn('mt-8 py-5 w-full text-center ', data?.pages.reduce((total, page) => total + page.posts.length, 0) == 0 && "hidden")}>
                                 <span className='font-sans'>&mdash;&mdash;</span>
